@@ -1,0 +1,9 @@
+.vscode/
+idea/
+.DS_Store
+vendor/
+_output/
+web/build/
+web/node_modules/
+web/.eslintcache
+mysql-data

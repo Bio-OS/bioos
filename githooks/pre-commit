@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+LC_ALL=C
+
+local_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+valid_branch_regex="^(main|develop)$|(feature|feat|release|hotfix)\/[A-Za-z0-9._-]+$|^HEAD$"
+
+message="Branch names should match the regular express: $valid_branch_regex.
+Rename your branch to a valid name by: git branch -m oldName newName."
+
+if [[ ! $local_branch =~ $valid_branch_regex ]]
+then
+    echo "$message"
+    exit 1
+fi
+
+cd web
+npx lint-staged

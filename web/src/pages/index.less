@@ -1,0 +1,53 @@
+.sideMenu {
+  background: #f6f8fa;
+
+  :global {
+    .icon {
+      width: 20px;
+      height: 20px;
+
+      &:hover {
+        background: rgba(204, 206, 208, 0.3);
+        border-radius: 4px;
+      }
+
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .arco-menu-inner {
+      padding: 0 12px;
+    }
+
+    .arco-menu-item {
+      height: 36px;
+      line-height: 36px;
+
+      background: #f6f8fa;
+      &:hover {
+        background: #e9effa !important;
+      }
+    }
+    .arco-menu-selected {
+      background: #e9effa !important;
+    }
+  }
+
+  .menuTitle {
+    height: 50px;
+    padding: 20px 12px 8px;
+    margin-bottom: 6px;
+
+    svg {
+      cursor: pointer;
+    }
+
+    :global {
+      .arco-typography {
+        max-width: 123px;
+      }
+    }
+  }
+}

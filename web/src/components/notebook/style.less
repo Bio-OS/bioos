@@ -1,0 +1,118 @@
+.descLeft {
+  width: 75px;
+}
+
+.relativeCluster {
+  display: inline-flex;
+
+  & > span {
+    margin-right: 4px;
+  }
+}
+
+.descSection {
+  background: #f6f7fb;
+  border-radius: 4px;
+  padding: 10px 20px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+.imageNameWrap {
+  background-color: #fafbfc;
+  padding: 16px 20px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+.drawPadding {
+  :global .arco-drawer-content {
+    padding: 24px;
+  }
+}
+
+.selectedType {
+  color: @primary !important;
+  background-color: #f3f7ff !important;
+  width: 120px;
+  font-weight: 500;
+  box-shadow: 0px 0px 0px 1px #a2c1ff;
+}
+.unselectedType {
+  color: #020814;
+  background-color: #fff;
+  width: 120px;
+  font-weight: 400;
+  box-shadow: 0px 0px 0px 1px #dde2e9;
+}
+.customAlert {
+  padding: 8px 16px;
+  margin-top: 12px;
+  align-items: flex-start;
+}
+.footerWrap {
+  text-align: right;
+  margin: -2px 4px;
+}
+
+.modalContent {
+  width: 480px;
+  :global {
+    .arco-modal-content {
+      padding: 0px;
+    }
+  }
+}
+.tipWrap {
+  background: #fffae8;
+  padding: 10px 24px;
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.jupyterEditContainer {
+  height: 100%;
+  .header {
+    height: 50px;
+    background: #ffffff;
+    box-shadow: 0px 2px 4px rgba(26, 34, 51, 0.03);
+    padding: 14px 20px;
+    box-sizing: border-box;
+    color: #1d2129;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cancel {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 88px;
+    height: 36px;
+    background: #000000;
+    opacity: 0.3;
+    border-radius: 4px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .iframeWrap {
+    width: 100%;
+    height: calc(100% - 55px);
+    border: none;
+    border-top: 1px solid #e5e8ef;
+  }
+}
+
+.popoverAlert {
+  :global {
+    .arco-popover-content,
+    .arco-popover-arrow {
+      background-color: #f89e16;
+    }
+  }
+}

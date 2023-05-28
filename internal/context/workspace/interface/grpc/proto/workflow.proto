@@ -1,0 +1,203 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+import "errors/errors.proto";
+
+option go_package = ".;proto";
+
+enum WorkflowErrorReason {
+  // Set default error code.
+  option (errors.default_code) = 500;
+
+  WORKFLOW_NOT_FOUND = 0 [(errors.code) = 404];
+  WORKFLOW_VERSION_NOT_FOUND = 1 [(errors.code) = 404];
+  WORKFLOW_FILE_NOT_FOUND = 2 [(errors.code) = 404];
+  WORKFLOW_VALIDATE_ERROR = 3 [(errors.code) = 404];
+  WORKFLOW_MAIN_WORKFLOW_FILE_NOT_EXIST = 4 [(errors.code) = 404];
+  WORKFLOW_NAME_DUPLICATED = 5 [(errors.code) = 404];
+}
+
+service WorkflowService {
+  rpc GetWorkflow(GetWorkflowRequest) returns (GetWorkflowResponse) {}
+  rpc ListWorkflow(ListWorkflowRequest) returns (ListWorkflowResponse) {}
+  rpc GetWorkflowFile(GetWorkflowFileRequest) returns (GetWorkflowFileResponse) {}
+  rpc ListWorkflowFiles(ListWorkflowFilesRequest) returns (ListWorkflowFilesResponse) {}
+  rpc GetWorkflowVersion(GetWorkflowVersionRequest) returns (GetWorkflowVersionResponse) {}
+  rpc ListWorkflowVersions(ListWorkflowVersionsRequest) returns (ListWorkflowVersionsResponse) {}
+  rpc CreateWorkflow(CreateWorkflowRequest) returns (CreateWorkflowResponse) {}
+  rpc DeleteWorkflow(DeleteWorkflowRequest) returns (DeleteWorkflowResponse) {}
+  rpc UpdateWorkflow(UpdateWorkflowRequest) returns (UpdateWorkflowResponse) {}
+}
+
+message GetWorkflowRequest {
+  string id = 1;
+  string workspaceID = 2;
+}
+
+message Workflow {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  WorkflowVersion latestVersion = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+}
+
+message WorkflowVersion {
+  string id = 1;
+  string status = 2;
+  string message = 3;
+  string language = 4;
+  string languageVersion = 5;
+  string mainWorkflowPath = 6;
+  repeated WorkflowParam inputs = 7;
+  repeated WorkflowParam outputs = 8;
+  string graph = 9;
+  map<string, string> metadata = 10;
+  string source = 11;
+  repeated WorkflowFileInfo files = 12;
+  google.protobuf.Timestamp createdAt = 13;
+  google.protobuf.Timestamp updatedAt = 14;
+}
+
+message WorkflowParam {
+  string name = 1;
+  string type = 2;
+  bool optional = 3;
+  optional string default = 4;
+}
+
+message WorkflowFile {
+  string id = 1;
+  string workflowVersionID = 2;
+  string path = 3;
+  string content = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+}
+
+message WorkflowFileInfo {
+  string id = 1;
+  string path = 2;
+}
+
+message GetWorkflowResponse {
+  Workflow workflow = 1;
+}
+message GetWorkflowFileRequest {
+  string workspaceID = 1;
+  string workflowID = 2;
+  string id = 3;
+}
+
+message GetWorkflowFileResponse {
+  WorkflowFile file = 1;
+}
+
+message ListWorkflowFilesRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string orderBy = 3;
+  repeated string ids = 4;
+  string workspaceID = 5;
+  string workflowID = 6;
+  optional string workflowVersionID = 7;   // if omit workflowVersionID, using latest version
+}
+
+message ListWorkflowFilesResponse {
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+  string workspaceID = 4;
+  string workflowID = 5;
+  repeated WorkflowFile files = 6;
+}
+
+message GetWorkflowVersionRequest {
+  string workspaceID = 1;
+  string workflowID = 2;
+  string id = 3;
+}
+
+message GetWorkflowVersionResponse {
+  WorkflowVersion version = 1;
+}
+
+message ListWorkflowVersionsRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string orderBy = 3;
+  repeated string ids = 4;
+  string workspaceID = 5;
+  string workflowID = 6;
+}
+
+message ListWorkflowVersionsResponse {
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+  string workspaceID = 4;
+  string workflowID = 5;
+  repeated WorkflowVersion Items = 6;
+}
+
+message ListWorkflowRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string orderBy = 3;
+  string searchWord = 4;
+  repeated string ids = 5;
+  string workspaceID = 6;
+  bool exact = 7;
+}
+
+message ListWorkflowResponse {
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+  repeated Workflow Items = 4;
+}
+
+message CreateWorkflowRequest {
+  string workspaceID = 1;
+  string name = 2;
+  optional string description = 3;
+  string language = 4;
+  string source = 5; // git/file
+  optional string url = 6;
+  optional string tag = 7;
+  optional string Token = 8;
+  string mainWorkflowPath = 9;
+  optional string id = 10;
+}
+
+message CreateWorkflowResponse {
+  string id = 1;
+}
+
+message DeleteWorkflowRequest {
+  string id = 1;
+  string workspaceID = 2;
+}
+
+message DeleteWorkflowResponse {
+}
+
+
+message UpdateWorkflowRequest {
+  string id = 1;
+  string workspaceID = 2;
+  optional string name = 3;
+  optional string description = 4;
+  optional string language = 5;
+  optional string source = 6; // git/file
+  optional string url = 7;
+  optional string tag = 8;
+  optional string Token = 9;
+  optional string mainWorkflowPath = 10;
+}
+
+message UpdateWorkflowResponse {
+}

@@ -1,0 +1,15 @@
+client:
+  serverAddr: localhost:50051
+  serverName: localhost
+  insecure: false
+  serverCertFile: conf/certs/server.pem
+  clientCertFile: conf/certs/client.pem
+  clientCertKeyFile: conf/certs/client-key.pem
+  caFile: conf/certs/ca.pem
+  username: admin
+  password: admin
+  method: grpc
+  timeout: 10
+
+stream:
+  format: yaml

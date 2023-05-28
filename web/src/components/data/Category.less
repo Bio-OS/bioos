@@ -1,0 +1,101 @@
+.category {
+  color: #80838a;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  justify-content: space-between;
+  padding-right: 12px;
+  svg:hover {
+    color: @primary;
+  }
+}
+
+.header:hover {
+  cursor: pointer;
+  span {
+    color: #4e5969;
+  }
+}
+
+.listItem {
+  height: 48px;
+  background: #ffffff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  padding-right: 12px;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.listItem:hover {
+  background: #f1f3f5;
+  .count {
+    display: none;
+  }
+  .pinCheck {
+    display: block;
+  }
+}
+
+.listItemActive {
+  background: #e9effa !important;
+}
+
+.dataIcon {
+  margin-right: 10px;
+  color: #ccced0;
+}
+
+.active {
+  color: @primary;
+}
+
+.count {
+  display: block;
+}
+
+.pinCheck {
+  display: none;
+}
+.trigger {
+  margin-top: 21px;
+  margin-bottom: 16px;
+  :global {
+    .arco-upload-trigger-drag-text {
+      display: none;
+    }
+
+    .arco-upload-trigger {
+      padding: 0px 0px;
+    }
+
+    .arco-icon-plus {
+      display: none;
+    }
+
+    .arco-upload-trigger-tip {
+      white-space: normal;
+    }
+  }
+}
+.uploadLi {
+  list-style: none;
+  li {
+    margin-top: 6px;
+  }
+  > li:before {
+    display: inline-block;
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: #ccced0;
+    margin-right: 8px;
+    margin-bottom: 2px;
+  }
+}

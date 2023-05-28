@@ -1,0 +1,22 @@
+{
+    "CN": "apiservver",
+    "hosts": [
+        "127.0.0.1",
+        "*.bioos.com",
+        "localhost",
+        "bioos.com"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "L": "BeiJing",
+            "O": "Bio",
+            "OU": "MyTeam",
+            "ST": "BeiJing"
+        }
+    ]
+}

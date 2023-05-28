@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/empty.proto";
+
+option go_package = ".;proto";
+
+service VersionService {
+  rpc Version(google.protobuf.Empty) returns (GetVersionResponse) {}
+}
+
+message GetVersionResponse {
+  string Version = 1;
+  string GitBranch = 2 ;
+  string GitCommit = 3;
+  string GitTreeState = 4 ;
+  string BuildTime = 5 ;
+  string GoVersion = 6;
+  string Compiler = 7;
+  string Platform = 8;
+}

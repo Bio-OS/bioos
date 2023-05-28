@@ -1,0 +1,23 @@
+{
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "target": "ES5",
+    "declaration": false,
+    "lib": ["DOM", "ES6", "ES7", "ESNEXT"],
+    "types": ["webpack-env"],
+    "typeRoots": ["src/typings"],
+    "baseUrl": "src",
+    "paths": {
+      "api/*": ["api/*"],
+      "components/*": ["components/*"],
+      "lib/*": ["lib/*"],
+      "helpers/*": ["helpers/*"],
+      "assets/*": ["assets/*"]
+    }
+  }
+}

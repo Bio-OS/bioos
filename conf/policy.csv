@@ -1,0 +1,3 @@
+p, user1, proto.WorkspaceService, GetWorkspace
+p, user1, Workspace, Create
+p, user1, Workspace, List

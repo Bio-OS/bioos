@@ -1,0 +1,299 @@
+:global {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    font-size: 13px !important;
+    min-width: 1440px;
+  }
+
+  html,
+  body,
+  #root,
+  #root > .arco-layout,
+  #rootContainer {
+    height: 100%;
+  }
+
+  #root > .arco-layout > main {
+    height: calc(100vh - 48px);
+    overflow: auto;
+  }
+
+  .mp-list() {
+    m: margin;
+    p: padding;
+  }
+
+  .set-directions() {
+    l: left;
+    r: right;
+    t: top;
+    b: bottom;
+  }
+
+  //  动态生成0-32之间的内外边距
+  each(.mp-list(), .(@mpv, @mpk, @mpi) {
+    each(range(0, 32, 4), {
+      each(.set-directions(), .(@v, @k, @i) {
+        .@{mpk}@{k}@{value} {
+          @{mpv}-@{v}:@value*1px
+        }
+      })
+    })
+  });
+
+  // 自动生成10-24的字体类
+  each(range(10, 24, 1), {
+    .fs@{value} {
+      font-size: @value*1px;
+    }
+  }) 
+  //  自动生成2-6的圆角类
+  each(range(2, 8, 2), {
+    .br@{value} {
+      border-radius: @value*1px;
+    }
+  }) 
+
+  //  自动生成20-32的行高类
+  each(range(20, 32, 2), {
+    .lh@{value} {
+      line-height: @value*1px;
+    }
+  }) 
+
+  #root {
+    background-color: white;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  [class*='flex'] {
+    display: flex;
+  }
+
+  .flexAlignCenter {
+    align-items: center;
+  }
+
+  .flexJustifyStart {
+    justify-content: flex-start;
+  }
+
+  .flexJustifyCenter {
+    justify-content: center;
+  }
+
+  .flexJustifyBetween {
+    justify-content: space-between;
+  }
+
+  .flexJustifyAround {
+    justify-content: space-around;
+  }
+
+  .flexJustifyEnd {
+    justify-content: flex-end;
+  }
+
+  .flexAlignItemsEnd {
+    align-items: flex-end;
+  }
+
+  .flexBetween {
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .flexCenter {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flexRow {
+    flex-direction: row;
+  }
+
+  .flexCol {
+    flex-direction: column;
+  }
+
+  .flexWrap {
+    flex-wrap: wrap;
+  }
+
+  .flex1 {
+    flex: 1;
+  }
+
+  .noShrink {
+    flex-shrink: 0;
+  }
+
+  .plr56 {
+    padding: 0 56px;
+  }
+
+  .colorBlack {
+    color: #020814;
+  }
+
+  .colorBlack2 {
+    color: #4e5969;
+  }
+
+  .colorBlack3 {
+    color: #41464f;
+  }
+
+  .colorBlack4 {
+    color: #424e66;
+  }
+
+  .colorGrey {
+    color: #80838a;
+  }
+  .colorGrey1 {
+    color: #454950;
+  }
+  .colorGrey2 {
+    color: #eaedf1;
+  }
+  .colorBg {
+    color: #ccced0;
+  }
+
+  .colorPrimary {
+    color: @primary !important;
+  }
+
+  .colorDanger {
+    color: #fa9ea3;
+  }
+
+  .colorWarning {
+    color: #f9a221;
+  }
+  .colorSuccess {
+    color: #00b42a;
+  }
+  .fw500 {
+    font-weight: 500;
+  }
+
+  .fw600 {
+    font-weight: 600;
+  }
+
+  .w200 {
+    width: 200px;
+  }
+
+  .w240 {
+    width: 240px;
+  }
+
+  .w100 {
+    width: 100%;
+  }
+
+  .h100 {
+    height: 100%;
+  }
+
+  .ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .textAlignCenter {
+    text-align: center;
+  }
+
+  .textAlignLeft {
+    text-align: left;
+  }
+
+  .textAlignRight {
+    text-align: right;
+  }
+
+  .notAllowed {
+    cursor: not-allowed;
+  }
+
+  .cursorPointer {
+    cursor: pointer;
+  }
+
+  .link {
+    cursor: pointer;
+    color: @primary;
+  }
+
+  .hoverableText {
+    cursor: pointer;
+
+    &:hover {
+      color: @primary;
+    }
+  }
+
+  .hoverableArea {
+    cursor: pointer;
+    &:hover {
+      .hoverActive {
+        color: @primary;
+      }
+    }
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  .opacity50 {
+    opacity: 0.5;
+  }
+
+  .rotate180 {
+    transform: rotate(180deg);
+  }
+
+  .iconBox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border-radius: 2px;
+
+    &:hover {
+      background: #f1f3f5;
+    }
+  }
+
+  .posRelative {
+    position: relative;
+  }
+  .hoverable:hover {
+    background-color: #f2f3f8 !important;
+  }
+
+  .inlineBlock {
+    display: inline-block;
+  }
+
+  .displayBlock {
+    display: block;
+  }
+
+  .marginAuto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

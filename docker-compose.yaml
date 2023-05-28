@@ -1,0 +1,63 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_DATABASE: bioos
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-storage:/var/lib/mysql
+    networks:
+      - bioos
+  apiserver:
+    build:
+      context: .
+      dockerfile: build/apiserver/Dockerfile
+    restart: always
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: mypassword
+      MYSQL_PORT: "3306"
+      MYSQL_DB: bioos
+    command: ["--config", "/app/conf/apiserver-mysql.yaml", "--log-level", "debug"]
+    ports:
+      - "8888:8888"
+      - "50051:50051"
+    volumes:
+      - bioos-storage:/app/conf/fs
+    depends_on:
+      - mysql
+    networks:
+      - bioos
+  web:
+    build:
+      context: .
+      dockerfile: build/web/Dockerfile
+    restart: always
+    depends_on:
+      - apiserver
+    ports:
+      - "8901:80"
+    networks:
+      - bioos
+  cromwell:
+    image: broadinstitute/cromwell:85
+    restart: always
+    command:
+      - server
+    ports:
+      - "8000:8000"
+    volumes:
+      - bioos-storage:/nfs/bioos-storage
+    networks:
+      - bioos
+networks:
+  bioos:
+    driver: bridge
+volumes:
+  bioos-storage:
+  mysql-storage:

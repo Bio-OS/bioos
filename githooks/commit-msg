@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# your commits will be validated after saving and closing the commit message in your text editor.
+# install go-gitlint via `go install github.com/llorllale/go-gitlint@latest`
+go-gitlint --msg-file="$1"

@@ -1,0 +1,199 @@
+syntax = "proto3";
+
+package proto;
+
+import "errors/errors.proto";
+
+option go_package = ".;proto";
+
+enum SubmissionErrorReason {
+  // Set default error code.
+  option (errors.default_code) = 500;
+
+  SUBMISSION_NOT_FOUND = 0 [(errors.code) = 404];
+  SUBMISSION_VALIDATE_ERROR = 1 [(errors.code) = 404];
+}
+
+service SubmissionService {
+  rpc CheckSubmission(CheckSubmissionRequest) returns (CheckSubmissionResponse) {}
+  rpc ListSubmissions(ListSubmissionsRequest) returns (ListSubmissionsResponse) {}
+  rpc CreateSubmission(CreateSubmissionRequest) returns (CreateSubmissionResponse) {}
+  rpc DeleteSubmission(DeleteSubmissionRequest) returns (DeleteSubmissionResponse) {}
+  rpc CancelSubmission(CancelSubmissionRequest) returns (CancelSubmissionResponse) {}
+  rpc ListRuns(ListRunsRequest) returns (ListRunsResponse) {}
+  rpc CancelRun(CancelRunRequest) returns (CancelRunResponse) {}
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse) {}
+}
+
+message CheckSubmissionRequest {
+  string name = 1;
+  string workspaceID = 2;
+}
+
+message CheckSubmissionResponse {
+  bool isNameExist = 1;
+}
+
+message ListSubmissionsRequest {
+  string workspaceID = 1;
+  int32 page = 2;
+  int32 size = 3;
+  string orderBy = 4;
+  string searchWord = 5;
+  string workflowID = 6;
+  repeated string status = 7;
+  repeated string ids = 8;
+  bool exact = 9;
+}
+
+message ListSubmissionsResponse {
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+  repeated SubmissionItem items = 4;
+}
+
+message SubmissionItem {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string type = 4;
+  string status = 5;
+  int64 startTime = 6;
+  int64 finishTime = 7;
+  int64 duration = 8;
+  WorkflowVersionInfo workflowVersion = 9;
+  Status runStatus = 10;
+  Entity entity = 11;
+  ExposedOptions exposedOptions = 12;
+  InOutMaterial inOutMaterial = 13;
+}
+message WorkflowVersionInfo {
+  string id = 1;
+  string versionID = 2;
+}
+
+message Status {
+  int64 count = 1;
+  int64 pending = 2;
+  int64 succeeded = 3;
+  int64 failed = 4;
+  int64 running = 5;
+  int64 cancelling = 6;
+  int64 cancelled = 7;
+  int64 queued = 8;
+  int64 initializing = 9;
+}
+
+message Entity {
+  string dataModelID = 1;
+  repeated string dataModelRowIDs = 2;
+  string inputsTemplate = 3;
+  string outputsTemplate = 4;
+}
+
+message ExposedOptions  {
+  bool readFromCache = 1;
+}
+
+message InOutMaterial  {
+  string inputsMaterial = 1;
+  string outputsMaterial = 2;
+}
+message CreateSubmissionRequest {
+  string workspaceID = 1;
+  string name = 2;
+  string workflowID = 3;
+  string description = 4;
+  string type = 5;
+  Entity         entity = 6;
+  ExposedOptions exposedOptions = 7;
+  InOutMaterial  inOutMaterial = 8;
+}
+
+message CreateSubmissionResponse {
+  string id = 1;
+}
+
+message DeleteSubmissionRequest {
+  string workspaceID = 1;
+  string id = 2;
+}
+
+message DeleteSubmissionResponse {
+}
+
+message CancelSubmissionRequest {
+  string workspaceID = 1;
+  string id = 2;
+}
+
+message CancelSubmissionResponse {
+}
+
+message ListRunsRequest {
+  string workspaceID = 1;
+  string submissionID = 2;
+  int32 page = 3;
+  int32 size = 4;
+  string orderBy = 5;
+  string searchWord = 6;
+  repeated string status = 7;
+  repeated string  ids = 8;
+}
+
+message ListRunsResponse{
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+  repeated RunItem items = 4;
+}
+
+message RunItem {
+  string id = 1;
+  string name = 2;
+  string status = 3;
+  int64 startTime = 4;
+  int64 finishTime = 5;
+  int64 duration = 6;
+  string engineRunID = 7;
+  string inputs = 8;
+  string outputs = 9;
+  Status taskStatus = 10;
+  string log = 11;
+  string message = 12;
+}
+
+message CancelRunRequest {
+  string workspaceID = 1;
+  string submissionID = 2;
+  string id = 3;
+}
+
+message CancelRunResponse {
+}
+
+message ListTasksRequest {
+  string workspaceID = 1;
+  string submissionID = 2;
+  string runID = 3;
+  int32 page = 4;
+  int32 size = 5;
+  string orderBy = 6;
+}
+message ListTasksResponse {
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+  repeated TaskItem items = 4;
+}
+message TaskItem {
+  string name = 1;
+  string runID = 2;
+  string status = 3;
+  int64 startTime = 4;
+  int64 finishTime = 5;
+  int64 duration = 6;
+  string stdout = 7;
+  string stderr = 8;
+}

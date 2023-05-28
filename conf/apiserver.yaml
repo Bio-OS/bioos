@@ -1,0 +1,90 @@
+server:
+  http:
+    port: 8888
+    tls: false
+  grpc:
+    port: 50051
+    tls: true
+  cert-file: conf/certs/server.pem
+  key-file: conf/certs/server-key.pem
+  ca-file: conf/certs/ca.pem
+  womtool-file: womtool.jar
+
+log:
+  level: debug
+  output-path: app.log
+  max-backups: 3
+
+db:
+  sqlite3:
+    file: ":memory:"
+
+eventBus:
+  maxRetries: 10
+  syncPeriod: 15s
+  batchSize: 5
+  workers: 5
+  dequeueTimeout: 5m
+  runningTimeout: 24h
+
+storage:
+  fs:
+    rootPath: /tmp
+auth:
+  authn:
+    basic:
+      ttl: 5
+      users:
+        - ID: 1
+          name: admin
+          password: admin
+          groups:
+            - admin
+            - users
+          extensions:
+            dept:
+              - deptA
+              - deptB
+            role:
+              - roleA
+              - roleB
+  authz:
+    casbin:
+      model: conf/model.conf
+      policy: conf/policy.csv
+
+wes:
+  endpoint: ''
+  basePath: /api/ga4gh/wes/v1
+  timeout: 10
+  Retry: 1
+
+client:
+  serverAddr: localhost:50051
+  serverName: localhost
+  insecure: false
+  serverCertFile: conf/certs/server.pem
+  clientCertFile: conf/certs/client.pem
+  clientCertKeyFile: conf/certs/client-key.pem
+  caFile: conf/certs/ca.pem
+  username: admin
+  password: admin
+  method: grpc
+  timeout: 10
+
+notebook:
+  officialImages:
+    - name: sample
+      version: '1.0'
+      description: 'this is official images'
+      image: jupyterhub/k8s-singleuser-sample:2.0.0
+      updateTime: '2023-01-01T00:00:00Z'
+  resourceOptions:
+    - cpu: 1
+      memory: 1Gi
+      disk: 20Gi
+  staticJupyterhub:
+    endpoint: '' # url format
+    adminToken: ''
+    kubernetes:
+      namespace: ''

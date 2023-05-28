@@ -1,0 +1,2799 @@
+basePath: /
+definitions:
+  apiserver.clientConfig:
+    properties:
+      notebook:
+        properties:
+          officialImages:
+            items:
+              $ref: '#/definitions/notebook.Image'
+            type: array
+          resourceOptions:
+            items:
+              $ref: '#/definitions/notebook.ResourceSize'
+            type: array
+        type: object
+      storage:
+        properties:
+          fsPath:
+            items:
+              type: string
+            type: array
+        type: object
+    type: object
+  errors.AppError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  github_com_Bio-OS_bioos_internal_context_submission_interface_hertz_handlers.WorkflowVersion:
+    properties:
+      id:
+        type: string
+      versionID:
+        type: string
+    type: object
+  github_com_Bio-OS_bioos_internal_context_workspace_interface_hertz_handlers.WorkflowVersion:
+    properties:
+      createdAt:
+        type: string
+      files:
+        items:
+          $ref: '#/definitions/handlers.WorkflowFileInfo'
+        type: array
+      graph:
+        type: string
+      id:
+        type: string
+      inputs:
+        items:
+          $ref: '#/definitions/handlers.WorkflowParam'
+        type: array
+      language:
+        type: string
+      languageVersion:
+        type: string
+      mainWorkflowPath:
+        type: string
+      message:
+        type: string
+      metadata:
+        additionalProperties:
+          type: string
+        type: object
+      outputs:
+        items:
+          $ref: '#/definitions/handlers.WorkflowParam'
+        type: array
+      source:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  handlers.CreateSubmissionRequest:
+    properties:
+      description:
+        type: string
+      entity:
+        $ref: '#/definitions/handlers.Entity'
+      exposedOptions:
+        $ref: '#/definitions/handlers.ExposedOptions'
+      inOutMaterial:
+        $ref: '#/definitions/handlers.InOutMaterial'
+      name:
+        type: string
+      type:
+        type: string
+      workflowID:
+        type: string
+      workspaceID:
+        type: string
+    type: object
+  handlers.CreateSubmissionResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  handlers.CreateWorkspaceRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      storage:
+        $ref: '#/definitions/handlers.WorkspaceStorage'
+    type: object
+  handlers.CreateWorkspaceResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  handlers.DataModel:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      rowCount:
+        type: integer
+      type:
+        type: string
+    type: object
+  handlers.Entity:
+    properties:
+      dataModelID:
+        type: string
+      dataModelRowIDs:
+        items:
+          type: string
+        type: array
+      inputsTemplate:
+        description: "* 输入配置，json 序列化后的 string\n\t  采用 json 序列化原因基于以下两点考虑：\n\t  -
+          thrift/接口设计层面不允许 `Value` 类型不确定\n\t  - 在 inputs/outputs 层级进行序列化可使得 `bioos-server`
+          不处理 `Inputs`/`Outputs`(非 `this.xxx` 索引的输入) 就入库/提交给计算引擎，达到透传效果"
+        type: string
+      outputsTemplate:
+        description: "* 输出配置，json 序列化后的 string\n\t  采用 json 序列化原因基于以下两点考虑：\n\t  -
+          thrift/接口设计层面不允许 `Value` 类型不确定\n\t  - 在 inputs/outputs 层级进行序列化可使得 `bioos-server`
+          不处理 `Inputs`/`Outputs`(非 `this.xxx` 索引的输入) 就入库/提交给计算引擎，达到透传效果"
+        type: string
+    type: object
+  handlers.ExposedOptions:
+    properties:
+      readFromCache:
+        type: boolean
+    type: object
+  handlers.GetDataModelResponse:
+    properties:
+      dataModel:
+        $ref: '#/definitions/handlers.DataModel'
+      headers:
+        items:
+          type: string
+        type: array
+    type: object
+  handlers.GetWorkspaceByIdResponse:
+    properties:
+      createTime:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      storage:
+        $ref: '#/definitions/handlers.WorkspaceStorage'
+      updateTime:
+        type: integer
+    type: object
+  handlers.ImportWorkspaceResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  handlers.InOutMaterial:
+    properties:
+      inputsMaterial:
+        type: string
+      outputsMaterial:
+        type: string
+    type: object
+  handlers.ListAllDataModelRowIDsResponse:
+    properties:
+      rowIDs:
+        items:
+          type: string
+        type: array
+    type: object
+  handlers.ListDataModelRowsResponse:
+    properties:
+      headers:
+        items:
+          type: string
+        type: array
+      page:
+        type: integer
+      rows:
+        items:
+          items:
+            type: string
+          type: array
+        type: array
+      size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  handlers.ListDataModelsResponse:
+    properties:
+      Items:
+        items:
+          $ref: '#/definitions/handlers.DataModel'
+        type: array
+    type: object
+  handlers.ListRunsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.RunItem'
+        type: array
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  handlers.ListSubmissionsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.SubmissionItem'
+        type: array
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  handlers.ListTasksResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.TaskItem'
+        type: array
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  handlers.ListWorkspacesResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.WorkspaceItem'
+        type: array
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  handlers.NFSWorkspaceStorage:
+    properties:
+      mountPath:
+        type: string
+    type: object
+  handlers.PatchDataModelRequest:
+    properties:
+      async:
+        type: boolean
+      headers:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      rows:
+        items:
+          items:
+            type: string
+          type: array
+        type: array
+      workspaceID:
+        type: string
+    type: object
+  handlers.PatchDataModelResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  handlers.RunItem:
+    properties:
+      duration:
+        type: integer
+      engineRunID:
+        type: string
+      finishTime:
+        type: integer
+      id:
+        type: string
+      inputs:
+        type: string
+      log:
+        type: string
+      message:
+        type: string
+      name:
+        type: string
+      outputs:
+        type: string
+      startTime:
+        type: integer
+      status:
+        type: string
+      taskStatus:
+        $ref: '#/definitions/handlers.Status'
+    type: object
+  handlers.Status:
+    properties:
+      cancelled:
+        type: integer
+      cancelling:
+        type: integer
+      count:
+        type: integer
+      failed:
+        type: integer
+      initializing:
+        type: integer
+      pending:
+        type: integer
+      queued:
+        type: integer
+      running:
+        type: integer
+      succeeded:
+        type: integer
+    type: object
+  handlers.SubmissionItem:
+    properties:
+      description:
+        type: string
+      duration:
+        type: integer
+      entity:
+        $ref: '#/definitions/handlers.Entity'
+      exposedOptions:
+        $ref: '#/definitions/handlers.ExposedOptions'
+      finishTime:
+        type: integer
+      id:
+        type: string
+      inOutMaterial:
+        $ref: '#/definitions/handlers.InOutMaterial'
+      name:
+        type: string
+      runStatus:
+        $ref: '#/definitions/handlers.Status'
+      startTime:
+        type: integer
+      status:
+        type: string
+      type:
+        type: string
+      workflowVersion:
+        $ref: '#/definitions/github_com_Bio-OS_bioos_internal_context_submission_interface_hertz_handlers.WorkflowVersion'
+    type: object
+  handlers.TaskItem:
+    properties:
+      duration:
+        type: integer
+      finishTime:
+        type: integer
+      name:
+        type: string
+      runID:
+        type: string
+      startTime:
+        type: integer
+      status:
+        type: string
+      stderr:
+        type: string
+      stdout:
+        type: string
+    type: object
+  handlers.UpdateWorkspaceRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  handlers.WorkflowFile:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      path:
+        type: string
+      updatedAt:
+        type: string
+      workflowVersionID:
+        type: string
+    type: object
+  handlers.WorkflowFileInfo:
+    properties:
+      id:
+        type: string
+      path:
+        type: string
+    type: object
+  handlers.WorkflowItem:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      latestVersion:
+        $ref: '#/definitions/github_com_Bio-OS_bioos_internal_context_workspace_interface_hertz_handlers.WorkflowVersion'
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  handlers.WorkflowParam:
+    properties:
+      default:
+        type: string
+      name:
+        type: string
+      optional:
+        type: boolean
+      type:
+        type: string
+    type: object
+  handlers.WorkspaceItem:
+    properties:
+      createTime:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      storage:
+        $ref: '#/definitions/handlers.WorkspaceStorage'
+      updateTime:
+        type: integer
+    type: object
+  handlers.WorkspaceStorage:
+    properties:
+      nfs:
+        $ref: '#/definitions/handlers.NFSWorkspaceStorage'
+    type: object
+  handlers.createWorkflowRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      language:
+        enum:
+        - WDL
+        type: string
+      mainWorkflowPath:
+        type: string
+      name:
+        type: string
+      source:
+        enum:
+        - git
+        type: string
+      tag:
+        type: string
+      token:
+        type: string
+      url:
+        type: string
+      workspaceID:
+        type: string
+    required:
+    - language
+    - mainWorkflowPath
+    - name
+    - source
+    - tag
+    - url
+    type: object
+  handlers.createWorkflowResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  handlers.getWorkflowFileResponse:
+    properties:
+      file:
+        $ref: '#/definitions/handlers.WorkflowFile'
+    type: object
+  handlers.getWorkflowResponse:
+    properties:
+      workflow:
+        $ref: '#/definitions/handlers.WorkflowItem'
+    type: object
+  handlers.getWorkflowVersionResponse:
+    properties:
+      version:
+        $ref: '#/definitions/github_com_Bio-OS_bioos_internal_context_workspace_interface_hertz_handlers.WorkflowVersion'
+    type: object
+  handlers.listNotebooksResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.notebookItem'
+        type: array
+    type: object
+  handlers.listWorkflowFilesRequest:
+    properties:
+      ids:
+        type: string
+      orderBy:
+        type: string
+      page:
+        type: integer
+      size:
+        type: integer
+      workflowID:
+        type: string
+      workflowVersionID:
+        type: string
+      workspaceID:
+        type: string
+    type: object
+  handlers.listWorkflowFilesResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.WorkflowFile'
+        type: array
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
+      workflowID:
+        type: string
+      workspaceID:
+        type: string
+    type: object
+  handlers.listWorkflowVersionsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/github_com_Bio-OS_bioos_internal_context_workspace_interface_hertz_handlers.WorkflowVersion'
+        type: array
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
+      workflowID:
+        type: string
+      workspaceID:
+        type: string
+    type: object
+  handlers.listWorkflowsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handlers.WorkflowItem'
+        type: array
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  handlers.notebookItem:
+    properties:
+      contentLength:
+        type: integer
+      name:
+        type: string
+      updateTime:
+        type: integer
+    type: object
+  handlers.updateWorkflowRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      language:
+        enum:
+        - WDL
+        type: string
+      mainWorkflowPath:
+        type: string
+      name:
+        type: string
+      source:
+        enum:
+        - git
+        type: string
+      tag:
+        type: string
+      token:
+        type: string
+      url:
+        type: string
+      workspaceID:
+        type: string
+    required:
+    - language
+    - source
+    type: object
+  hertz.createRequest:
+    properties:
+      image:
+        type: string
+      resourceSize:
+        $ref: '#/definitions/notebook.ResourceSize'
+    type: object
+  hertz.createResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  hertz.getResponse:
+    properties:
+      accessURL:
+        type: string
+      createTime:
+        type: integer
+      id:
+        type: string
+      image:
+        type: string
+      resourceSize:
+        $ref: '#/definitions/notebook.ResourceSize'
+      status:
+        type: string
+      updateTime:
+        type: integer
+    type: object
+  hertz.listResponseItem:
+    properties:
+      createTime:
+        type: integer
+      id:
+        type: string
+      image:
+        type: string
+      resourceSize:
+        $ref: '#/definitions/notebook.ResourceSize'
+      status:
+        type: string
+      updateTime:
+        type: integer
+    type: object
+  hertz.updateSettingsRequest:
+    properties:
+      image:
+        type: string
+      resourceSize:
+        $ref: '#/definitions/notebook.ResourceSize'
+    type: object
+  notebook.GPU:
+    properties:
+      card:
+        description: float is for mgpu
+        type: number
+      memory:
+        type: integer
+      model:
+        type: string
+    type: object
+  notebook.IPythonNotebook:
+    properties:
+      cells:
+        items:
+          $ref: '#/definitions/notebook.IPythonNotebookCell'
+        type: array
+      metadata:
+        $ref: '#/definitions/notebook.IPythonNotebookMeta'
+      nbformat:
+        minimum: 4
+        type: integer
+      nbformat_minor:
+        type: integer
+    required:
+    - nbformat
+    type: object
+  notebook.IPythonNotebookCell:
+    properties:
+      attachments:
+        additionalProperties: true
+        type: object
+      cell_type:
+        enum:
+        - code
+        - markdown
+        - raw
+        type: string
+      execution_count:
+        type: integer
+      id:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      outputs:
+        items:
+          $ref: '#/definitions/notebook.IPythonNotebookCellOutput'
+        type: array
+      source:
+        items:
+          type: string
+        type: array
+    required:
+    - cell_type
+    type: object
+  notebook.IPythonNotebookCellOutput:
+    properties:
+      data:
+        additionalProperties: true
+        type: object
+      ename:
+        description: In errors
+        type: string
+      evalue:
+        type: string
+      execute_count:
+        description: in execute result; used to be pyout / prompt_number
+        type: integer
+      metadata:
+        additionalProperties: true
+        description: in display data
+        type: object
+      name:
+        type: string
+      output_type:
+        enum:
+        - stream
+        - display_data
+        - execute_result
+        - error
+        type: string
+      text:
+        items:
+          type: string
+        type: array
+      traceback:
+        items:
+          type: string
+        type: array
+    required:
+    - name
+    - output_type
+    type: object
+  notebook.IPythonNotebookKernelSpec:
+    properties:
+      display_name:
+        type: string
+      language:
+        enum:
+        - python
+        - R
+        type: string
+      name:
+        type: string
+    required:
+    - language
+    - name
+    type: object
+  notebook.IPythonNotebookLanguageInfo:
+    properties:
+      file_extension:
+        description: |-
+          codemirror_mode in docs is string but jupyter created is {"name":"ipython",...}
+          CodeMirrorMode string `json:"codemirror_mode"`
+        type: string
+      mimetype:
+        type: string
+      name:
+        enum:
+        - python
+        - R
+        type: string
+      pygments_lexer:
+        type: string
+      version:
+        type: string
+    required:
+    - file_extension
+    - mimetype
+    - name
+    - version
+    type: object
+  notebook.IPythonNotebookMeta:
+    properties:
+      kernelspec:
+        $ref: '#/definitions/notebook.IPythonNotebookKernelSpec'
+      language_info:
+        $ref: '#/definitions/notebook.IPythonNotebookLanguageInfo'
+      max_cell_id:
+        type: integer
+    type: object
+  notebook.Image:
+    properties:
+      description:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      updateTime:
+        type: string
+      version:
+        type: string
+    type: object
+  notebook.ResourceSize:
+    properties:
+      cpu:
+        type: number
+      disk:
+        type: integer
+      gpu:
+        $ref: '#/definitions/notebook.GPU'
+      memory:
+        type: integer
+    type: object
+info:
+  contact:
+    name: hertz-contrib
+    url: https://github.com/hertz-contrib
+  description: This is bioos apiserver using Hertz.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: BioOS Apiserver
+  version: "1.0"
+paths:
+  /.well-known/configuration:
+    get:
+      description: get client configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apiserver.clientConfig'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      summary: use to get client configuration
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: ping
+  /version:
+    get:
+      consumes:
+      - application/json
+      description: version Description
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: version Summary
+  /workspace:
+    get:
+      consumes:
+      - application/json
+      description: list workspaces
+      parameters:
+      - description: query page
+        in: query
+        name: page
+        type: integer
+      - description: query size
+        in: query
+        name: size
+        type: integer
+      - description: query order, just like field1,field2:desc
+        in: query
+        name: orderBy
+        type: string
+      - description: query searchWord
+        in: query
+        name: searchWord
+        type: string
+      - description: query exact
+        in: query
+        name: exact
+        type: boolean
+      - description: query ids, split by comma
+        in: query
+        name: ids
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ListWorkspacesResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list workspaces
+      tags:
+      - workspace
+    post:
+      consumes:
+      - application/json
+      description: create workspace
+      parameters:
+      - description: create workspace request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateWorkspaceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.CreateWorkspaceResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to create workspace
+      tags:
+      - workspace
+    put:
+      consumes:
+      - multipart/form-data
+      description: import workspace
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: workspace mount path
+        in: query
+        name: mountType
+        required: true
+        type: string
+      - description: workspace mount type, only support nfs
+        in: query
+        name: mountPath
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ImportWorkspaceResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to import workspace
+      tags:
+      - workspace
+  /workspace/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete workspace
+      parameters:
+      - description: delete workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to delete workspace
+      tags:
+      - workspace
+    get:
+      consumes:
+      - application/json
+      description: get workspace
+      parameters:
+      - description: get workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetWorkspaceByIdResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to get workspace by id
+      tags:
+      - workspace
+    patch:
+      consumes:
+      - application/json
+      description: update workspace
+      parameters:
+      - description: update workspace id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update workspace request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateWorkspaceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to update workspace
+      tags:
+      - workspace
+  /workspace/{workspace-id}/notebook:
+    get:
+      consumes:
+      - application/json
+      description: list notebook of workspace
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.listNotebooksResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list notebook of workspace
+      tags:
+      - notebook
+  /workspace/{workspace-id}/notebook/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: delete notebook
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to delete notebook
+      tags:
+      - notebook
+    get:
+      consumes:
+      - application/json
+      description: get notebook content
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: get notebook content
+      tags:
+      - notebook
+    put:
+      consumes:
+      - application/json
+      description: create notebook, update if name exist, set ipynb content in http
+        body
+      parameters:
+      - description: ipynb content
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/notebook.IPythonNotebook'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to create or update notebook
+      tags:
+      - notebook
+  /workspace/{workspace-id}/notebookserver:
+    get:
+      description: list notebook server
+      parameters:
+      - description: 'workspace id '
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/hertz.listResponseItem'
+            type: array
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list notebook server
+      tags:
+      - notebook server
+    post:
+      description: create notebook server
+      parameters:
+      - description: 'workspace id '
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: notebook server settings
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/hertz.createRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/hertz.createResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to create notebook server
+      tags:
+      - notebook server
+  /workspace/{workspace-id}/notebookserver/{id}:
+    delete:
+      description: delete notebook server
+      parameters:
+      - description: 'workspace id '
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: notebook server id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to delete notebook server
+      tags:
+      - notebook server
+    get:
+      description: get notebook server
+      parameters:
+      - description: 'workspace id '
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: notebook server id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: notebook object to edit
+        in: query
+        name: notebook
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/hertz.getResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to get notebook server
+      tags:
+      - notebook server
+    post:
+      description: turn notebook server on or off
+      parameters:
+      - description: 'workspace id '
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: notebook server id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: turn on notebook server
+        in: query
+        name: "on"
+        type: boolean
+      - description: turn off notebook server
+        in: query
+        name: "off"
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to turn notebook server on or off
+      tags:
+      - notebook server
+    put:
+      description: update notebook server settings
+      parameters:
+      - description: 'workspace id '
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: notebook server id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: notebook server settings
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/hertz.updateSettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to update notebook server settings
+      tags:
+      - notebook server
+  /workspace/{workspace-id}/workflow:
+    get:
+      consumes:
+      - application/json
+      description: list workflow of workspace
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: page number
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: size
+        type: integer
+      - description: 'support order field: name/createdAt, support order: asc/desc,
+          seperated by comma, eg: createdAt:desc,name:asc'
+        in: query
+        name: orderBy
+        type: string
+      - description: workflow name
+        in: query
+        name: searchWord
+        type: string
+      - description: exact
+        in: query
+        name: exact
+        type: boolean
+      - description: workspace ids seperated by comma
+        in: query
+        name: ids
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.listWorkflowsResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list workflows of workspace
+      tags:
+      - workflow
+    post:
+      consumes:
+      - application/json
+      description: create workflow, add workflow version if id is given
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: create workflow request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createWorkflowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.createWorkflowResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to create or update workflow
+      tags:
+      - workflow
+  /workspace/{workspace-id}/workflow/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete workflow
+      parameters:
+      - description: delete workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: delete workflow id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to delete workflow
+      tags:
+      - workflow
+    get:
+      consumes:
+      - application/json
+      description: get workflow
+      parameters:
+      - description: workflow id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.getWorkflowResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: get workflow
+      tags:
+      - workflow
+    patch:
+      consumes:
+      - application/json
+      description: update workspace
+      parameters:
+      - description: update workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: update workflow id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update workflow request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateWorkflowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "404":
+          description: not found
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to update workflow
+      tags:
+      - workflow
+  /workspace/{workspace-id}/workflow/{workflow-id}/file:
+    get:
+      consumes:
+      - application/json
+      description: list workflow of workspace
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: workflow id
+        in: path
+        name: workflow-id
+        required: true
+        type: string
+      - description: list workflow files
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.listWorkflowFilesRequest'
+      - description: page number
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: size
+        type: integer
+      - description: 'support order field: version/path, support order: asc/desc,
+          seperated by comma, eg: version:desc,path:asc'
+        in: query
+        name: orderBy
+        type: string
+      - description: workflow name
+        in: query
+        name: searchWord
+        type: string
+      - description: workspace file ids seperated by comma
+        in: query
+        name: ids
+        type: string
+      - description: workspace version id
+        in: query
+        name: workflowVersionID
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.listWorkflowFilesResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list workflow files
+      tags:
+      - workflow
+  /workspace/{workspace-id}/workflow/{workflow-id}/file/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get workflow file
+      parameters:
+      - description: workflow file id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: workflow id
+        in: path
+        name: workflow-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.getWorkflowFileResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: get workflow file
+      tags:
+      - workflow
+  /workspace/{workspace-id}/workflow/{workflow-id}/version/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get workflow version
+      parameters:
+      - description: workflow version id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: workflow id
+        in: path
+        name: workflow-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.getWorkflowVersionResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: get workflow version
+      tags:
+      - workflow
+  /workspace/{workspace-id}/workflow/{workflow-id}/versions:
+    get:
+      consumes:
+      - application/json
+      description: list workflow verions of workspace
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace-id
+        required: true
+        type: string
+      - description: workflow id
+        in: path
+        name: workflow-id
+        required: true
+        type: string
+      - description: page number
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: size
+        type: integer
+      - description: 'support order field: source/language/status, support order:
+          asc/desc, seperated by comma, eg: status:desc,language:asc'
+        in: query
+        name: orderBy
+        type: string
+      - description: workspace version ids seperated by comma
+        in: query
+        name: ids
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.listWorkflowVersionsResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list workflow versions
+      tags:
+      - workflow
+  /workspace/{workspace_id}/data_model:
+    get:
+      consumes:
+      - application/json
+      description: list data models
+      parameters:
+      - description: get workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - collectionFormat: csv
+        description: data model types
+        in: query
+        items:
+          type: string
+        name: types
+        type: array
+      - description: query searchWord
+        in: query
+        name: searchWord
+        type: string
+      - collectionFormat: csv
+        description: data model ids
+        in: query
+        items:
+          type: string
+        name: ids
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ListDataModelsResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list data models
+      tags:
+      - datamodel
+    patch:
+      consumes:
+      - application/json
+      description: patch data model
+      parameters:
+      - description: patch data model request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.PatchDataModelRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.PatchDataModelResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to patch data model
+      tags:
+      - datamodel
+  /workspace/{workspace_id}/data_model/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete data model
+      parameters:
+      - description: get workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: get data model id
+        in: path
+        name: id
+        required: true
+        type: string
+      - collectionFormat: csv
+        description: the data model headers should delete
+        in: query
+        items:
+          type: string
+        name: headers
+        type: array
+      - collectionFormat: csv
+        description: the data model row ids should delete
+        in: query
+        items:
+          type: string
+        name: rowIDs
+        type: array
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to delete data model,support delete with data model name/row ids/headers
+      tags:
+      - datamodel
+    get:
+      consumes:
+      - application/json
+      description: get data model
+      parameters:
+      - description: get workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: get data model id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.GetDataModelResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to get data model
+      tags:
+      - datamodel
+  /workspace/{workspace_id}/data_model/{id}/rows:
+    get:
+      consumes:
+      - application/json
+      description: list data model rows
+      parameters:
+      - description: get workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: get data model id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: query page
+        in: query
+        name: page
+        type: integer
+      - description: query size
+        in: query
+        name: size
+        type: integer
+      - description: query order, just like field1,field2:desc
+        in: query
+        name: orderBy
+        type: string
+      - collectionFormat: csv
+        description: data model entity set reffed entity row ids
+        in: query
+        items:
+          type: string
+        name: inSetIDs
+        type: array
+      - description: query searchWord
+        in: query
+        name: searchWord
+        type: string
+      - collectionFormat: csv
+        description: data model row ids
+        in: query
+        items:
+          type: string
+        name: rowIDs
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ListDataModelRowsResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list data model rows
+      tags:
+      - datamodel
+  /workspace/{workspace_id}/data_model/{id}/rows/ids:
+    get:
+      consumes:
+      - application/json
+      description: list all data model row ids
+      parameters:
+      - description: get workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: get data model id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ListAllDataModelRowIDsResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list all data model row ids
+      tags:
+      - datamodel
+  /workspace/{workspace_id}/submission:
+    get:
+      consumes:
+      - application/json
+      description: list submissions
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: query page
+        in: query
+        name: page
+        type: integer
+      - description: query size
+        in: query
+        name: size
+        type: integer
+      - description: query order, just like field1,field2:desc
+        in: query
+        name: orderBy
+        type: string
+      - description: query searchWord
+        in: query
+        name: searchWord
+        type: string
+      - description: query exact
+        in: query
+        name: exact
+        type: boolean
+      - collectionFormat: csv
+        description: query ids
+        in: query
+        items:
+          type: string
+        name: ids
+        type: array
+      - description: workflow id
+        in: query
+        name: workflowID
+        type: string
+      - collectionFormat: csv
+        description: query status
+        in: query
+        items:
+          type: string
+        name: status
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ListSubmissionsResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list submissions
+      tags:
+      - submission
+    post:
+      consumes:
+      - application/json
+      description: create submission
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: create submission request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateSubmissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.CreateSubmissionResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to create submission
+      tags:
+      - submission
+  /workspace/{workspace_id}/submission/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete submission
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: submission id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to delete submission
+      tags:
+      - submission
+  /workspace/{workspace_id}/submission/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: cancel submission
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: submission id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to cancel submission
+      tags:
+      - submission
+  /workspace/{workspace_id}/submission/{name}:
+    get:
+      consumes:
+      - application/json
+      description: check submission name unique
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: submission name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to check submission name unique
+      tags:
+      - submission
+  /workspace/{workspace_id}/submission/{submission_id}/run:
+    get:
+      consumes:
+      - application/json
+      description: list runs
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: submission id
+        in: path
+        name: submission_id
+        required: true
+        type: string
+      - description: query page
+        in: query
+        name: page
+        type: integer
+      - description: query size
+        in: query
+        name: size
+        type: integer
+      - description: query order, just like field1,field2:desc
+        in: query
+        name: orderBy
+        type: string
+      - description: query searchWord
+        in: query
+        name: searchWord
+        type: string
+      - collectionFormat: csv
+        description: query ids
+        in: query
+        items:
+          type: string
+        name: ids
+        type: array
+      - collectionFormat: csv
+        description: query status
+        in: query
+        items:
+          type: string
+        name: status
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ListRunsResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list runs
+      tags:
+      - submission
+  /workspace/{workspace_id}/submission/{submission_id}/run/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: cancel run
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: submission id
+        in: path
+        name: submission_id
+        required: true
+        type: string
+      - description: run id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to cancel run
+      tags:
+      - submission
+  /workspace/{workspace_id}/submission/{submission_id}/run/{run_id}/task:
+    get:
+      consumes:
+      - application/json
+      description: list tasks
+      parameters:
+      - description: workspace id
+        in: path
+        name: workspace_id
+        required: true
+        type: string
+      - description: submission id
+        in: path
+        name: submission_id
+        required: true
+        type: string
+      - description: run id
+        in: path
+        name: run_id
+        required: true
+        type: string
+      - description: query page
+        in: query
+        name: page
+        type: integer
+      - description: query size
+        in: query
+        name: size
+        type: integer
+      - description: query order, just like field1,field2:desc
+        in: query
+        name: orderBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ListTasksResponse'
+        "400":
+          description: invalid param
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/errors.AppError'
+        "500":
+          description: internal system error
+          schema:
+            $ref: '#/definitions/errors.AppError'
+      security:
+      - basicAuth: []
+      summary: use to list tasks
+      tags:
+      - submission
+schemes:
+- http
+- https
+securityDefinitions:
+  basicAuth:
+    type: basic
+swagger: "2.0"

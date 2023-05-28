@@ -1,0 +1,185 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = ".;proto";
+
+service WorkspaceService {
+  rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse) {}
+  rpc CreateWorkspace(CreateWorkspaceRequest) returns (CreateWorkspaceResponse) {}
+  rpc DeleteWorkspace(DeleteWorkspaceRequest) returns (DeleteWorkspaceResponse) {}
+  rpc UpdateWorkspace(UpdateWorkspaceRequest) returns (UpdateWorkspaceResponse) {}
+  rpc ListWorkspace(ListWorkspaceRequest) returns (ListWorkspaceResponse) {}
+  rpc ImportWorkspace(stream ImportWorkspaceRequest) returns (ImportWorkspaceResponse) {}
+}
+
+message GetWorkspaceRequest {
+  string id = 1;
+}
+
+message Workspace {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp createdAt = 4;
+  google.protobuf.Timestamp updatedAt = 5;
+  WorkspaceStorage storage = 6;
+}
+
+message GetWorkspaceResponse {
+  Workspace workspace = 1;
+}
+
+message CreateWorkspaceRequest {
+  string name = 1;
+  string description = 2;
+  WorkspaceStorage storage = 3;
+}
+
+message ImportWorkspaceRequest {
+  string fileName = 1;
+  bytes  content = 2;
+  WorkspaceStorage storage = 3;
+}
+
+message WorkspaceStorage {
+  NFSWorkspaceStorage nfs = 1;
+}
+message NFSWorkspaceStorage {
+  string mountPath = 1;
+}
+
+message CreateWorkspaceResponse {
+  string id = 1;
+}
+
+message ImportWorkspaceResponse {
+  string id = 1;
+}
+
+message DeleteWorkspaceRequest {
+  string id = 1;
+}
+
+message DeleteWorkspaceResponse {
+}
+
+
+message UpdateWorkspaceRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message UpdateWorkspaceResponse {
+}
+
+message ListWorkspaceRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string orderBy = 3;
+  string searchWord = 4;
+  bool exact = 5;
+  repeated string ids = 6;
+}
+
+message ListWorkspaceResponse {
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+  repeated Workspace Items = 4;
+}
+
+service DataModelService {
+  rpc ListDataModels(ListDataModelsRequest) returns (ListDataModelsResponse) {}
+  rpc GetDataModel(GetDataModelRequest) returns (GetDataModelResponse) {}
+  rpc ListDataModelRows(ListDataModelRowsRequest) returns (ListDataModelRowsResponse) {}
+  rpc PatchDataModel(PatchDataModelRequest) returns (PatchDataModelResponse) {}
+  rpc DeleteDataModel(DeleteDataModelRequest) returns (DeleteDataModelResponse) {}
+  rpc ListAllDataModelRowIDs(ListAllDataModelRowIDsRequest) returns (ListAllDataModelRowIDsResponse) {}
+}
+
+message DataModel {
+  string id = 1;
+  string name = 2;
+  int64 rowCount = 3;
+  string type = 4;
+}
+
+message Row {
+  repeated string grids = 1;
+}
+
+message GetDataModelRequest {
+  string workspaceID = 1;
+  string id = 2;
+}
+
+message GetDataModelResponse {
+  DataModel dataModel = 1;
+  repeated string headers = 2;
+}
+
+message ListDataModelsRequest {
+  string workspaceID = 1;
+  repeated string types = 2;
+  string searchWord = 3;
+  bool exact = 4;
+  repeated string ids = 5;
+}
+
+message ListDataModelsResponse {
+  repeated DataModel Items = 4;
+}
+
+message ListDataModelRowsRequest {
+  string workspaceID = 1;
+  string id = 2;
+  int32 page = 3;
+  int32 size = 4;
+  string orderBy = 5;
+  repeated string inSetIDs = 6;
+  string searchWord = 7;
+  repeated string rowIDs = 8;
+}
+
+message ListDataModelRowsResponse {
+  repeated string headers = 1;
+  repeated Row rows = 2;
+  int32 page = 3;
+  int32 size = 4;
+  int64 total = 5;
+}
+
+message PatchDataModelRequest {
+  string workspaceID = 1;
+  string name = 2;
+  bool async = 3;
+  repeated string headers = 4;
+  repeated Row rows = 5;
+}
+
+message PatchDataModelResponse {
+  string id = 1;
+}
+
+message DeleteDataModelRequest {
+  string workspaceID = 1;
+  string id = 2;
+  repeated string headers = 4;
+  repeated string rowIDs = 5;
+}
+
+message DeleteDataModelResponse {
+}
+
+message ListAllDataModelRowIDsRequest {
+  string workspaceID = 1;
+  string id = 2;
+}
+
+message ListAllDataModelRowIDsResponse {
+  repeated string rowIDs = 1;
+}

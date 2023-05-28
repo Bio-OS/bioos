@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+import "errors/errors.proto";
+
+enum NotebookServerErrorReason {
+  // Set default error code.
+  option (errors.default_code) = 500;
+
+  NOTEBOOKSERVER_NOT_FOUND = 0 [(errors.code) = 404];
+  NOTEBOOKSERVER_VALIDATE_ERROR = 1 [(errors.code) = 400];
+}
+
+option go_package = ".;proto";
+
+service NotebookServerService {
+  rpc CreateNotebookServer(CreateNotebookServerRequest) returns (CreateNotebookServerResponse) {}
+  rpc GetNotebookServer(GetNotebookServerRequest) returns (GetNotebookServerResponse) {}
+  rpc UpdateNotebookServerSettings(UpdateNotebookServerSettingsRequest) returns (UpdateNotebookServerSettingsResponse) {}
+  rpc DeleteNotebookServer(DeleteNotebookServerRequest) returns (DeleteNotebookServerResponse) {}
+  rpc SwitchNotebookServer(SwitchNotebookServerRequest) returns (SwitchNotebookServerResponse) {}
+  rpc ListNotebookServers(ListNotebookServersRequest) returns (ListNotebookServersResponse) {}
+}
+
+message GPU {
+  string model = 1;
+  double card = 2;
+  int64 memory = 3;
+}
+
+message ResourceSize {
+  double cpu = 1;
+  int64 memory = 2;
+  int64 disk = 3;
+  GPU gpu = 4;
+}
+
+message CreateNotebookServerRequest{
+  string workspaceID = 1;
+  string image = 2;
+  ResourceSize resourceSize = 3;
+}
+
+message CreateNotebookServerResponse {
+  string id = 1;
+}
+
+message GetNotebookServerRequest{
+  string workspaceID = 1;
+  string id = 2;
+  string notebook = 3;
+}
+
+message GetNotebookServerResponse{
+  string id = 1;
+  string image = 2;
+  ResourceSize resourceSize = 3;
+  string status = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+  string accessURL = 7;
+}
+
+message ListNotebookServersRequest{
+  string workspaceID = 1;
+}
+
+message NotebookServer {
+  string id = 1;
+  string image = 2;
+  ResourceSize resourceSize = 3;
+  string status = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+}
+
+message ListNotebookServersResponse {
+  repeated NotebookServer Items = 1;
+}
+
+message UpdateNotebookServerSettingsRequest{
+  string id = 1;
+  string image = 2;
+  ResourceSize resourceSize = 3;
+}
+
+message UpdateNotebookServerSettingsResponse{
+}
+
+message DeleteNotebookServerRequest{
+  string id = 1;
+}
+
+message DeleteNotebookServerResponse{
+}
+
+message SwitchNotebookServerRequest{
+  string id = 1;
+  bool onoff = 2;
+}
+
+message SwitchNotebookServerResponse{
+}

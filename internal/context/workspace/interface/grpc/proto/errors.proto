@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto;
+import "errors/errors.proto";
+
+// Define the package name for source code reference.
+option go_package = ".;proto";
+
+enum ErrorReason {
+  // Set default error code.
+  option (errors.default_code) = 500;
+
+  WORKSPACE_NOT_FOUND = 0 [(errors.code) = 404];
+  WORKSPACE_NAME_INVALID = 1 [(errors.code) = 400];
+}

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = ".;proto";
+
+service NotebookService {
+  rpc CreateNotebook(CreateNotebookRequest) returns (CreateNotebookResponse) {}
+  rpc DeleteNotebook(DeleteNotebookRequest) returns (DeleteNotebookResponse) {}
+  rpc ListNotebooks(ListNotebooksRequest) returns (ListNotebooksResponse) {}
+}
+
+message CreateNotebookRequest {
+  string workspaceID = 1;
+  string name = 2;
+  bytes content = 3;
+}
+
+message CreateNotebookResponse {
+}
+
+message DeleteNotebookRequest {
+  string workspaceID = 1;
+  string name = 2;
+}
+
+message DeleteNotebookResponse {
+}
+
+message ListNotebooksRequest {
+  string workspaceID = 1;
+}
+
+message Notebook {
+  string name = 1;
+  int64 length = 2;
+  google.protobuf.Timestamp updatedAt = 3;
+}
+
+message ListNotebooksResponse {
+  repeated Notebook Items = 1;
+}
