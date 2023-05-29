@@ -8,7 +8,7 @@ include hack/make-rules/tools.mk
 
 ROOT_PACKAGE=github.com/Bio-OS/bioos
 VERSION        ?= $(shell git describe --tags --always --dirty)
-GIT_BRANCH     ?= $(shell git branch | grep \* | cut -d ' ' -f2)
+GIT_BRANCH     ?= $(shell git rev-parse --abbrev-ref HEAD)
 GIT_COMMIT     ?= $(shell git rev-parse HEAD)
 GIT_TREE_STATE ?= $(if $(shell git status --porcelain),dirty,clean)
 GIT_BUILD_TIME ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
