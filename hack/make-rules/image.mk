@@ -1,7 +1,7 @@
 DOCKER := docker
 IMAGES_DIR ?= $(wildcard ${ROOT_DIR}/build/*)
 IMAGES ?= $(foreach image,${IMAGES_DIR},$(notdir ${image}))
-IMAGE_REGISTRY ?= quay.io/bioos
+IMAGE_REGISTRY ?= docker.io/howardshaw
 
 .PHONY: image.verify
 image.verify:

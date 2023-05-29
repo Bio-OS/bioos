@@ -1,0 +1,58 @@
+name: Upload_release
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'github release url'
+        required: true
+      tag:
+        description: 'latest tag'
+        required: true
+
+permissions: write-all
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ darwin, windows, linux ]
+        arch: [ amd64, arm64 ]
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+          check-latest: true
+          cache: true
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build bioctl
+        run: |
+          git tag ${{ github.event.inputs.tag }} || true
+          GO_OUT_EXT=""
+          if [ "${{ matrix.os }}" = "windows" ]; then
+            GO_OUT_EXT=".exe"
+          fi
+          export PLATFORM=${{ matrix.os }}_${{ matrix.arch }}
+          make tools.install
+          make install.womtool
+          make web.install
+          make go.build
+          
+          shasum -a 256 ./_output/platforms/${{ matrix.os }}/${{ matrix.arch }}/bioctl${GO_OUT_EXT} | awk '{print $1}' > checksums.txt
+          zip -r bioos_${{ github.event.inputs.tag }}_${{ matrix.os }}_${{ matrix.arch }}.zip ./_output/platforms/${{ matrix.os }}/${{ matrix.arch }}/bioctl${GO_OUT_EXT} ./_output/platforms/${{ matrix.os }}/${{ matrix.arch }}/apiserver${GO_OUT_EXT} LICENSE README.md README_ZH.md checksums.txt
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.inputs.url }}
+          asset_path: ./bioos_${{ github.event.inputs.tag }}_${{ matrix.os }}_${{ matrix.arch }}.zip
+          asset_name: bioos_${{ github.event.inputs.tag }}_${{ matrix.os }}_${{ matrix.arch }}.zip
+          asset_content_type: application/zip
+
