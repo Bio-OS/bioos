@@ -169,7 +169,7 @@ minikube start \
 --image-mirror-country=cn \
 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers \
 --driver=none \
---apiserver-ips='180.184.43.61' # 可选配置，如果需要外网访问，需要这里配置主机的外网IP
+--apiserver-ips='xxx.xxx.xx.xx' # 可选配置，如果需要外网访问，需要这里配置主机的外网IP
 ```
 Deployment log information:
 ```shell
@@ -671,10 +671,10 @@ storage:
   mountPath: /app/conf/fs
 
 wes:
-  endpoint: http://180.184.43.61:8000
+  endpoint: http://xxx.xxx.xx.xx:8000
 
 jupyterhub:
-  endpoint: http://180.184.43.61/jupyterhub
+  endpoint: http://xxx.xxx.xx.xx/jupyterhub
   adminToken: 6026738d798c495aa01c7831048539d9
 ```
 Update config and run the following command

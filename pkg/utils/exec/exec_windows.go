@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !linux && !windows
+//go:build windows
 
 package exec
 
@@ -32,7 +32,7 @@ func Exec(ctx context.Context, timeout time.Duration, name string, arg ...string
 	defer cancel()
 	cmd := exec.CommandContext(ctx, name, arg...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setpgid: true,
+		HideWindow: true,
 	}
 	var b bytes.Buffer
 	// Set process IO

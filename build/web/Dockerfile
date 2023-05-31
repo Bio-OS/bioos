@@ -1,6 +1,7 @@
 FROM node:16-alpine3.16 as build
 WORKDIR /usr/app
 COPY /web /usr/app/
+COPY /conf/nginx.conf /usr/app/nginx.conf
 RUN npm install && npm run build
 
 FROM nginx:1.21-alpine
