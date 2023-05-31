@@ -30,7 +30,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build bioctl
+      - name: Build
         run: |
           git tag ${{ github.event.inputs.tag }} || true
           if [ "${{ matrix.os }}" = "windows" ]; then
