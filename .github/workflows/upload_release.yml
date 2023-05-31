@@ -33,9 +33,8 @@ jobs:
       - name: Build bioctl
         run: |
           git tag ${{ github.event.inputs.tag }} || true
-          GO_OUT_EXT=""
           if [ "${{ matrix.os }}" = "windows" ]; then
-            GO_OUT_EXT=".exe"
+            export GO_OUT_EXT=".exe"
           fi
           export PLATFORM=${{ matrix.os }}_${{ matrix.arch }}
           make tools.install
@@ -43,8 +42,11 @@ jobs:
           make web.install
           make go.build
           
-          shasum -a 256 ./_output/platforms/${{ matrix.os }}/${{ matrix.arch }}/bioctl${GO_OUT_EXT} | awk '{print $1}' > checksums.txt
-          zip -r bioos_${{ github.event.inputs.tag }}_${{ matrix.os }}_${{ matrix.arch }}.zip ./_output/platforms/${{ matrix.os }}/${{ matrix.arch }}/bioctl${GO_OUT_EXT} ./_output/platforms/${{ matrix.os }}/${{ matrix.arch }}/apiserver${GO_OUT_EXT} LICENSE README.md README_ZH.md checksums.txt
+          mv ./_output/platforms/${{ matrix.os }}/${{ matrix.arch }}/bioctl${GO_OUT_EXT} ./bioctl${GO_OUT_EXT} 
+          mv ./_output/platforms/${{ matrix.os }}/${{ matrix.arch }}/apiserver${GO_OUT_EXT} ./apiserver${GO_OUT_EXT}
+          shasum -a 256 ./bioctl${GO_OUT_EXT} | awk '{print $1}' > bioctl_checksums.txt
+          shasum -a 256 ./apiserver${GO_OUT_EXT} | awk '{print $1}' > apiserver_checksums.txt
+          zip -r bioos_${{ github.event.inputs.tag }}_${{ matrix.os }}_${{ matrix.arch }}.zip ./bioctl${GO_OUT_EXT} ./apiserver${GO_OUT_EXT} LICENSE README.md bioctl_checksums.txt apiserver_checksums.txt
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
