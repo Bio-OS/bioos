@@ -58,3 +58,13 @@ jobs:
           asset_name: bioos_${{ github.event.inputs.tag }}_${{ matrix.os }}_${{ matrix.arch }}.zip
           asset_content_type: application/zip
 
+      - name: Release helm chart
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          git clone git@github.com:Bio-OS/helm-charts.git
+          cd helm-charts
+          git config user.email "bioos@bioos.dev"
+          git config user.name "bioos"
+          git checkout main
+          git tag ${{ env.RELEASE_VERSION }}
+          git push https://${{ secrets.GPR_USER }}:${{ secrets.GPR_PASS }}@github.com/Bio-OS/helm-charts.git ${{ env.RELEASE_VERSION }}
