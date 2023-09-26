@@ -10,6 +10,7 @@ service NotebookService {
   rpc CreateNotebook(CreateNotebookRequest) returns (CreateNotebookResponse) {}
   rpc DeleteNotebook(DeleteNotebookRequest) returns (DeleteNotebookResponse) {}
   rpc ListNotebooks(ListNotebooksRequest) returns (ListNotebooksResponse) {}
+  rpc GetNotebook(GetNotebookRequest) returns (GetNotebookResponse) {}
 }
 
 message CreateNotebookRequest {
@@ -41,4 +42,13 @@ message Notebook {
 
 message ListNotebooksResponse {
   repeated Notebook Items = 1;
+}
+
+message GetNotebookRequest {
+  string workspaceID = 1;
+  string name = 2;
+}
+
+message GetNotebookResponse {
+  bytes content = 1;
 }

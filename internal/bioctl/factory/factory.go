@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 	"google.golang.org/grpc"
@@ -18,6 +19,7 @@ type Factory interface {
 	WorkspaceClient() (WorkspaceClient, error)
 	DataModelClient() (DataModelClient, error)
 	WorkflowClient() (WorkflowClient, error)
+	NotebookClient() (NotebookClient, error)
 	VersionClient() (VersionClient, error)
 	SubmissionClient() (SubmissionClient, error)
 }
@@ -57,7 +59,7 @@ func (f factoryImpl) newHttpClient() (*httpClient, error) {
 	}
 	return &httpClient{
 		addr: strings.TrimRight(serverAddr, "/"),
-		rest: resty.NewWithClient(transport.Client()),
+		rest: resty.NewWithClient(transport.Client()).SetTimeout(time.Duration(f.opts.Timeout) * time.Second),
 	}, err
 }
 
@@ -141,4 +143,17 @@ func (h *httpClient) restR(ctx context.Context) *resty.Request {
 
 func (h *httpClient) url(apipath string, pathParams ...interface{}) string {
 	return strings.Join([]string{h.addr, fmt.Sprintf(apipath, pathParams...)}, "/")
+}
+
+func (f factoryImpl) NotebookClient() (NotebookClient, error) {
+	if err := f.opts.Method.Validate(); err != nil {
+		return nil, err
+	}
+	switch f.opts.Method {
+	case client.GRPCMethod:
+		return f.newGrpcClient()
+	case client.HTTPMethod:
+		return f.newHttpClient()
+	}
+	return nil, nil
 }

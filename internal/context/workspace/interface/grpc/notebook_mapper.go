@@ -29,6 +29,13 @@ func newNotebookListCommand(req *proto.ListNotebooksRequest) *query.ListQuery {
 	}
 }
 
+func newNotebookGetCommand(req *proto.GetNotebookRequest) *query.GetQuery {
+	return &query.GetQuery{
+		WorkspaceID: req.WorkspaceID,
+		Name:        req.Name,
+	}
+}
+
 func newNotebookVO(dto *query.Notebook) *proto.Notebook {
 	return &proto.Notebook{
 		Name:      dto.Name,
@@ -44,5 +51,11 @@ func newListNotebooksResponse(list []*query.Notebook) *proto.ListNotebooksRespon
 	}
 	return &proto.ListNotebooksResponse{
 		Items: items,
+	}
+}
+
+func newGetNotebookResponse(get *query.Notebook) *proto.GetNotebookResponse {
+	return &proto.GetNotebookResponse{
+		Content: get.Content,
 	}
 }
