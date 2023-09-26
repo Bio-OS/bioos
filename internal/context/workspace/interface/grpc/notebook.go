@@ -40,3 +40,11 @@ func (s *notebookServer) ListNotebooks(ctx context.Context, req *proto.ListNoteb
 	}
 	return newListNotebooksResponse(list), nil
 }
+
+func (s *notebookServer) GetNotebook(ctx context.Context, req *proto.GetNotebookRequest) (*proto.GetNotebookResponse, error) {
+	get, err := s.service.NotebookQueries.Get.Handle(ctx, newNotebookGetCommand(req))
+	if err != nil {
+		return nil, utils.ToGRPCError(err)
+	}
+	return newGetNotebookResponse(get), nil
+}

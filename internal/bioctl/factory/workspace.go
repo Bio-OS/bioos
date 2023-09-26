@@ -16,6 +16,7 @@ type WorkspaceClient interface {
 	UpdateWorkspace(ctx context.Context, in *convert.UpdateWorkspaceRequest) (*convert.UpdateWorkspaceResponse, error)
 	ListWorkspaces(ctx context.Context, in *convert.ListWorkspacesRequest) (*convert.ListWorkspacesResponse, error)
 	ImportWorkspace(ctx context.Context, in *convert.ImportWorkspaceRequest) (*convert.ImportWorkspaceResponse, error)
+	GetWorkspace(ctx context.Context, in *convert.GetWorkspaceRequest) (*convert.GetWorkspaceResponse, error)
 }
 
 func (g *grpcClient) CreateWorkspace(ctx context.Context, in *convert.CreateWorkspaceRequest) (*convert.CreateWorkspaceResponse, error) {
@@ -58,6 +59,17 @@ func (g *grpcClient) ListWorkspaces(ctx context.Context, in *convert.ListWorkspa
 		return nil, err
 	}
 	out := &convert.ListWorkspacesResponse{}
+	out.FromGRPC(protoResp)
+	return out, nil
+}
+
+func (g *grpcClient) GetWorkspace(ctx context.Context, in *convert.GetWorkspaceRequest) (*convert.GetWorkspaceResponse, error) {
+
+	protoResp, err := workspaceproto.NewWorkspaceServiceClient(g.conn).GetWorkspace(ctx, in.ToGRPC())
+	if err != nil {
+		return nil, err
+	}
+	out := &convert.GetWorkspaceResponse{}
 	out.FromGRPC(protoResp)
 	return out, nil
 }
@@ -175,6 +187,19 @@ func (h *httpClient) ImportWorkspace(ctx context.Context, in *convert.ImportWork
 		return nil, err
 	}
 	out := &convert.ImportWorkspaceResponse{}
+	convert.AssignFromHttpResponse(httpResp, out)
+	return out, nil
+}
+
+func (h *httpClient) GetWorkspace(ctx context.Context, in *convert.GetWorkspaceRequest) (*convert.GetWorkspaceResponse, error) {
+
+	req := h.restR(ctx)
+	convert.AssignToHttpRequest(in, req)
+	httpResp, err := req.Get(h.url("workspace/{id}"))
+	if err != nil {
+		return nil, err
+	}
+	out := &convert.GetWorkspaceResponse{}
 	convert.AssignFromHttpResponse(httpResp, out)
 	return out, nil
 }

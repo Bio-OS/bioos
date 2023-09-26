@@ -20,5 +20,6 @@ func NewCmdWorkspace(opt *clioptions.GlobalOptions) *cobra.Command {
 	cmd.AddCommand(NewCmdDelete(opt))
 	cmd.AddCommand(NewCmdUpdate(opt))
 	cmd.AddCommand(NewCmdImport(opt))
+	cmd.AddCommand(NewCmdExport(opt))
 	return cmd
 }

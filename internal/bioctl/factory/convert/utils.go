@@ -66,3 +66,10 @@ func AssignFromHttpResponse(restyResp *resty.Response, resp interface{}) error {
 	}
 	return nil
 }
+
+func RawBodyFromHttpResponse(restyResp *resty.Response) ([]byte, error) {
+	if restyResp.RawResponse != nil && restyResp.RawResponse.StatusCode >= 400 {
+		return nil, errors.New(string(restyResp.Body()))
+	}
+	return restyResp.Body(), nil
+}

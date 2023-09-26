@@ -17,8 +17,12 @@
 package bom
 
 import (
+	"bytes"
 	"errors"
 	"io"
+	"unicode/utf8"
+
+	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
 // Encoding is type alias for detected UTF encoding.
@@ -43,6 +47,8 @@ const (
 
 	// UTF32LittleEndian UTF-32, little-endian, BOM bytes: FF FE 00 00
 	UTF32LittleEndian
+
+	GBK
 )
 
 // String returns a user-friendly string representation of the encoding. Satisfies fmt.Stringer interface.
@@ -58,6 +64,8 @@ func (e Encoding) String() string {
 		return "UTF32BigEndian"
 	case UTF32LittleEndian:
 		return "UTF32LittleEndian"
+	case GBK:
+		return "GBK"
 	default:
 		return "Unknown"
 	}
@@ -76,11 +84,17 @@ func ReadSkipBOM(rd io.Reader) (*Reader, Encoding) {
 	}
 
 	enc, left, err := detectUtf(rd)
-	return &Reader{
+	reader := &Reader{
 		rd:  rd,
 		buf: left,
 		err: err,
-	}, enc
+	}
+	if enc == Unknown {
+		enc, err = detectGBKOrUTF8WithoutBOM(reader)
+		reader.err = err
+	}
+
+	return reader, enc
 }
 
 // Reader implements automatic BOM (Unicode Byte Order Mark) checking and
@@ -150,6 +164,49 @@ func detectUtf(rd io.Reader) (enc Encoding, buf []byte, err error) {
 	return Unknown, nilIfEmpty(buf), err
 }
 
+func detectGBKOrUTF8WithoutBOM(r *Reader) (enc Encoding, err error) {
+	var readBuf bytes.Buffer
+	readBuf.Write(r.buf)
+	r.buf = nil
+
+	data := make([]byte, 1024)
+	for {
+		var n int
+		n, err = r.Read(data)
+		if err != nil && err != io.EOF {
+			return Unknown, err
+		}
+		if n == 0 {
+			break
+		}
+		readBuf.Write(data[:n])
+	}
+
+	bytes := readBuf.Bytes()
+	if utf8.Valid(bytes) {
+		r.buf = bytes
+		return UTF8, nil
+	}
+
+	if isGBK(bytes) {
+		//converter, _ := iconv.NewConverter("gbk", "utf-8")
+		//convertedBytes := make([]byte, len(bytes))
+		//_, _, err = converter.ConvertString(bytes, convertedBytes)
+		//if err != nil {
+		//	return GBK, err
+		//}
+		var convertedBytes []byte
+		convertedBytes, err = simplifiedchinese.GBK.NewDecoder().Bytes(bytes)
+		if err != nil {
+			return GBK, err
+		}
+		r.buf = convertedBytes
+		return GBK, nil
+	}
+
+	return Unknown, nil
+}
+
 func readBOM(rd io.Reader) (buf []byte, err error) {
 	const maxBOMSize = 4
 	var bom [maxBOMSize]byte // used to read BOM
@@ -169,6 +226,22 @@ func readBOM(rd io.Reader) (buf []byte, err error) {
 		}
 	}
 	return
+}
+
+func isGBK(buf []byte) bool {
+	for i := 0; i < len(buf); i++ {
+		if buf[i] > 0x80 {
+			if i+1 >= len(buf) {
+				return false
+			}
+			if buf[i] >= 0x81 && buf[i] <= 0xFE && buf[i+1] >= 0x40 && buf[i+1] <= 0xFE && buf[i+1] != 0x7F {
+				i++
+			} else {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func isUTF32BigEndianBOM4(buf []byte) bool {

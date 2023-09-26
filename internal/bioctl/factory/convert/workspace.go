@@ -74,6 +74,37 @@ func (resp *UpdateWorkspaceResponse) FromGRPC(protoResp *workspaceproto.UpdateWo
 	return
 }
 
+type GetWorkspaceRequest struct {
+	Id string `path:"id"`
+}
+
+func (req *GetWorkspaceRequest) ToGRPC() *workspaceproto.GetWorkspaceRequest {
+	r := &workspaceproto.GetWorkspaceRequest{
+		Id: req.Id,
+	}
+	return r
+}
+
+type GetWorkspaceResponse struct {
+	WorkspaceItem `json:",inline"`
+}
+
+func (resp *GetWorkspaceResponse) FromGRPC(protoResp *workspaceproto.GetWorkspaceResponse) {
+	resp.WorkspaceItem = WorkspaceItem{
+		Id:          protoResp.Workspace.Id,
+		Name:        protoResp.Workspace.Name,
+		Description: protoResp.Workspace.Description,
+		Storage: &WorkspaceStorage{
+			NFS: &NFSWorkspaceStorage{
+				MountPath: protoResp.Workspace.Storage.Nfs.MountPath,
+			},
+		},
+		CreateTime: protoResp.Workspace.CreatedAt.GetSeconds(),
+		UpdateTime: protoResp.Workspace.UpdatedAt.GetSeconds(),
+	}
+	return
+}
+
 type ListWorkspacesRequest struct {
 	Page       int    `query:"page"`
 	Size       int    `query:"size"`
@@ -106,19 +137,19 @@ type listWorkspacesBriefItems struct {
 	Id          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	MountType   string `json:"mount_type"`
+	MountPath   string `json:"mount_path"`
 }
 
 func (resp *ListWorkspacesResponse) BriefItems() reflect.Value {
 	briefItems := make([]listWorkspacesBriefItems, len(resp.Items))
 	for i, item := range resp.Items {
-		briefItems[i] = struct {
-			Id          string `json:"id"`
-			Name        string `json:"name"`
-			Description string `json:"description"`
-		}{
+		briefItems[i] = listWorkspacesBriefItems{
 			Id:          item.Id,
 			Name:        item.Name,
 			Description: item.Description,
+			MountType:   "nfs",
+			MountPath:   item.Storage.NFS.MountPath,
 		}
 	}
 	return reflect.ValueOf(briefItems)

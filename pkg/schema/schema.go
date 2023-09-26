@@ -46,9 +46,9 @@ type WorkflowTypedSchema struct {
 
 // WorkflowMetadata ...
 type WorkflowMetadata struct {
-	Scheme string  `yaml:"scheme"`
-	Repo   string  `yaml:"repo"`
-	Tag    string  `yaml:"tag"`
+	Scheme string  `yaml:"scheme,omitempty"`
+	Repo   string  `yaml:"repo,omitempty"`
+	Tag    string  `yaml:"tag,omitempty"`
 	Token  *string `yaml:"token,omitempty"`
 }
 

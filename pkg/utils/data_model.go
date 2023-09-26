@@ -26,6 +26,7 @@ import (
 	"strings"
 
 	"github.com/Bio-OS/bioos/pkg/consts"
+	"github.com/Bio-OS/bioos/pkg/utils/bom"
 )
 
 // GetDataModelType ...
@@ -56,11 +57,13 @@ func ReadDataModelFromCSV(filePath string) ([]string, [][]string, error) {
 	var headers []string
 	rows := make([][]string, 0)
 	// Open the file
-	csvfile, err := os.Open(filepath.Clean(filePath))
+	csvRawFile, err := os.Open(filepath.Clean(filePath))
 	if err != nil {
 		return nil, nil, fmt.Errorf("couldn't open the csv file: %w", err)
 	}
-	defer csvfile.Close()
+	defer csvRawFile.Close()
+
+	csvfile, _ := bom.ReadSkipBOM(csvRawFile)
 
 	// Parse the file
 	r := csv.NewReader(csvfile)
@@ -85,4 +88,35 @@ func ReadDataModelFromCSV(filePath string) ([]string, [][]string, error) {
 		rows = append(rows, record)
 	}
 	return headers, rows, err
+}
+
+// WriteDataModelToCSVFile ...
+func WriteDataModelToCSVFile(filePath string, headers []string, rows [][]string) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	fileCSV := bom.WriteWithBOM(file, bom.UTF8)
+
+	w := csv.NewWriter(fileCSV)
+
+	// write headers
+	err = w.Write(headers)
+	if err != nil {
+		return err
+	}
+	w.Flush()
+
+	// write rows
+	for _, row := range rows {
+		err := w.Write(row)
+		if err != nil {
+			return err
+		}
+		// flush buffer
+		w.Flush()
+	}
+	return nil
 }

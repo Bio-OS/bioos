@@ -16,6 +16,8 @@
 
 package consts
 
+import "os"
+
 const (
 	XRequestIDKey = "X-Request-ID"
 )
@@ -107,9 +109,19 @@ const WsDataModelValueHeader = "Value"
 const ImportWorkspaceFileTypeExt = ".zip"
 
 const (
-	WorkspaceDirName  = "workspace"
-	WorkspaceYAMLName = "workspace.yaml"
-	WorkflowDirName   = "workflow"
-	NotebookDirName   = "notebook"
-	DataModelDirName  = "data"
+	WorkspaceDir                 = "workspace"
+	WorkspaceCoverImageName      = "cover.png"
+	WorkspaceYAMLName            = "workspace.yaml"
+	WorkspaceZIPName             = "workspace.zip"
+	WorkflowDirName              = "workflow"
+	NotebookDirName              = "notebook"
+	FileDirName                  = "file"
+	SubmissionDirName            = "submission"
+	DataModelDirName             = "data"
+	WorkspaceScopedSchemaVersion = "1"
+)
+
+// FileMode ...
+const (
+	SchemaFileMode = os.FileMode(0777)
 )
