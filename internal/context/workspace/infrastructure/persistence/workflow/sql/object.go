@@ -11,7 +11,7 @@ import (
 
 type workflow struct {
 	ID            string `gorm:"primaryKey"`
-	Name          string `gorm:"type:varchar(200);uniqueIndex:idx_name_ws"`
+	Name          string `gorm:"type:varchar(200) CHARACTER SET gbk COLLATE gbk_bin;not null;uniqueIndex:idx_name_ws"`
 	WorkspaceID   string `gorm:"type:varchar(32);uniqueIndex:idx_name_ws"`
 	Description   string
 	LatestVersion string

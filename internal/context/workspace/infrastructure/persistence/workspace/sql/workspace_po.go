@@ -7,7 +7,7 @@ import (
 // Workspace model.
 type Workspace struct {
 	ID          string `gorm:"primaryKey"`
-	Name        string `gorm:"unique"`
+	Name        string `gorm:"type:varchar(64) CHARACTER SET gbk COLLATE gbk_bin;not null;unique"`
 	Description string
 	Storage     WorkspaceStorage `gorm:"serializer:json"`
 	CreateTime  time.Time
