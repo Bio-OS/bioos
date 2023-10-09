@@ -71,7 +71,7 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
 
   async function handleSubmit(values) {
     let res;
-    if (isEdit) {
+    if (isEdit || isReimport) {
       res = await Api.workspaceIdWorkflowPartialUpdate(
         match.params.workspaceId,
         workflowInfo.id,
@@ -85,7 +85,6 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
       res = await Api.workspaceIdWorkflowCreate(match.params.workspaceId, {
         ...values,
         source: 'git',
-        id: isReimport ? workflowInfo.id : undefined,
       });
     }
 
