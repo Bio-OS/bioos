@@ -18,6 +18,10 @@ const (
 )
 
 const (
-	Language         = "WDL"
 	VersionRegexpStr = "^version\\s+([\\w-._]+)"
+)
+
+const (
+	LanguageWDL      Language = "WDL"
+	LanguageNextFlow Language = "NextFlow"
 )

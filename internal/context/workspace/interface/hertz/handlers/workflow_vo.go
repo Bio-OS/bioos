@@ -15,7 +15,7 @@ type createWorkflowRequest struct {
 	WorkspaceID      string  `path:"workspace-id"`
 	Name             string  `json:"name" validate:"required,resName"`
 	Description      *string `json:"description" validate:"workspaceDesc"`
-	Language         string  `json:"language" validate:"required,oneof=WDL"`
+	Language         string  `json:"language" validate:"required,oneof=WDL NextFlow"`
 	Source           string  `json:"source" validate:"required,oneof=git"`
 	URL              string  `json:"url" validate:"required"`
 	Tag              string  `json:"tag" validate:"required"`

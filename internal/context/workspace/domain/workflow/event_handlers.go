@@ -3,12 +3,11 @@ package workflow
 import (
 	"bufio"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/Bio-OS/bioos/pkg/utils"
 	"os"
 	"path"
-	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
@@ -33,14 +32,14 @@ const (
 )
 
 type WorkflowVersionAddedHandler struct {
-	repo        Repository
-	womtoolPath string
+	repo   Repository
+	reader Reader
 }
 
-func NewWorkflowVersionAddedHandler(repo Repository, womtoolPath string) *WorkflowVersionAddedHandler {
+func NewWorkflowVersionAddedHandler(repo Repository, readerOptions *ReaderOptions) *WorkflowVersionAddedHandler {
 	return &WorkflowVersionAddedHandler{
-		repo:        repo,
-		womtoolPath: womtoolPath,
+		repo:   repo,
+		reader: &WDLReader{readerOptions},
 	}
 }
 
@@ -113,34 +112,33 @@ func (h *WorkflowVersionAddedHandler) handle(ctx context.Context, workflowID str
 		return apperrors.NewInternalError(err)
 	}
 	// parse workfile version
-	languageVersion, err := h.parseWorkflowVersion(ctx, mainWorkflowPath)
+	languageVersion, err := h.reader.ParseWorkflowVersion(ctx, mainWorkflowPath)
 	if err != nil {
 		return apperrors.NewInternalError(err)
 	}
-	version.Language = Language
 	version.LanguageVersion = languageVersion
 
 	// step3: validate and save workflow files
-	if err := h.validateWorkflowFiles(ctx, version, dir, version.MainWorkflowPath); err != nil {
+	if err := h.reader.ValidateWorkflowFiles(ctx, version, dir, version.MainWorkflowPath); err != nil {
 		return err
 	}
 
 	// step4: get workflow inputs
-	inputs, err := h.getWorkflowInputs(ctx, mainWorkflowPath)
+	inputs, err := h.reader.GetWorkflowInputs(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}
 	version.Inputs = inputs
 
 	// step5: get workflow outputs
-	outputs, err := h.getWorkflowOutputs(ctx, mainWorkflowPath)
+	outputs, err := h.reader.GetWorkflowOutputs(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}
 	version.Outputs = outputs
 
 	// step6: get workflow graph
-	graph, err := h.getWorkflowGraph(ctx, mainWorkflowPath)
+	graph, err := h.reader.GetWorkflowGraph(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}
@@ -173,66 +171,6 @@ func (h *WorkflowVersionAddedHandler) parseWorkflowVersion(_ context.Context, ma
 	return "draft-2", nil
 }
 
-func (h *WorkflowVersionAddedHandler) validateWorkflowFiles(ctx context.Context, version *WorkflowVersion, baseDir, mainWorkflowPath string) error {
-	applog.Infow("start to validate files", "mainWorkflowPath", mainWorkflowPath)
-	validateResult, err := exec.Exec(ctx, CommandExecuteTimeout, "java", "-jar", h.womtoolPath, "validate", path.Join(baseDir, mainWorkflowPath), "-l")
-	if err != nil {
-		applog.Errorw("fail to validate workflow", "err", err, "result", string(validateResult))
-		return apperrors.NewInternalError(fmt.Errorf("validate workflow failed"))
-	}
-	validateResultLines := strings.Split(string(validateResult), "\n")
-	applog.Infow("validate result", "result", validateResultLines)
-	// parse and save workflow files
-	if len(validateResultLines) < 2 || strings.ToLower(validateResultLines[0]) != "success!" {
-		return proto.ErrorWorkflowValidateError("fail to validate workflow version:%s", version.ID)
-	}
-	workflowFiles := []string{mainWorkflowPath}
-	// need to start from line 2(start with line 0)
-	for i := 2; i < len(validateResultLines); i++ {
-		absPath := validateResultLines[i]
-		if len(absPath) == 0 {
-			continue
-		}
-		// validate file
-		if _, err := os.Stat(absPath); err == nil {
-			// in mac absPath was prefix with /private
-			relPath, err := filepath.Rel(baseDir, absPath[strings.LastIndex(absPath, baseDir):])
-			if err != nil {
-				return apperrors.NewInternalError(err)
-			}
-			applog.Infow("file path", "baseDir", baseDir, "absPath", absPath, "relPath", relPath)
-			workflowFiles = append(workflowFiles, relPath)
-		}
-	}
-	for _, relPath := range workflowFiles {
-		input, err := os.ReadFile(path.Join(baseDir, relPath))
-		if err != nil {
-			applog.Errorw("fail to read file", "err", err)
-			return apperrors.NewInternalError(err)
-		}
-
-		encodedContent := base64.StdEncoding.EncodeToString(input)
-
-		workflowFile, err := version.AddFile(&FileParam{
-			Path:    relPath,
-			Content: encodedContent,
-		})
-		if err != nil {
-			return err
-		}
-		applog.Infow("success add workflow file", "workflowVersionID", version.ID, "fileID", workflowFile.ID, "path", workflowFile.Path)
-	}
-	return nil
-}
-
-func (h *WorkflowVersionAddedHandler) getWorkflowInputs(ctx context.Context, WorkflowFilePath string) ([]WorkflowParam, error) {
-	return h.getWorkflowParams(ctx, "java", "-jar", h.womtoolPath, "inputs", WorkflowFilePath)
-}
-
-func (h *WorkflowVersionAddedHandler) getWorkflowOutputs(ctx context.Context, WorkflowFilePath string) ([]WorkflowParam, error) {
-	return h.getWorkflowParams(ctx, "java", "-jar", h.womtoolPath, "outputs", WorkflowFilePath)
-}
-
 func (h *WorkflowVersionAddedHandler) getWorkflowParams(ctx context.Context, name string, arg ...string) ([]WorkflowParam, error) {
 	params := make([]WorkflowParam, 0)
 	outputsResult, err := exec.Exec(ctx, CommandExecuteTimeout, name, arg...)
@@ -261,15 +199,6 @@ func (h *WorkflowVersionAddedHandler) getWorkflowParams(ctx context.Context, nam
 		return params[i].Name < params[j].Name
 	})
 	return params, nil
-}
-
-func (h *WorkflowVersionAddedHandler) getWorkflowGraph(ctx context.Context, WorkflowFilePath string) (string, error) {
-	graph, err := exec.Exec(ctx, CommandExecuteTimeout, "java", "-jar", h.womtoolPath, "graph", WorkflowFilePath)
-	if err != nil {
-		return "", err
-	}
-
-	return string(graph), nil
 }
 
 func parseWorkflowParamValue(value string) (paramType string, optional bool, defaultValue *string) {
@@ -442,7 +371,7 @@ func validateWorkflow(workflow schema.WorkflowTypedSchema) error {
 	if !validator.ValidateResNameInString(workflow.Name) {
 		return fmt.Errorf("workflow name[%s] not passed the validation ", workflow.Name)
 	}
-	if workflow.Language != "WDL" {
+	if utils.In(workflow.Language, SupportedLanguages()) {
 		return fmt.Errorf("workflow language [%s] not passed the validation ", workflow.Language)
 	}
 	//TODO Validation will be consistent with that of commercial version in the future

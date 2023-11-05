@@ -7,6 +7,9 @@ import (
 	"github.com/Bio-OS/bioos/pkg/utils"
 )
 
+// Language workflow language
+type Language string
+
 // Workflow workflow entity
 type Workflow struct {
 	// ID is the unique identifier of the workflow
