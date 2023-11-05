@@ -23,7 +23,6 @@ import { FormApi } from 'final-form';
 import {
   Alert,
   Form as ArcoForm,
-  Form,
   Input,
   Message,
   Modal,
@@ -182,8 +181,19 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
               <FieldItem
                   name="language"
                   label="规范"
+                  validate={[
+                    (val: string | undefined) => {
+                      if (val === undefined) {
+                        return '请选择 workflow 规范';
+                      }
+                      return;
+                    }
+                  ]}
               >
-                <Radio.Group defaultValue='WDL' options={['WDL', 'NextFlow']} />
+                <Radio.Group type="button">
+                  <Radio value="WDL">WDL</Radio>
+                  <Radio value="NextFlow">NextFlow</Radio>
+                </Radio.Group>
               </FieldItem>
               <FieldItem
                 name="url"
@@ -256,8 +266,5 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
 }
 
 export default memo(ImportModal, (pre, next) => {
-  if (pre.visible !== next.visible || pre.workflowInfo !== next.workflowInfo) {
-    return false;
-  }
-  return true;
+  return !(pre.visible !== next.visible || pre.workflowInfo !== next.workflowInfo);
 });
