@@ -32,6 +32,7 @@ import {
   Switch,
   Tabs,
   Typography,
+  Tag,
 } from '@arco-design/web-react';
 import {
   IconCaretRight,
@@ -623,20 +624,37 @@ export default function WorkflowRun() {
             }
             description={
               <>
-                <span className="">描述：</span>
-                <Typography.Paragraph
-                  className="colorGrey mr20"
-                  style={{ maxWidth: 100 }}
-                  ellipsis={{
-                    showTooltip: {
-                      type: 'popover',
-                    },
-                  }}
-                >
-                  {workflow?.description}
-                </Typography.Paragraph>
-                <span>来源：</span>
-                <Link>{workflow?.latestVersion?.metadata?.gitURL}</Link>
+                {workflow?.description && <>
+                  <span className="">描述：</span>
+                  <Typography.Paragraph
+                      className="colorGrey mr20"
+                      style={{ maxWidth: 100 }}
+                      ellipsis={{
+                        showTooltip: {
+                          type: 'popover',
+                        },
+                      }}
+                  >
+                    {workflow?.description}
+                  </Typography.Paragraph>
+                </>}
+
+                {workflow?.latestVersion?.language && <>
+                  <span>规范：</span>
+                  <Typography.Paragraph
+                      className="colorGrey mr20"
+                      style={{ maxWidth: 200 }}
+                  >
+                    <Tag color="arcoblue">{workflow?.latestVersion?.language}</Tag>
+                  </Typography.Paragraph>
+
+                </>}
+
+                {workflow?.latestVersion?.metadata?.gitURL && <>
+                  <span>来源：</span>
+                  <Link>{workflow?.latestVersion?.metadata?.gitURL}</Link>
+                </>}
+
               </>
             }
             title={workflow?.name}

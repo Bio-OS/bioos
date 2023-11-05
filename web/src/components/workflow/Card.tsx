@@ -23,7 +23,7 @@ import {
   Card,
   Dropdown,
   Menu,
-  Popover,
+  Popover, Tag,
   Typography,
 } from '@arco-design/web-react';
 import {
@@ -39,6 +39,7 @@ import { useQueryHistory } from 'helpers/hooks';
 interface Props {
   id: string;
   name: string;
+  language: string;
   status: string;
   description: string;
   originUrl: string;
@@ -50,6 +51,7 @@ interface Props {
 function WorkflowCard({
   id,
   name,
+  language,
   status,
   description,
   originUrl,
@@ -156,6 +158,7 @@ function WorkflowCard({
         </div>
         {renderAction()}
       </div>
+
       <Typography.Paragraph
         className="colorBlack2 fs12 inlineBlock lh20 w100"
         style={{ height: 20 }}
@@ -167,6 +170,13 @@ function WorkflowCard({
         {description}
       </Typography.Paragraph>
       <div className="flexBetween mt24 w100 fs12">
+        <span className="noShrink colorGrey">规范：</span>
+        <Typography.Paragraph
+            className="colorBlack2 fs12 inlineBlock w100"
+            // style={{ height: 20 }}
+        >
+          <Tag color="arcoblue">{language}</Tag>
+        </Typography.Paragraph>
         <span className="noShrink colorGrey">来源：</span>
         <a
           className="colorGrey ellipsis hoverableText mr16"

@@ -28,6 +28,7 @@ import {
   Message,
   Modal,
   Popover,
+  Radio,
 } from '@arco-design/web-react';
 import { IconQuestionCircle } from '@arco-design/web-react/icon';
 
@@ -60,6 +61,7 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
       workflowInfo
         ? {
             name: workflowInfo.name,
+            language: workflowInfo.latestVersion.language,
             url: workflowInfo.latestVersion.metadata.gitURL,
             tag: workflowInfo.latestVersion.metadata.gitTag,
             mainWorkflowPath: workflowInfo.latestVersion.mainWorkflowPath,
@@ -177,9 +179,12 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
               >
                 <Input placeholder="请输入" allowClear={true} />
               </FieldItem>
-              <Form.Item label="规范">
-                <span>WDL</span>
-              </Form.Item>
+              <FieldItem
+                  name="language"
+                  label="规范"
+              >
+                <Radio.Group defaultValue='WDL' options={['WDL', 'NextFlow']} />
+              </FieldItem>
               <FieldItem
                 name="url"
                 label="Git 地址"

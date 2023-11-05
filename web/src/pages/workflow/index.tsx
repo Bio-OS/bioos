@@ -126,6 +126,7 @@ export default function WorkflowList() {
               <Card
                 id={item.id}
                 name={item.name}
+                language={item.latestVersion.language}
                 status={item.latestVersion.status}
                 description={item.description}
                 originUrl={item.latestVersion.metadata.gitURL}
