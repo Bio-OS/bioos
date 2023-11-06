@@ -308,7 +308,7 @@ export interface HandlersWorkspaceStorage {
 export interface HandlersCreateWorkflowRequest {
   description?: string;
   id?: string;
-  language: 'WDL';
+  language: string;
   mainWorkflowPath: string;
   name: string;
   source: 'git';
