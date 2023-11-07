@@ -4,6 +4,6 @@ package workflow
 func SupportedLanguages() []string {
 	return []string{
 		string(LanguageWDL),
-		string(LanguageNextFlow),
+		string(LanguageNextflow),
 	}
 }

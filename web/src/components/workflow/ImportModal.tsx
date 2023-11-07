@@ -192,7 +192,7 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
               >
                 <Radio.Group type="button">
                   <Radio value="WDL">WDL</Radio>
-                  <Radio value="NextFlow">NextFlow</Radio>
+                  <Radio value="Nextflow">Nextflow</Radio>
                 </Radio.Group>
               </FieldItem>
               <FieldItem

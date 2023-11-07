@@ -23,5 +23,5 @@ const (
 
 const (
 	LanguageWDL      Language = "WDL"
-	LanguageNextFlow Language = "NextFlow"
+	LanguageNextflow Language = "Nextflow"
 )
