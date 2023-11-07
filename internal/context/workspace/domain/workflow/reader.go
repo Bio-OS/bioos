@@ -63,6 +63,7 @@ func (r *WDLReader) ParseWorkflowVersion(ctx context.Context, mainWorkflowPath s
 	return "draft-2", nil
 }
 
+// ValidateWorkflowFiles ...
 func (r *WDLReader) ValidateWorkflowFiles(ctx context.Context, version *WorkflowVersion, baseDir, mainWorkflowPath string) error {
 	applog.Infow("start to validate files", "mainWorkflowPath", mainWorkflowPath)
 	validateResult, err := exec.Exec(ctx, CommandExecuteTimeout, "java", "-jar", r.options.WomtoolPath, "validate", path.Join(baseDir, mainWorkflowPath), "-l")
@@ -120,9 +121,12 @@ func (r *WDLReader) GetWorkflowInputs(ctx context.Context, WorkflowFilePath stri
 	return r.getWorkflowParams(ctx, "java", "-jar", r.options.WomtoolPath, "inputs", WorkflowFilePath)
 }
 
+// GetWorkflowOutputs ...
 func (r *WDLReader) GetWorkflowOutputs(ctx context.Context, WorkflowFilePath string) ([]WorkflowParam, error) {
 	return r.getWorkflowParams(ctx, "java", "-jar", r.options.WomtoolPath, "outputs", WorkflowFilePath)
 }
+
+// GetWorkflowGraph ...
 func (r *WDLReader) GetWorkflowGraph(ctx context.Context, WorkflowFilePath string) (string, error) {
 	graph, err := exec.Exec(ctx, CommandExecuteTimeout, "java", "-jar", r.options.WomtoolPath, "graph", WorkflowFilePath)
 	if err != nil {
@@ -161,4 +165,39 @@ func (r *WDLReader) getWorkflowParams(ctx context.Context, name string, arg ...s
 		return params[i].Name < params[j].Name
 	})
 	return params, nil
+}
+
+func parseWorkflowParamValue(value string) (paramType string, optional bool, defaultValue *string) {
+	splitByLeftBracket := strings.SplitN(value, "(", 2)
+	paramType = strings.TrimSpace(splitByLeftBracket[0])
+	if len(splitByLeftBracket) == 1 {
+		return paramType, false, nil
+	}
+
+	extraInfo := strings.TrimSuffix(splitByLeftBracket[1], ")")
+	splitByComma := strings.SplitN(extraInfo, ",", 2)
+	if strings.TrimSpace(splitByComma[0]) == "optional" {
+		optional = true
+	}
+	if len(splitByComma) == 1 {
+		return paramType, optional, nil
+	}
+
+	defaultInfo := strings.TrimSpace(splitByComma[1])
+	splitByEqual := strings.SplitN(defaultInfo, "=", 2)
+	if len(splitByEqual) != 2 || strings.ToLower(strings.TrimSpace(splitByEqual[0])) != "default" {
+		return paramType, optional, nil
+	}
+	rawDefaultValue := strings.TrimSpace(splitByEqual[1])
+	defaultValue = new(string)
+	if strings.HasPrefix(rawDefaultValue, `"`) && strings.HasSuffix(rawDefaultValue, `"`) { // String type
+		_ = json.Unmarshal([]byte(rawDefaultValue), defaultValue) // escape, never error
+	} else {
+		*defaultValue = rawDefaultValue
+	}
+	return paramType, optional, defaultValue
+}
+
+// NextflowReader reader for workflow written by Nextflow
+type NextflowReader struct {
 }
