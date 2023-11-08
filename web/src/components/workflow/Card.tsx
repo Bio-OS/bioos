@@ -87,17 +87,16 @@ function WorkflowCard({
         disabled={importing}
         droplist={
           <Menu style={{ width: 64 }}>
-            {succeeded && (
-              <Menu.Item
-                key="edit"
-                onClick={e => {
-                  e.stopPropagation();
-                  onEdit();
-                }}
-              >
-                更新
-              </Menu.Item>
-            )}
+            <Menu.Item
+              key="edit"
+              onClick={e => {
+                e.stopPropagation();
+                onEdit();
+              }}
+            >
+              更新
+            </Menu.Item>
+
             <Menu.Item
               key="delete"
               onClick={e => {
