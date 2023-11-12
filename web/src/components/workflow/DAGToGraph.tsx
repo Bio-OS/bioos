@@ -27,6 +27,7 @@ import Icon from 'components/Icon';
 import { Z_INDEX } from 'helpers/constants';
 
 import styles from './style.less';
+import mermaid from "mermaid";
 
 const ZOOM_ACTIONS = [
   {
@@ -53,16 +54,15 @@ const ZOOM_ACTIONS = [
 
 let viz = new Viz({ Module, render });
 
-function DAGToGraph({ data }: { data: string }) {
+function DAGToGraph({ data, language }: { data: string, language: string }) {
   const graphRef = useRef<HTMLDivElement>(null);
   const zoomRef = useRef<SvgPanZoom.Instance>(null);
   const [showFullScreen, setShowFullScreen] = useState(false);
 
   if (!data) return null;
 
-  useEffect(() => {
-    viz
-      ?.renderSVGElement(data, { yInvert: false })
+  const wdlEffect = () => {
+    viz?.renderSVGElement(data, { yInvert: false })
       .then(result => {
         graphRef?.current?.append(result);
         zoomRef.current = svgPanZoom(result, {
@@ -75,7 +75,44 @@ function DAGToGraph({ data }: { data: string }) {
         viz = new Viz({ Module, render });
         console.error(error);
       });
-  }, []);
+  }
+  const nextflowEffect = () => {
+    mermaid.initialize({startOnLoad: false})
+    mermaid.parse(data, {
+      suppressErrors: true
+    }).then(parsed => {
+      if (parsed) {
+        const svgContainer = document.createElement('div')
+        svgContainer.setAttribute('id', 'svgContainer')
+        svgContainer.style.width = '100%'
+        svgContainer.style.height = '100%'
+
+        graphRef?.current?.append(svgContainer)
+        mermaid.render('theGraph', data).then(result=> {
+          svgContainer.innerHTML = result.svg
+          svgContainer.querySelector('svg').style.maxWidth = null
+          zoomRef.current = svgPanZoom(svgContainer.querySelector('svg'), {
+            zoomEnabled: true,
+            fit: true,
+            center: true,
+          });
+        })
+      }
+    })
+  }
+
+  function chooseEffect(language: string) {
+    switch (language) {
+      case 'WDL':
+        return wdlEffect
+      case 'Nextflow':
+        return nextflowEffect
+      default:
+        console.error(`workflow language ${language} not found`)
+    }
+  }
+
+  useEffect(chooseEffect(language), []);
 
   function resetSvg() {
     zoomRef.current.resetZoom();
@@ -139,6 +176,7 @@ function DAGToGraph({ data }: { data: string }) {
             </Popover>
           ))}
         </div>
+        {/**/}
       </div>
     </div>
   );
