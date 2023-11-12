@@ -166,7 +166,7 @@ function DAGToGraph({ data, language }: { data: string, language: string }) {
         styles.graphWrap,
         { [styles.fullScreen]: showFullScreen },
       ])}
-      style={{ zIndex: Z_INDEX.modal }}
+      style={{ zIndex: Z_INDEX.modal, cursor: 'pointer' }}
     >
       <div ref={graphRef}>
         <div className={styles.actions}>

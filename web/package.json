@@ -68,6 +68,7 @@
     "katex": "^0.15.2",
     "lodash-es": "^4.17.21",
     "marked": "^4.0.12",
+    "mermaid": "^10.6.1",
     "omit-deep": "^0.3.0",
     "papaparse": "^5.4.1",
     "portfinder": "^1.0.32",
