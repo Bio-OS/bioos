@@ -26,15 +26,26 @@ const (
 )
 
 type WorkflowVersionAddedHandler struct {
-	repo   Repository
-	reader Reader
+	repo        Repository
+	reader      Reader
+	readerCache map[Language]Reader
 }
 
 func NewWorkflowVersionAddedHandler(repo Repository, readerOptions *ReaderOptions) *WorkflowVersionAddedHandler {
 	return &WorkflowVersionAddedHandler{
-		repo:   repo,
-		reader: &WDLReader{readerOptions},
+		repo: repo,
+		readerCache: map[Language]Reader{
+			LanguageWDL: &WDLReader{readerOptions},
+			LanguageNextflow: &NextflowReader{
+				inputParams:  []WorkflowParam{},
+				outputParams: []WorkflowParam{},
+			},
+		},
 	}
+}
+
+func (h *WorkflowVersionAddedHandler) getWorkflowReader(language Language) Reader {
+	return h.readerCache[language]
 }
 
 func (h *WorkflowVersionAddedHandler) Handle(ctx context.Context, event *WorkflowVersionAddedEvent) (err error) {
@@ -106,33 +117,33 @@ func (h *WorkflowVersionAddedHandler) handle(ctx context.Context, workflowID str
 		return apperrors.NewInternalError(err)
 	}
 	// parse workfile version
-	languageVersion, err := h.reader.ParseWorkflowVersion(ctx, mainWorkflowPath)
+	languageVersion, err := h.getWorkflowReader(Language(version.Language)).ParseWorkflowVersion(ctx, mainWorkflowPath)
 	if err != nil {
 		return apperrors.NewInternalError(err)
 	}
 	version.LanguageVersion = languageVersion
 
 	// step3: validate and save workflow files
-	if err := h.reader.ValidateWorkflowFiles(ctx, version, dir, version.MainWorkflowPath); err != nil {
+	if err := h.getWorkflowReader(Language(version.Language)).ValidateWorkflowFiles(ctx, version, dir, version.MainWorkflowPath); err != nil {
 		return err
 	}
 
 	// step4: get workflow inputs
-	inputs, err := h.reader.GetWorkflowInputs(ctx, mainWorkflowPath)
+	inputs, err := h.getWorkflowReader(Language(version.Language)).GetWorkflowInputs(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}
 	version.Inputs = inputs
 
 	// step5: get workflow outputs
-	outputs, err := h.reader.GetWorkflowOutputs(ctx, mainWorkflowPath)
+	outputs, err := h.getWorkflowReader(Language(version.Language)).GetWorkflowOutputs(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}
 	version.Outputs = outputs
 
 	// step6: get workflow graph
-	graph, err := h.reader.GetWorkflowGraph(ctx, mainWorkflowPath)
+	graph, err := h.getWorkflowReader(Language(version.Language)).GetWorkflowGraph(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}

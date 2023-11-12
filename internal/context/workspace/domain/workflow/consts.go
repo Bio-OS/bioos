@@ -18,7 +18,8 @@ const (
 )
 
 const (
-	VersionRegexpStr = "^version\\s+([\\w-._]+)"
+	VersionWDLRegexpStr      = "^version\\s+([\\w-._]+)"
+	VersionNextflowRegexpStr = "^nextflow.enable.dsl\\s+=\\s+(\\d)"
 )
 
 const (

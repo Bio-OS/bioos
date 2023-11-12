@@ -794,7 +794,7 @@ export default function WorkflowRun() {
                   />
                 </Tabs.TabPane>
                 <Tabs.TabPane key="graph" title="Graph" style={{ height: 700 }}>
-                  <DAGToGraph data={workflow?.latestVersion?.graph} />
+                  <DAGToGraph data={workflow?.latestVersion?.graph} language={workflow?.latestVersion?.language}/>
                 </Tabs.TabPane>
               </Tabs>
             </div>

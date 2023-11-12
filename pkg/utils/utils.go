@@ -16,6 +16,8 @@
 
 package utils
 
+import "os"
+
 func DeleteStrSliceElms(sl []string, elms ...string) []string {
 	if len(sl) == 0 || len(elms) == 0 {
 		return sl
@@ -41,4 +43,13 @@ func In(elm string, elms []string) bool {
 		}
 	}
 	return false
+}
+
+// FileExists ...
+func FileExists(filepath string) bool {
+	fileInfo, err := os.Stat(filepath)
+	if err != nil {
+		return false
+	}
+	return !fileInfo.IsDir()
 }
