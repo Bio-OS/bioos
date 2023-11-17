@@ -775,7 +775,7 @@ export default function WorkflowRun() {
                     selectOptions={options.workspaceModel}
                   />
                 </Tabs.TabPane>
-                <Tabs.TabPane key="ouput" title="输出参数">
+                <Tabs.TabPane key="output" title="输出参数">
                   <RunParams
                     type="output"
                     isPath={false}

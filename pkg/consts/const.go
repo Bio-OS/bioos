@@ -125,3 +125,9 @@ const (
 const (
 	SchemaFileMode = os.FileMode(0777)
 )
+
+// WorkflowType ...
+const (
+	WorkflowTypeWDL      = "WDL"
+	WorkflowTypeNextflow = "Nextflow"
+)

@@ -260,13 +260,13 @@ func (r *NextflowReader) ValidateWorkflowFiles(ctx context.Context, version *Wor
 		return apperrors.NewInternalError(fmt.Errorf("please check the format of nextflow_schema.json"))
 	}
 
-	for process, definition := range nextflowSchema.Definitions {
+	for _, definition := range nextflowSchema.Definitions {
 		for paramName, property := range definition.Properties {
 			optional := !utils.In(paramName, definition.Required)
 			workflowParam := WorkflowParam{
-				Name:     fmt.Sprintf("%s.%s", process, paramName),
+				Name:     paramName,
 				Type:     cases.Title(language.English).String(property.Type),
-				Optional: !utils.In(paramName, definition.Required),
+				Optional: optional,
 			}
 			if property.Mimetype != "" {
 				workflowParam.Type = "File"
@@ -283,7 +283,7 @@ func (r *NextflowReader) ValidateWorkflowFiles(ctx context.Context, version *Wor
 					workflowParam.Default = strconv.FormatInt(property.Default.(int64), 10)
 				}
 			}
-			applog.Infow("x", "name", paramName, "out", property.Out)
+
 			if !property.Out {
 				r.inputParams = append(r.inputParams, workflowParam)
 			} else {

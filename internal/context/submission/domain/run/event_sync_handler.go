@@ -46,14 +46,17 @@ func (e *EventHandlerSyncRun) Handle(ctx context.Context, event *submission.Even
 		return e.markRunFailed(ctx, curRun, "nil engineRunID while sync run")
 	}
 
-	resp, err := e.wes.GetRunLog(ctx, &wes.GetRunLogRequest{RunID: curRun.EngineRunID})
+	resp, err := e.wes.GetRunLog(ctx, &wes.GetRunLogRequest{
+		RunID:        curRun.EngineRunID,
+		WorkflowType: curRun.WorkflowType,
+	})
 	if err != nil {
 		if wes.IsNotFound(err) {
 			return e.markRunFailed(ctx, curRun, "not found ")
 		}
 
 		applog.Errorw("failed to get run log", "err", err)
-		return e.republicCurrentEvent(ctx, event.RunID)
+		return e.republicCurrentEvent(ctx, event.RunID, curRun.WorkflowType)
 	}
 	updatedRun := e.syncRunStatus(curRun, resp)
 	taskList, err := e.genTasks(event.RunID, updatedRun.Status, resp)
@@ -65,7 +68,7 @@ func (e *EventHandlerSyncRun) Handle(ctx context.Context, event *submission.Even
 		return err
 	}
 
-	// public sync submission event to update output row datamodel
+	// public sync submission event to update output row data model
 	eventSyncSubmission := submission.NewSyncSubmissionEvent(updatedRun.SubmissionID)
 	if err := e.eventBus.Publish(ctx, eventSyncSubmission); err != nil {
 		return apperrors.NewInternalError(err)
@@ -74,11 +77,11 @@ func (e *EventHandlerSyncRun) Handle(ctx context.Context, event *submission.Even
 	if updatedRun.IsFinished() {
 		return nil
 	}
-	return e.republicCurrentEvent(ctx, event.RunID)
+	return e.republicCurrentEvent(ctx, event.RunID, curRun.WorkflowType)
 }
 
-func (e *EventHandlerSyncRun) republicCurrentEvent(ctx context.Context, runID string) error {
-	newEventSyncRun := submission.NewEventSyncRun(runID, genReSyncDelayTime())
+func (e *EventHandlerSyncRun) republicCurrentEvent(ctx context.Context, runID string, workflowType string) error {
+	newEventSyncRun := submission.NewEventSyncRun(runID, workflowType, genReSyncDelayTime())
 	if err := e.eventBus.Publish(ctx, newEventSyncRun); err != nil {
 		return apperrors.NewInternalError(err)
 	}

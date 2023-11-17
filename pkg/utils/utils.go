@@ -53,3 +53,17 @@ func FileExists(filepath string) bool {
 	}
 	return !fileInfo.IsDir()
 }
+
+// MergeMapInterface ...
+func MergeMapInterface(maps ...map[string]interface{}) map[string]interface{} {
+	var ret map[string]interface{}
+	for _, m := range maps {
+		if m == nil {
+			continue
+		}
+		for k, v := range m {
+			ret[k] = v
+		}
+	}
+	return ret
+}

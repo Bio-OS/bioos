@@ -21,6 +21,7 @@ type Run struct {
 	Message      *string
 	StartTime    time.Time
 	FinishTime   *time.Time
+	WorkflowType string
 	Tasks        []*Task
 }
 

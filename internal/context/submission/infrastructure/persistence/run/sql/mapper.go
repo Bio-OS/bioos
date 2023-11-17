@@ -13,13 +13,14 @@ import (
 
 func RunPOToRunDTO(ctx context.Context, run *Run) (*query.RunItem, error) {
 	item := &query.RunItem{
-		ID:          run.ID,
-		Name:        run.Name,
-		Status:      run.Status,
-		StartTime:   run.StartTime.Unix(),
-		EngineRunID: run.EngineRunID,
-		Log:         run.Log,
-		Message:     run.Message,
+		ID:           run.ID,
+		Name:         run.Name,
+		Status:       run.Status,
+		StartTime:    run.StartTime.Unix(),
+		EngineRunID:  run.EngineRunID,
+		Log:          run.Log,
+		Message:      run.Message,
+		WorkflowType: run.WorkflowType,
 	}
 	var inputs, outputs []byte
 	var err error
@@ -82,6 +83,7 @@ func RunPOToRunDO(runPO *Run) *run.Run {
 		Message:      runPO.Message,
 		StartTime:    runPO.StartTime,
 		FinishTime:   runPO.FinishTime,
+		WorkflowType: runPO.WorkflowType,
 	}
 }
 
@@ -115,5 +117,6 @@ func RunDOToRunPO(runDO *run.Run) *Run {
 		Message:      runDO.Message,
 		StartTime:    runDO.StartTime,
 		FinishTime:   runDO.FinishTime,
+		WorkflowType: runDO.WorkflowType,
 	}
 }

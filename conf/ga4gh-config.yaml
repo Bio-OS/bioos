@@ -1,0 +1,9 @@
+wes:
+  serverProps:
+    publicApiPort: 7500
+    adminApiPort: 7501
+  serviceInfo:
+    id: org.ga4gh.demo.wes.test
+    name: WES API Test Demo
+  databaseProps:
+    url: jdbc:sqlite:/home/user/db/ga4gh-starter-kit.dev.db

@@ -48,7 +48,7 @@ func (e *EventHandlerSubmitRun) Handle(ctx context.Context, event *submission.Ev
 
 	if run.EngineRunID != "" {
 		// todo check delay
-		eventSync := submission.NewEventSyncRun(event.RunID, 0)
+		eventSync := submission.NewEventSyncRun(event.RunID, event.WorkflowType(), 0)
 		if err := e.eventBus.Publish(ctx, eventSync); err != nil {
 			return apperrors.NewInternalError(err)
 		}
@@ -56,15 +56,22 @@ func (e *EventHandlerSubmitRun) Handle(ctx context.Context, event *submission.Ev
 	}
 
 	// not submit before
+	var workflowParams map[string]interface{}
+	if run.Outputs != nil {
+		workflowParams = mergeWorkflowParams(run.Inputs, *run.Outputs)
+	} else {
+		workflowParams = run.Inputs
+	}
 	resp, err := e.wes.RunWorkflow(ctx, &wes.RunWorkflowRequest{
 		RunRequest: wes.RunRequest{
-			WorkflowParams:      run.Inputs,
+			WorkflowParams:      workflowParams,
 			WorkflowType:        event.RunConfig.Language,
 			WorkflowTypeVersion: event.RunConfig.Version,
 			Tags: map[string]interface{}{
 				BioosRunIDKey: run.ID,
 			},
 			WorkflowEngineParameters: event.RunConfig.WorkflowEngineParameters,
+			WorkflowURL:              event.RunConfig.WorkflowURL,
 		},
 		WorkflowAttachment: event.RunConfig.WorkflowContents,
 	})
@@ -97,7 +104,7 @@ func (e *EventHandlerSubmitRun) markRunRunningAndPublicEventSync(ctx context.Con
 	if err := e.runRepo.Save(ctx, tempRun); err != nil {
 		return apperrors.NewInternalError(err)
 	}
-	eventSync := submission.NewEventSyncRun(event.RunID, 0)
+	eventSync := submission.NewEventSyncRun(event.RunID, event.WorkflowType(), 0)
 	if err := e.eventBus.Publish(ctx, eventSync); err != nil {
 		return apperrors.NewInternalError(err)
 	}
@@ -110,4 +117,18 @@ func (e *EventHandlerSubmitRun) republicCurrentEvent(ctx context.Context, event 
 		return apperrors.NewInternalError(err)
 	}
 	return nil
+}
+
+func mergeWorkflowParams(input, output map[string]interface{}) map[string]interface{} {
+	if output == nil {
+		return input
+	}
+	workflowParams := make(map[string]interface{}, len(input)+len(output))
+	for k, v := range input {
+		workflowParams[k] = v
+	}
+	for k, v := range output {
+		workflowParams[k] = v
+	}
+	return workflowParams
 }

@@ -11,6 +11,7 @@ mysql-data
 *.sqlite3
 .vscode
 
+conf/apiserver-local.yaml
 web/build/
 web/node_modules/
 web/.eslintcache
