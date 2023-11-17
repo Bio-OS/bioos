@@ -23,7 +23,7 @@ import { Table, TableColumnProps, TableProps } from '@arco-design/web-react';
 
 import styles from './style.less';
 
-export default function ResizebleTable({
+export default function ResizeableTable({
   columns = [],
   minSize = 100,
   className,
@@ -44,7 +44,7 @@ export default function ResizebleTable({
     document.getElementsByTagName('html')[0].className = '';
   }
 
-  const resizebleColumns = columns.map(
+  const resizeableColumns = columns.map(
     (column: TableColumnProps, index: number) => {
       const last = index === columns.length - 1;
       if (last) return column;
@@ -73,7 +73,7 @@ export default function ResizebleTable({
       border={true}
       borderCell={true}
       scroll={{ x: true }}
-      columns={resizebleColumns}
+      columns={resizeableColumns}
       {...rest}
     />
   );

@@ -39,7 +39,7 @@ import {
 import { IconInfoCircle, IconPlus } from '@arco-design/web-react/icon';
 
 import PageEmpty from 'components/Empty';
-import ResizebleTable from 'components/ResizebleTable';
+import ResizeableTable from 'components/ResizeableTable';
 import { useForceUpdate } from 'helpers/hooks';
 import { HandlersWorkflowParam } from 'api/index';
 
@@ -361,7 +361,7 @@ export default memo(
       forceUpdate();
     };
 
-    const TableComponent = isInput && isPath ? ResizebleTable : Table;
+    const TableComponent = isInput && isPath ? ResizeableTable : Table;
     // const className =
     return (
       <div
