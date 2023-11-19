@@ -67,8 +67,12 @@ auth:
       policy: conf/policy.csv
 
 wes:
-  endpoint: ''
-  basePath: /api/ga4gh/wes/v1
+  wdl:
+    endpoint: http://cromwell:8000
+    basePath: /api/ga4gh/wes/v1
+  nextflow:
+    endpoint: http://ga4gh-starter-kit-wes:7500
+    basePath: /ga4gh/wes/v1
   timeout: 10
   Retry: 1
 
