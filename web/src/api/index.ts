@@ -71,6 +71,7 @@ export interface HandlersCreateSubmissionRequest {
   inOutMaterial?: HandlersInOutMaterial;
   name?: string;
   type?: string;
+  language: string;
   workflowID?: string;
   workspaceID?: string;
 }
@@ -241,6 +242,7 @@ export interface HandlersSubmissionItem {
   runStatus?: HandlersStatus;
   startTime?: number;
   status?: string;
+  language?: string;
   type?: string;
   workflowVersion?: GithubComBioOSBioosInternalContextSubmissionInterfaceHertzHandlersWorkflowVersion;
 }
@@ -1651,6 +1653,8 @@ export class Api<
         workflowID?: string;
         /** query status */
         status?: string[];
+        /** query language **/
+        language?: string[];
       },
       params: RequestParams = {},
     ) =>

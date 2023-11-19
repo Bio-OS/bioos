@@ -83,7 +83,7 @@ func (s *service) Create(ctx context.Context, submission *Submission) error {
 	} else if stored != nil {
 		return apperrors.NewAlreadyExistError("submission", submission.Name)
 	}
-	event := NewCreateEvent(submission.WorkspaceID, submission.ID, submission.WorkflowID, submission.WorkflowVersionID, submission.DataModelID, submission.DataModelRowIDs)
+	event := NewCreateEvent(submission.WorkspaceID, submission.ID, submission.WorkflowID, submission.WorkflowVersionID, submission.Language, submission.DataModelID, submission.DataModelRowIDs)
 	if err := s.eventbus.Publish(ctx, event); err != nil {
 		return apperrors.NewInternalError(err)
 	}

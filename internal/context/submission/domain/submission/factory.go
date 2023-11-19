@@ -18,6 +18,7 @@ type CreateSubmissionParam struct {
 	DataModelID       *string
 	DataModelRowIDs   []string
 	Type              string
+	Language          string
 	Inputs            map[string]interface{}
 	Outputs           map[string]interface{}
 	ExposedOptions    ExposedOptions
@@ -51,6 +52,7 @@ func (fac *Factory) CreateWithSubmissionParam(param CreateSubmissionParam) (*Sub
 		DataModelRowIDs:   param.DataModelRowIDs,
 		WorkspaceID:       param.WorkspaceID,
 		Type:              param.Type,
+		Language:          param.Language,
 		Inputs:            param.Inputs,
 		Outputs:           param.Outputs,
 		ExposedOptions:    param.ExposedOptions,

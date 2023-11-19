@@ -69,9 +69,10 @@ type CreateEvent struct {
 	SourceWorkflowVersionID string
 	SourceDataModelID       *string
 	SourceDataModelRowIDs   []string
+	Language                string
 }
 
-func NewCreateEvent(workspaceID, submissionID, workflowID, workflowVersionID string, sourceDataModelID *string, sourceDataModelRowIDs []string) *CreateEvent {
+func NewCreateEvent(workspaceID, submissionID, workflowID, workflowVersionID string, language string, sourceDataModelID *string, sourceDataModelRowIDs []string) *CreateEvent {
 	return &CreateEvent{
 		WorkspaceID:             workspaceID,
 		SubmissionID:            submissionID,
@@ -79,6 +80,7 @@ func NewCreateEvent(workspaceID, submissionID, workflowID, workflowVersionID str
 		SourceWorkflowVersionID: workflowVersionID,
 		SourceDataModelID:       sourceDataModelID,
 		SourceDataModelRowIDs:   sourceDataModelRowIDs,
+		Language:                language,
 	}
 }
 

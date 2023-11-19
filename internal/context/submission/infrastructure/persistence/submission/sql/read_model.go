@@ -77,7 +77,9 @@ func listSubmissionsFilter(db *gorm.DB, filter *query.ListSubmissionsFilter) *go
 	if len(filter.WorkflowID) != 0 {
 		db = db.Where("workflow_id = ?", filter.WorkflowID)
 	}
-
+	if len(filter.Language) > 0 {
+		db = db.Where("language IN ?", filter.Language)
+	}
 	return db
 }
 

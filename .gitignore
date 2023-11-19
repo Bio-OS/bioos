@@ -12,6 +12,7 @@ mysql-data
 .vscode
 
 conf/apiserver-local.yaml
+docker-compose-local.yaml
 web/build/
 web/node_modules/
 web/.eslintcache

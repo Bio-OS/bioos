@@ -63,6 +63,7 @@ export default function AnalysisList() {
   const { page, size, search } = useQuery(10);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('All');
+  const [language, setLanguage] = useState('All');
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const [workflowID, setWorkflowID] = useState(''); //空值为全部
   const [deleteItem, setDeleteItem] = useState({
@@ -96,6 +97,7 @@ export default function AnalysisList() {
           : status === 'Running'
           ? ['Pending', 'Running']
           : [status],
+      language: language === 'All' ? ['WDL', 'Nextflow'] : [language],
     });
 
     if (res.ok) {
@@ -165,7 +167,7 @@ export default function AnalysisList() {
   };
 
   // 终止
-  const stopSubmission = (submissonName: string, submissonID: string) => {
+  const stopSubmission = (submissionName: string, submissionID: string) => {
     return (
       <Link
         onClick={() => {
@@ -176,7 +178,7 @@ export default function AnalysisList() {
                 终止投递将会终止所有启动中和运行中的工作流，请谨慎操作
                 <CommonLimitText
                   name={'投递'}
-                  value={submissonName}
+                  value={submissionName}
                   style={{ marginTop: '12px' }}
                 />
               </div>
@@ -191,7 +193,7 @@ export default function AnalysisList() {
             maskClosable: false,
             okText: '终止',
             onConfirm: () => {
-              handleCancelSubmission(submissonID, submissonName);
+              handleCancelSubmission(submissionID, submissionName);
             },
           });
         }}
@@ -215,6 +217,7 @@ export default function AnalysisList() {
     const { name, description } = data || {};
     const body = {
       ...resetData,
+      language: resetData.language,
       workflowID: resetData?.workflowVersion?.id,
       workspaceID: workspaceId,
       name,
@@ -226,7 +229,7 @@ export default function AnalysisList() {
     });
     if (res.ok) {
       setResetData({});
-      fetchAnalysisList();
+      await fetchAnalysisList();
       return res?.data?.id;
     }
     return '';
@@ -237,6 +240,7 @@ export default function AnalysisList() {
     return items?.map(item => ({
       key: item?.id,
       Name: [item?.name || '-', item?.description || '-', item?.id || ''],
+      Language: item.language,
       Status: [item?.status, item?.runStatus],
       Count: item?.runStatus?.count,
       Time: genTime(item?.startTime) || '-',
@@ -311,6 +315,14 @@ export default function AnalysisList() {
           </Tag>
         );
       },
+    },
+    {
+      title: '规范',
+      width: 100,
+      dataIndex: 'Language',
+      render: (language: string) => {
+        return <Tag color='arcoblue'>{language}</Tag>
+      }
     },
     {
       title: '执行结果',
@@ -455,7 +467,7 @@ export default function AnalysisList() {
     fetchAnalysisList();
     startPolling();
     return () => stopPolling();
-  }, [page, size, search, status, workflowID]);
+  }, [page, size, search, status, workflowID, language]);
 
   return (
     <ListPage title="分析历史">
@@ -465,10 +477,13 @@ export default function AnalysisList() {
           <ListSelects
             statusID={status}
             workflowID={workflowID}
+            language={language}
             listWorkFlowItems={workflowData?.items}
             showWorkflowFlag={true}
+            showLanguageFlag={true}
             onChangeStatus={status => setStatus(status)}
             onChangeWorkflow={id => setWorkflowID(id)}
+            onChangeLanguage={language => setLanguage(language)}
           />
         }
       />

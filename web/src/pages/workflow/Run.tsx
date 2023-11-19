@@ -309,6 +309,7 @@ export default function WorkflowRun() {
       workspaceID: workspaceId,
       workflowID: workflowId,
       type: isPath ? 'filePath' : 'dataModel',
+      language: workflow?.latestVersion?.language,
       exposedOptions: {
         readFromCache: callCaching,
       },

@@ -6,6 +6,7 @@ type SubmissionItem struct {
 	Description       *string
 	Type              string
 	Status            string
+	Language          string
 	StartTime         int64
 	FinishTime        *int64
 	Duration          int64
@@ -56,6 +57,7 @@ type ListSubmissionsFilter struct {
 	Name       string
 	Status     []string
 	IDs        []string
+	Language   []string
 }
 
 // Field for order.
