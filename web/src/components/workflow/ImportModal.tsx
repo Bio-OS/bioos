@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { memo, useMemo, useRef } from 'react';
+import {memo, useMemo, useRef, useState} from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { useRouteMatch } from 'react-router-dom';
 import { FormApi } from 'final-form';
@@ -42,6 +42,8 @@ import { ToastLimitText } from '..';
 
 import style from './style.less';
 
+const DEFAULT_LANGUAGE = 'WDL'
+
 interface Props {
   visible: boolean;
   workflowInfo?: HandlersWorkflowItem;
@@ -54,6 +56,7 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
   const match = useRouteMatch<{ workspaceId: string }>();
   const isEdit = workflowInfo?.latestVersion.status === 'Success';
   const isReimport = workflowInfo?.latestVersion.status === 'Failed';
+  const [language, _] = useState(DEFAULT_LANGUAGE)
 
   const initialValues = useMemo(
     () =>
@@ -66,7 +69,9 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
             mainWorkflowPath: workflowInfo.latestVersion.mainWorkflowPath,
             description: workflowInfo.description,
           }
-        : undefined,
+        : {
+            language,
+          },
     [workflowInfo],
   );
 
@@ -190,7 +195,7 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
                     }
                   ]}
               >
-                <Radio.Group type="button">
+                <Radio.Group type="button" defaultValue={language}>
                   <Radio value="WDL">WDL</Radio>
                   <Radio value="Nextflow">Nextflow</Radio>
                 </Radio.Group>
