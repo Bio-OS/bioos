@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -84,11 +83,11 @@ func (o *MySQLOptions) GetGORMInstance(ctx context.Context) (*gorm.DB, error) {
 	defer cancel()
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		viper.GetString(o.Username),
-		viper.GetString(o.Password),
-		viper.GetString(o.Host),
-		viper.GetString(o.Port),
-		viper.GetString(o.Database),
+		o.Username,
+		o.Password,
+		o.Host,
+		o.Port,
+		o.Database,
 	)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger:          logger.Default.LogMode(logger.Info),
