@@ -57,7 +57,7 @@ To run Bio-OS, the following prerequisites must be met:
 - Installed Docker
   - please refer to the [Docker installation documentation](https://docs.docker.com/engine/install/).
 - Deployed Kubernetes
- - Installation using [Minikube](https://minikube.sigs.k8s.io/docs/start/) is recommanded.
+  - Installation using [Minikube](https://minikube.sigs.k8s.io/docs/start/) is recommanded.
 
 Strongly recommended dependency versions:
 - Minikube: v1.31.2
