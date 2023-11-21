@@ -64,7 +64,7 @@ Strongly recommended dependency versions:
 - Kubernetes: 1.24.15
 - Helm: 3.12.0
 - MySQL: 8.0.34
-- 
+
 ## Tutorial
 ### Bio-OS Installation guide
 Please look at the Bio-OS installation guide: https://bio-os.gitbook.io/userguide/bu-shu/getting-set-up
