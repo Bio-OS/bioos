@@ -53,9 +53,18 @@ To run Bio-OS, the following prerequisites must be met:
   - Ubuntu 22.04 +
 - Internet access
 - Resource Required
+  - Minimum 8 cpu and 16G memory
+- Installed Docker
+  - please refer to the [Docker installation documentation](https://docs.docker.com/engine/install/).
+- Deployed Kubernetes
+ - Installation using [Minikube](https://minikube.sigs.k8s.io/docs/start/) is recommanded.
 
-Minimum 8 cpu and 16G memory
-
+Strongly recommended dependency versions:
+- Minikube: v1.31.2
+- Kubernetes: 1.24.15
+- Helm: 3.12.0
+- MySQL: 8.0.34
+- 
 ## Tutorial
 ### Bio-OS Installation guide
 Please look at the Bio-OS installation guide: https://bio-os.gitbook.io/userguide/bu-shu/getting-set-up
