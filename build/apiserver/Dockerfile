@@ -22,4 +22,6 @@ COPY --from=builder --chown=root:root /go/src/github.com/Bio-OS/bioos/conf conf
 COPY --from=builder /go/src/github.com/Bio-OS/bioos/_output/platforms/${TARGETOS}/${TARGETARCH}/apiserver .
 COPY --from=builder /go/src/github.com/Bio-OS/bioos/womtool.jar .
 COPY --from=builder /go/src/github.com/Bio-OS/bioos/nextflow /usr/local/bin
+RUN chmod a+x /usr/local/bin/nextflow
+
 ENTRYPOINT ["/app/apiserver"]
