@@ -69,4 +69,4 @@ install.womtool:
 
 .PHONY: install.nextflow
 install.nextflow:
-    @wget --progress=dot -cP ${ROOT_DIR} -O nextflow https://github.com/nextflow-io/nextflow/releases/download/v23.10.0/nextflow-23.10.0-all
+	@wget --progress=dot -cP ${ROOT_DIR} -O nextflow https://github.com/nextflow-io/nextflow/releases/download/v23.10.0/nextflow-23.10.0-all
