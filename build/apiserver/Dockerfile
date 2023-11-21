@@ -6,7 +6,8 @@ WORKDIR /go/src/github.com/Bio-OS/bioos
 COPY go.mod .
 RUN --mount=type=cache,target=/go/pkg/mod go mod download
 COPY . .
-RUN go env -w CGO_ENABLED=1 && BINS=apiserver PLATFORM=${TARGETOS}_${TARGETARCH} make go.build && make tools.install.cfssl && make tools.install.womtool && make generate.certs
+RUN go env -w CGO_ENABLED=1 && BINS=apiserver PLATFORM=${TARGETOS}_${TARGETARCH} make go.build \
+    && make tools.install.cfssl && make tools.install.womtool && make tools.install.nextflow && make generate.certs
 
 FROM debian:bullseye
 RUN apt update \
@@ -15,9 +16,10 @@ RUN apt update \
      && rm -rf /var/lib/apt/lists/*
 ARG TARGETOS
 ARG TARGETARCH
-USER    nobody
+USER    root
 WORKDIR /app
-COPY --from=builder --chown=nobody:nogroup /go/src/github.com/Bio-OS/bioos/conf conf
+COPY --from=builder --chown=root:root /go/src/github.com/Bio-OS/bioos/conf conf
 COPY --from=builder /go/src/github.com/Bio-OS/bioos/_output/platforms/${TARGETOS}/${TARGETARCH}/apiserver .
 COPY --from=builder /go/src/github.com/Bio-OS/bioos/womtool.jar .
+COPY --from=builder /go/src/github.com/Bio-OS/bioos/nextflow /usr/local/bin
 ENTRYPOINT ["/app/apiserver"]

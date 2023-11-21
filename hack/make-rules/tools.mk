@@ -66,3 +66,8 @@ install.golangci-lint:
 .PHONY: install.womtool
 install.womtool:
 	@wget --progress=dot -cP ${ROOT_DIR} -O womtool.jar https://github.com/broadinstitute/cromwell/releases/download/85/womtool-85.jar
+
+.PHONY: install.nextflow
+install.nextflow:
+    @wget --progress=dot -cP ${ROOT_DIR} -O nextflow https://github.com/nextflow-io/nextflow/releases/download/v23.10.0/nextflow-23.10.0-all
+
