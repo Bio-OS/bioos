@@ -7,4 +7,5 @@ type Repository interface {
 	Save(ctx context.Context, r *Run) error
 	Get(ctx context.Context, id string) (*Run, error)
 	Delete(ctx context.Context, r *Run) error
+	FindSameRun(ctx context.Context, w *Run) (*Run, error)
 }

@@ -3,8 +3,11 @@ package run
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"strings"
+	"time"
 
 	"github.com/Bio-OS/bioos/internal/context/submission/domain/submission"
 	"github.com/Bio-OS/bioos/internal/context/workspace/infrastructure/eventbus"
@@ -48,6 +51,16 @@ func (e *EventHandlerCreateRuns) Handle(ctx context.Context, event *submission.E
 	}
 
 	for _, run := range runList {
+		// try to call caching
+		hitCache, err := e.CallCaching(ctx, run, event)
+		if err != nil {
+			return err
+		}
+		// hit cache: skip publish submitRun  event
+		if hitCache {
+			continue
+		}
+
 		// public submit run
 		if err = e.Publish(ctx, run, event); err != nil {
 			return err
@@ -55,6 +68,51 @@ func (e *EventHandlerCreateRuns) Handle(ctx context.Context, event *submission.E
 	}
 
 	return nil
+}
+
+func (e *EventHandlerCreateRuns) CallCaching(ctx context.Context, run *Run, event *submission.EventCreateRuns) (bool, error) {
+	// check user open cache
+	readFromCache := event.RunConfig.WorkflowEngineParameters["read_from_cache"].(bool)
+	if !readFromCache {
+		return false, nil
+	}
+
+	// find the same input run from history succeeded
+	samRun, err := e.runRepo.FindSameRun(ctx, run)
+	if err != nil {
+		// if not found, directly return false
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, err
+		}
+		return false, nil
+	}
+	// copy params from history run
+	e.copyOutput(samRun, run)
+	// save
+	if err := e.runRepo.Save(ctx, run); err != nil {
+		return false, apperrors.NewInternalError(err)
+	}
+	applog.Infof("callCaching success, from %s to %S", samRun.ID, run.ID)
+
+	// publish sync submission event
+	eventSyncSubmission := submission.NewSyncSubmissionEvent(event.SubmissionID)
+	if err := e.eventBus.Publish(ctx, eventSyncSubmission); err != nil {
+		return false, apperrors.NewInternalError(err)
+	}
+	return true, nil
+}
+
+func (e *EventHandlerCreateRuns) copyOutput(from, to *Run) {
+	now := time.Now()
+	// set this run hit cache
+	to.Cache = true
+	// copy other params
+	to.Outputs = from.Outputs
+	to.EngineRunID = from.EngineRunID
+	to.Status = from.Status
+	to.Log = from.Log
+	to.Message = from.Message
+	to.FinishTime = &now
 }
 
 func (e *EventHandlerCreateRuns) genRunList(ctx context.Context, dataList *dataList, event *submission.EventCreateRuns) ([]*Run, error) {
@@ -74,10 +132,11 @@ func (e *EventHandlerCreateRuns) genRunList(ctx context.Context, dataList *dataL
 				return nil, err
 			}
 			tempRun, err := e.runFactory.CreateWithRunParam(CreateRunParam{
-				SubmissionID: event.SubmissionID,
-				Name:         name,
-				Inputs:       inputStr,
-				Status:       consts.RunPending,
+				SubmissionID:      event.SubmissionID,
+				Name:              name,
+				Inputs:            inputStr,
+				Status:            consts.RunPending,
+				WorkflowVersionID: event.RunConfig.WorkflowVersionID,
 			})
 			if err != nil {
 				return nil, err
@@ -94,10 +153,11 @@ func (e *EventHandlerCreateRuns) genRunList(ctx context.Context, dataList *dataL
 			return nil, err
 		}
 		tempRun, err := e.runFactory.CreateWithRunParam(CreateRunParam{
-			SubmissionID: event.SubmissionID,
-			Name:         rowID,
-			Inputs:       inputStr,
-			Status:       consts.RunPending,
+			SubmissionID:      event.SubmissionID,
+			Name:              rowID,
+			Inputs:            inputStr,
+			Status:            consts.RunPending,
+			WorkflowVersionID: event.RunConfig.WorkflowVersionID,
 		})
 		if err != nil {
 			return nil, err
