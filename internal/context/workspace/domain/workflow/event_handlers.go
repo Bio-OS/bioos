@@ -178,7 +178,7 @@ func (h *WorkflowVersionAddedHandler) validateWorkflowFiles(ctx context.Context,
 	validateResult, err := exec.Exec(ctx, CommandExecuteTimeout, "java", "-jar", h.womtoolPath, "validate", path.Join(baseDir, mainWorkflowPath), "-l")
 	if err != nil {
 		applog.Errorw("fail to validate workflow", "err", err, "result", string(validateResult))
-		return apperrors.NewInternalError(fmt.Errorf("validate workflow failed"))
+		return apperrors.NewValidateFailedError(fmt.Errorf("please check if there are any syntax errors in your workflow"))
 	}
 	validateResultLines := strings.Split(string(validateResult), "\n")
 	applog.Infow("validate result", "result", validateResultLines)
