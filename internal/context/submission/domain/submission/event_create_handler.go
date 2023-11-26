@@ -35,12 +35,16 @@ func (h *CreateHandler) Handle(ctx context.Context, event *CreateEvent) (err err
 	if err != nil {
 		return err
 	}
-	// todo we should store the data model & workflow used in submission
 	createRunEvent, err := h.genCreateRunEvent(ctx, event, sub)
 	if err != nil {
 		return err
 	}
-
+	// write workflowVersionID into submission table
+	sub.WorkflowVersionID = createRunEvent.RunConfig.WorkflowVersionID
+	err = h.repository.Save(ctx, sub)
+	if err != nil {
+		return err
+	}
 	return h.eventbus.Publish(ctx, createRunEvent)
 }
 
@@ -71,6 +75,7 @@ func (h *CreateHandler) genCreateRunEvent(ctx context.Context, event *CreateEven
 		WorkflowContents:         files,
 		WorkflowEngineParameters: workflowEngineParameters,
 		Version:                  getWorkflowVersionResp.Version.LanguageVersion,
+		WorkflowVersionID:        getWorkflowVersionResp.Version.Id,
 	}), nil
 
 }
