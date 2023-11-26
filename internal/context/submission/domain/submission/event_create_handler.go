@@ -71,6 +71,7 @@ func (h *CreateHandler) genCreateRunEvent(ctx context.Context, event *CreateEven
 		WorkflowContents:         files,
 		WorkflowEngineParameters: workflowEngineParameters,
 		Version:                  getWorkflowVersionResp.Version.LanguageVersion,
+		WorkflowVersionID:        getWorkflowVersionResp.Version.Id,
 	}), nil
 
 }

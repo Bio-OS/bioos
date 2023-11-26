@@ -6,17 +6,19 @@ import (
 
 // Run ...
 type Run struct {
-	ID           string
-	Name         string                  `gorm:"type:varchar(200);not null;uniqueIndex:sub_run"`
-	SubmissionID string                  `gorm:"type:varchar(32);not null;uniqueIndex:sub_run"`
-	Inputs       map[string]interface{}  `gorm:"serializer:json"`
-	Outputs      *map[string]interface{} `gorm:"serializer:json"`
-	EngineRunID  string                  `gorm:"type:varchar(128);not null"`
-	Status       string                  `gorm:"type:varchar(32);not null"`
-	Log          *string                 `gorm:"type:longtext"`
-	Message      *string                 `gorm:"type:longtext"`
-	StartTime    time.Time
-	FinishTime   *time.Time
+	ID                string
+	Name              string                  `gorm:"type:varchar(200);not null;uniqueIndex:sub_run"`
+	SubmissionID      string                  `gorm:"type:varchar(32);not null;uniqueIndex:sub_run"`
+	WorkflowVersionID string                  `gorm:"type:varchar(32)"`
+	Cache             bool                    `gorm:"type:bool"`
+	Inputs            map[string]interface{}  `gorm:"serializer:json"`
+	Outputs           *map[string]interface{} `gorm:"serializer:json"`
+	EngineRunID       string                  `gorm:"type:varchar(128);not null"`
+	Status            string                  `gorm:"type:varchar(32);not null"`
+	Log               *string                 `gorm:"type:longtext"`
+	Message           *string                 `gorm:"type:longtext"`
+	StartTime         time.Time
+	FinishTime        *time.Time
 }
 
 func (r *Run) TableName() string {

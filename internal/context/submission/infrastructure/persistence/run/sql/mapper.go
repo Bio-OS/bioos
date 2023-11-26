@@ -71,17 +71,19 @@ func StatusCountPOToStatusCountDTO(count *StatusCount) *query.StatusCount {
 
 func RunPOToRunDO(runPO *Run) *run.Run {
 	return &run.Run{
-		ID:           runPO.ID,
-		Name:         runPO.Name,
-		SubmissionID: runPO.SubmissionID,
-		Inputs:       runPO.Inputs,
-		Outputs:      runPO.Outputs,
-		EngineRunID:  runPO.EngineRunID,
-		Status:       runPO.Status,
-		Log:          runPO.Log,
-		Message:      runPO.Message,
-		StartTime:    runPO.StartTime,
-		FinishTime:   runPO.FinishTime,
+		ID:                runPO.ID,
+		Name:              runPO.Name,
+		SubmissionID:      runPO.SubmissionID,
+		WorkflowVersionID: runPO.WorkflowVersionID,
+		Cache:             runPO.Cache,
+		Inputs:            runPO.Inputs,
+		Outputs:           runPO.Outputs,
+		EngineRunID:       runPO.EngineRunID,
+		Status:            runPO.Status,
+		Log:               runPO.Log,
+		Message:           runPO.Message,
+		StartTime:         runPO.StartTime,
+		FinishTime:        runPO.FinishTime,
 	}
 }
 
@@ -104,16 +106,18 @@ func RunDOToTaskPOList(runDO *run.Run) []*Task {
 
 func RunDOToRunPO(runDO *run.Run) *Run {
 	return &Run{
-		ID:           runDO.ID,
-		Name:         runDO.Name,
-		SubmissionID: runDO.SubmissionID,
-		Inputs:       runDO.Inputs,
-		Outputs:      runDO.Outputs,
-		EngineRunID:  runDO.EngineRunID,
-		Status:       runDO.Status,
-		Log:          runDO.Log,
-		Message:      runDO.Message,
-		StartTime:    runDO.StartTime,
-		FinishTime:   runDO.FinishTime,
+		ID:                runDO.ID,
+		Name:              runDO.Name,
+		SubmissionID:      runDO.SubmissionID,
+		WorkflowVersionID: runDO.WorkflowVersionID,
+		Cache:             runDO.Cache,
+		Inputs:            runDO.Inputs,
+		Outputs:           runDO.Outputs,
+		EngineRunID:       runDO.EngineRunID,
+		Status:            runDO.Status,
+		Log:               runDO.Log,
+		Message:           runDO.Message,
+		StartTime:         runDO.StartTime,
+		FinishTime:        runDO.FinishTime,
 	}
 }

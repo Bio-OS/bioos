@@ -2,7 +2,9 @@ package sql
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"github.com/Bio-OS/bioos/pkg/consts"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -81,4 +83,24 @@ func (r *runRepository) Delete(ctx context.Context, w *run.Run) error {
 		}
 		return nil
 	})
+}
+
+func (r *runRepository) FindSameRun(ctx context.Context, w *run.Run) (*run.Run, error) {
+	runPO := RunDOToRunPO(w)
+
+	inputs, err := json.Marshal(runPO.Inputs)
+	if err != nil {
+		return nil, err
+	}
+
+	var sameRunPo Run
+	err = r.db.WithContext(ctx).
+		Where("workflow_version_id = ?", runPO.WorkflowVersionID).
+		Where("inputs = ?", string(inputs)).
+		Where("status = ?", consts.RunSucceeded).
+		First(&sameRunPo).Error
+	if err != nil {
+		return nil, err
+	}
+	return RunPOToRunDO(&sameRunPo), nil
 }

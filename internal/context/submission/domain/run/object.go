@@ -10,18 +10,20 @@ import (
 
 // Run ...
 type Run struct {
-	ID           string
-	Name         string
-	SubmissionID string
-	Inputs       map[string]interface{}  `gorm:"serializer:json"`
-	Outputs      *map[string]interface{} `gorm:"serializer:json"`
-	EngineRunID  string
-	Status       string
-	Log          *string
-	Message      *string
-	StartTime    time.Time
-	FinishTime   *time.Time
-	Tasks        []*Task
+	ID                string
+	Name              string
+	SubmissionID      string
+	WorkflowVersionID string
+	Cache             bool
+	Inputs            map[string]interface{}  `gorm:"serializer:json"`
+	Outputs           *map[string]interface{} `gorm:"serializer:json"`
+	EngineRunID       string
+	Status            string
+	Log               *string
+	Message           *string
+	StartTime         time.Time
+	FinishTime        *time.Time
+	Tasks             []*Task
 }
 
 // Task ...

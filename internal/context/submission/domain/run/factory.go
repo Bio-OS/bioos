@@ -8,17 +8,18 @@ import (
 )
 
 type CreateRunParam struct {
-	ID           string
-	Name         string
-	SubmissionID string
-	Inputs       map[string]interface{}  `gorm:"serializer:json"`
-	Outputs      *map[string]interface{} `gorm:"serializer:json"`
-	EngineRunID  string
-	Status       string
-	Log          *string
-	Message      *string
-	StartTime    time.Time
-	FinishTime   *time.Time
+	ID                string
+	Name              string
+	SubmissionID      string
+	WorkflowVersionID string
+	Inputs            map[string]interface{}  `gorm:"serializer:json"`
+	Outputs           *map[string]interface{} `gorm:"serializer:json"`
+	EngineRunID       string
+	Status            string
+	Log               *string
+	Message           *string
+	StartTime         time.Time
+	FinishTime        *time.Time
 }
 
 type CreateTaskParam struct {
@@ -60,17 +61,18 @@ func (fac *Factory) CreateWithRunParam(param CreateRunParam) (*Run, error) {
 	}
 
 	return &Run{
-		ID:           param.ID,
-		Name:         param.Name,
-		SubmissionID: param.SubmissionID,
-		Inputs:       param.Inputs,
-		Outputs:      param.Outputs,
-		EngineRunID:  param.EngineRunID,
-		Status:       param.Status,
-		Log:          param.Log,
-		Message:      param.Message,
-		StartTime:    param.StartTime,
-		FinishTime:   param.FinishTime,
+		ID:                param.ID,
+		Name:              param.Name,
+		SubmissionID:      param.SubmissionID,
+		WorkflowVersionID: param.WorkflowVersionID,
+		Inputs:            param.Inputs,
+		Outputs:           param.Outputs,
+		EngineRunID:       param.EngineRunID,
+		Status:            param.Status,
+		Log:               param.Log,
+		Message:           param.Message,
+		StartTime:         param.StartTime,
+		FinishTime:        param.FinishTime,
 	}, nil
 }
 
