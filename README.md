@@ -75,5 +75,17 @@ Please look at the Bio-OS user guide: https://bio-os.gitbook.io/userguide/
 ### Bio-OS CLI
 Please look at the CLI tutorial: https://bio-os.gitbook.io/userguide/chan-pin-zhi-nan/ming-ling-hang-gong-ju-bioctl
 
+## Help
+
+> Please read the [documentation](https://bio-os.gitbook.io/userguide/) and search for existing [issues](https://github.com/Bio-OS/bioos/issues) that might help before you ask a question. It is also advisable to search the internet for answers first.
+
+If you then still feel the need to ask a question and need clarification, we recommend the following:
+
+-   Open an [issue](https://github.com/Bio-OS/bioos/issues/new).
+-   Provide as much context as you can about what you're running into.
+-   Provide project and platform versions, depending on what seems relevant.
+
+We will handle the issue carefully as soon as possible.
+
 ## License
 This project is licensed under the Apache-2.0 License.
