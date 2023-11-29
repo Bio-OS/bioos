@@ -46,7 +46,7 @@ function autoStart() {
 }
 
 # install, config and start NFS server
-function main_nf() {
+function main_nfs() {
     installNFSServer
     configNFS
     autoStart
