@@ -10,9 +10,10 @@ import (
 
 // ListRunsRequest ...
 type ListRunsRequest struct {
-	PageSize  *int64
-	PageToken *string
-	TagFilter *string
+	PageSize     *int64
+	PageToken    *string
+	TagFilter    *string
+	WorkflowType string `json:"workflow_type"`
 }
 
 // ListRunsResponse ...
@@ -34,7 +35,8 @@ type RunWorkflowResponse struct {
 
 // GetRunLogRequest ...
 type GetRunLogRequest struct {
-	RunID string
+	RunID        string
+	WorkflowType string `json:"workflow_type"`
 }
 
 // GetRunLogResponse ...
@@ -49,7 +51,8 @@ type GetRunLogResponse struct {
 
 // CancelRunRequest ...
 type CancelRunRequest struct {
-	RunID string
+	RunID        string
+	WorkflowType string `json:"workflow_type"`
 }
 
 // CancelRunResponse ...

@@ -128,6 +128,7 @@ export default function WorkflowList() {
                 name={item.name}
                 status={item.latestVersion.status}
                 description={item.description}
+                language={item.latestVersion.language}
                 originUrl={item.latestVersion.metadata.gitURL}
                 onEdit={() => {
                   currentInfo.current = item;

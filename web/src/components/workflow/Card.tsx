@@ -41,6 +41,7 @@ interface Props {
   name: string;
   status: string;
   description: string;
+  language: string;
   originUrl: string;
   onEdit: () => void;
   onDelete: () => void;

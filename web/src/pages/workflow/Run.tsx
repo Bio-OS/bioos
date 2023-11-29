@@ -637,6 +637,8 @@ export default function WorkflowRun() {
                 </Typography.Paragraph>
                 <span>来源：</span>
                 <Link>{workflow?.latestVersion?.metadata?.gitURL}</Link>
+                <span>工作流类型：</span>
+                {workflow?.latestVersion?.language}
               </>
             }
             title={workflow?.name}

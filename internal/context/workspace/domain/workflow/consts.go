@@ -18,6 +18,13 @@ const (
 )
 
 const (
-	Language         = "WDL"
-	VersionRegexpStr = "^version\\s+([\\w-._]+)"
+	VersionRegexpStrWDL      = "^version\\s+([\\w-._]+)"
+	VersionRegexpStrNextflow = "^nextflow.enable.dsl\\s+=\\s+(\\d)"
+)
+
+const (
+	LanguageWDL       = "WDL"
+	LanguageNextflow  = "Nextflow"
+	LanguageCWL       = "CWL"
+	LanguageSnakemake = "Snakemake"
 )

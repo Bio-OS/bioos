@@ -15,9 +15,9 @@ RUN apt update \
      && rm -rf /var/lib/apt/lists/*
 ARG TARGETOS
 ARG TARGETARCH
-USER    nobody
+USER    root
 WORKDIR /app
-COPY --from=builder --chown=nobody:nogroup /go/src/github.com/Bio-OS/bioos/conf conf
+COPY --from=builder --chown=root:root /go/src/github.com/Bio-OS/bioos/conf conf
 COPY --from=builder /go/src/github.com/Bio-OS/bioos/_output/platforms/${TARGETOS}/${TARGETARCH}/apiserver .
 COPY --from=builder /go/src/github.com/Bio-OS/bioos/womtool.jar .
 ENTRYPOINT ["/app/apiserver"]
