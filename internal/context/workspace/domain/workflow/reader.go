@@ -6,15 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/Bio-OS/bioos/internal/context/workspace/interface/grpc/proto"
-	apperrors "github.com/Bio-OS/bioos/pkg/errors"
-	applog "github.com/Bio-OS/bioos/pkg/log"
-	"github.com/Bio-OS/bioos/pkg/schema"
-	"github.com/Bio-OS/bioos/pkg/utils"
-	"github.com/Bio-OS/bioos/pkg/utils/exec"
-	"github.com/PuerkitoBio/goquery"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"io/fs"
 	"os"
 	"path"
@@ -23,6 +14,17 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+
+	"github.com/Bio-OS/bioos/internal/context/workspace/interface/grpc/proto"
+	apperrors "github.com/Bio-OS/bioos/pkg/errors"
+	applog "github.com/Bio-OS/bioos/pkg/log"
+	"github.com/Bio-OS/bioos/pkg/schema"
+	"github.com/Bio-OS/bioos/pkg/utils"
+	"github.com/Bio-OS/bioos/pkg/utils/exec"
 )
 
 // ReaderOptions workflow reader options

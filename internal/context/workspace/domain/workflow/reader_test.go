@@ -2,13 +2,15 @@ package workflow
 
 import (
 	"context"
-	"github.com/Bio-OS/bioos/pkg/log"
-	"github.com/Bio-OS/bioos/pkg/utils/git"
-	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"os"
 	"os/exec"
 	"path"
 	"testing"
+
+	"github.com/cloudwego/hertz/pkg/common/test/assert"
+
+	"github.com/Bio-OS/bioos/pkg/log"
+	"github.com/Bio-OS/bioos/pkg/utils/git"
 )
 
 const (

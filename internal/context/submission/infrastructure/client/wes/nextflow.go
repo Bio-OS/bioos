@@ -3,11 +3,13 @@ package wes
 import (
 	"context"
 	"fmt"
-	applog "github.com/Bio-OS/bioos/pkg/log"
-	"github.com/go-resty/resty/v2"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/go-resty/resty/v2"
+
+	applog "github.com/Bio-OS/bioos/pkg/log"
 )
 
 const (

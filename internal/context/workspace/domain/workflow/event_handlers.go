@@ -3,7 +3,6 @@ package workflow
 import (
 	"context"
 	"fmt"
-	"github.com/Bio-OS/bioos/pkg/utils"
 	"os"
 	"path"
 	"time"
@@ -17,6 +16,7 @@ import (
 	apperrors "github.com/Bio-OS/bioos/pkg/errors"
 	applog "github.com/Bio-OS/bioos/pkg/log"
 	"github.com/Bio-OS/bioos/pkg/schema"
+	"github.com/Bio-OS/bioos/pkg/utils"
 	"github.com/Bio-OS/bioos/pkg/utils/git"
 	"github.com/Bio-OS/bioos/pkg/validator"
 )

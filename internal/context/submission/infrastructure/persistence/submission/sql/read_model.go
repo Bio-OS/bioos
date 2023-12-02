@@ -6,10 +6,9 @@ import (
 
 	"gorm.io/gorm"
 
-	applog "github.com/Bio-OS/bioos/pkg/log"
-
 	query "github.com/Bio-OS/bioos/internal/context/submission/application/query/submission"
 	apperrors "github.com/Bio-OS/bioos/pkg/errors"
+	applog "github.com/Bio-OS/bioos/pkg/log"
 	"github.com/Bio-OS/bioos/pkg/utils"
 )
 

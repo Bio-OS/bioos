@@ -3,7 +3,6 @@ package workflow
 import (
 	"context"
 	"fmt"
-	"github.com/Bio-OS/bioos/pkg/utils"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -15,6 +14,7 @@ import (
 	"github.com/Bio-OS/bioos/internal/bioctl/utils/formatter"
 	"github.com/Bio-OS/bioos/internal/bioctl/utils/prompt"
 	"github.com/Bio-OS/bioos/internal/context/workspace/domain/workflow"
+	"github.com/Bio-OS/bioos/pkg/utils"
 )
 
 // CreateOptions is an options to create a workflow.

@@ -5,9 +5,8 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 
-	runquery "github.com/Bio-OS/bioos/internal/context/submission/application/query/run"
-
 	command "github.com/Bio-OS/bioos/internal/context/submission/application/command/submission"
+	runquery "github.com/Bio-OS/bioos/internal/context/submission/application/query/run"
 	query "github.com/Bio-OS/bioos/internal/context/submission/application/query/submission"
 	apperrors "github.com/Bio-OS/bioos/pkg/errors"
 	applog "github.com/Bio-OS/bioos/pkg/log"
