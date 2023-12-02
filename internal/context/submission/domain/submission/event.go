@@ -2,8 +2,9 @@ package submission
 
 import (
 	"encoding/json"
-	"github.com/Bio-OS/bioos/pkg/utils"
 	"time"
+
+	"github.com/Bio-OS/bioos/pkg/utils"
 )
 
 const (
@@ -72,7 +73,7 @@ type CreateEvent struct {
 	Language                string
 }
 
-func NewCreateEvent(workspaceID, submissionID, workflowID, workflowVersionID string, language string, sourceDataModelID *string, sourceDataModelRowIDs []string) *CreateEvent {
+func NewCreateEvent(workspaceID, submissionID, workflowID, workflowVersionID, language string, sourceDataModelID *string, sourceDataModelRowIDs []string) *CreateEvent {
 	return &CreateEvent{
 		WorkspaceID:             workspaceID,
 		SubmissionID:            submissionID,
