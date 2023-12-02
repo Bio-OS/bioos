@@ -56,15 +56,9 @@ func (e *EventHandlerSubmitRun) Handle(ctx context.Context, event *submission.Ev
 	}
 
 	// not submit before
-	var workflowParams map[string]interface{}
-	if run.Outputs != nil {
-		workflowParams = mergeWorkflowParams(run.Inputs, *run.Outputs)
-	} else {
-		workflowParams = run.Inputs
-	}
 	resp, err := e.wes.RunWorkflow(ctx, &wes.RunWorkflowRequest{
 		RunRequest: wes.RunRequest{
-			WorkflowParams:      workflowParams,
+			WorkflowParams:      run.Inputs,
 			WorkflowType:        event.RunConfig.Language,
 			WorkflowTypeVersion: event.RunConfig.Version,
 			Tags: map[string]interface{}{
@@ -117,18 +111,4 @@ func (e *EventHandlerSubmitRun) republicCurrentEvent(ctx context.Context, event 
 		return apperrors.NewInternalError(err)
 	}
 	return nil
-}
-
-func mergeWorkflowParams(input, output map[string]interface{}) map[string]interface{} {
-	if output == nil {
-		return input
-	}
-	workflowParams := make(map[string]interface{}, len(input)+len(output))
-	for k, v := range input {
-		workflowParams[k] = v
-	}
-	for k, v := range output {
-		workflowParams[k] = v
-	}
-	return workflowParams
 }

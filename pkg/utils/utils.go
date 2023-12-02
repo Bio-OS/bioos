@@ -54,9 +54,9 @@ func FileExists(filepath string) bool {
 	return !fileInfo.IsDir()
 }
 
-// MergeMapInterface ...
-func MergeMapInterface(maps ...map[string]interface{}) map[string]interface{} {
-	var ret map[string]interface{}
+// MergeMap ...
+func MergeMap[K comparable, V any](maps ...map[K]V) map[K]V {
+	var ret map[K]V
 	for _, m := range maps {
 		if m == nil {
 			continue

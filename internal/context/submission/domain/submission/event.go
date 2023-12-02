@@ -159,7 +159,7 @@ type EventCreateRuns struct {
 }
 
 func (e *EventCreateRuns) InAndOutTemplate() map[string]interface{} {
-	return utils.MergeMapInterface(e.InputsTemplate, e.OutputsTemplate)
+	return utils.MergeMap(e.InputsTemplate, e.OutputsTemplate)
 }
 
 type RunConfig struct {
