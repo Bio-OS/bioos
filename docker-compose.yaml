@@ -55,7 +55,7 @@ services:
       - bioos-storage:/nfs/bioos-storage
     networks:
       - bioos
-  ga4gh-wes:
+  ga4gh-wes-nextflow:
     image: ga4gh/ga4gh-starter-kit-wes:0.3.2-nextflow
     restart: always
     ports:

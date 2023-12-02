@@ -289,7 +289,7 @@ func validateWorkflow(workflow schema.WorkflowTypedSchema) error {
 	if !validator.ValidateResNameInString(workflow.Name) {
 		return fmt.Errorf("workflow name[%s] not passed the validation ", workflow.Name)
 	}
-	if utils.In(workflow.Language, SupportedLanguages()) {
+	if utils.In(workflow.Language, SupportedLanguages) {
 		return fmt.Errorf("workflow language [%s] not passed the validation ", workflow.Language)
 	}
 	//TODO Validation will be consistent with that of commercial version in the future

@@ -36,7 +36,7 @@ func DeleteStrSliceElms(sl []string, elms ...string) []string {
 }
 
 // In ...
-func In(elm string, elms []string) bool {
+func In[T comparable](elm T, elms []T) bool {
 	for _, item := range elms {
 		if elm == item {
 			return true

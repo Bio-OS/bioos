@@ -55,7 +55,7 @@ func (o *CreateOptions) GetPromptOptions() error {
 		return err
 	}
 
-	o.Language, err = prompt.PromptStringSelect("Language", 10, workflow.SupportedLanguages())
+	o.Language, err = prompt.PromptStringSelect("Language", 10, workflow.SupportedLanguages)
 	if err != nil {
 		return err
 	}
@@ -142,7 +142,7 @@ func (o *CreateOptions) Validate() error {
 	if err := o.options.Validate(); err != nil {
 		return err
 	}
-	if !utils.In(o.Language, workflow.SupportedLanguages()) {
+	if !utils.In(o.Language, workflow.SupportedLanguages) {
 		return fmt.Errorf("unspport language: %s", o.Language)
 	}
 	if o.Source != workflow.WorkflowSourceGit && o.Source != workflow.WorkflowSourceFile {
