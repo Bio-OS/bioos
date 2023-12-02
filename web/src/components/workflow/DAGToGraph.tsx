@@ -18,12 +18,11 @@
 
 import { memo, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
-import svgPanZoom from 'svg-pan-zoom';
-import Viz from 'viz.js';
-import { Module, render } from 'viz.js/full.render';
 import { Popover } from '@arco-design/web-react';
 
 import Icon from 'components/Icon';
+import NextflowGraph from 'components/workflow/graph/NextflowGraph';
+import WDLGraph from 'components/workflow/graph/WDLGraph';
 import { Z_INDEX } from 'helpers/constants';
 
 import styles from './style.less';
@@ -51,31 +50,12 @@ const ZOOM_ACTIONS = [
   },
 ];
 
-let viz = new Viz({ Module, render });
-
-function DAGToGraph({ data }: { data: string }) {
+function DAGToGraph({ data, language }: { data: string; language: string }) {
   const graphRef = useRef<HTMLDivElement>(null);
   const zoomRef = useRef<SvgPanZoom.Instance>(null);
   const [showFullScreen, setShowFullScreen] = useState(false);
 
   if (!data) return null;
-
-  useEffect(() => {
-    viz
-      ?.renderSVGElement(data, { yInvert: false })
-      .then(result => {
-        graphRef?.current?.append(result);
-        zoomRef.current = svgPanZoom(result, {
-          zoomEnabled: true,
-          fit: true,
-          center: true,
-        });
-      })
-      .catch(error => {
-        viz = new Viz({ Module, render });
-        console.error(error);
-      });
-  }, []);
 
   function resetSvg() {
     zoomRef.current.resetZoom();
@@ -129,7 +109,7 @@ function DAGToGraph({ data }: { data: string }) {
         styles.graphWrap,
         { [styles.fullScreen]: showFullScreen },
       ])}
-      style={{ zIndex: Z_INDEX.modal }}
+      style={{ zIndex: Z_INDEX.modal, cursor: 'pointer' }}
     >
       <div ref={graphRef}>
         <div className={styles.actions}>
@@ -139,6 +119,12 @@ function DAGToGraph({ data }: { data: string }) {
             </Popover>
           ))}
         </div>
+
+        {language === 'WDL' ? (
+          <WDLGraph data={data} container={graphRef} zoom={zoomRef} />
+        ) : (
+          <NextflowGraph data={data} zoom={zoomRef} />
+        )}
       </div>
     </div>
   );

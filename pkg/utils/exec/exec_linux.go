@@ -27,14 +27,15 @@ import (
 	"time"
 )
 
-func Exec(ctx context.Context, timeout time.Duration, name string, arg ...string) ([]byte, error) {
+func Exec(ctx context.Context, timeout time.Duration, workdir, name string, arg ...string) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, name, arg...)
+	cmd.Dir = workdir
 
 	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setpgid: true,
+		Setpgid: false,
 		//	Credential: &syscall.Credential{Uid: uint32(1), Gid: uint32(1)},
 		//	Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS | syscall.CLONE_NEWIPC | syscall.CLONE_NEWNET,
 	}

@@ -11,6 +11,9 @@ mysql-data
 *.sqlite3
 .vscode
 
+conf/apiserver-local.yaml
+conf/**-local.yaml
+docker-compose-local.yaml
 web/build/
 web/node_modules/
 web/.eslintcache

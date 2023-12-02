@@ -14,6 +14,7 @@ type CreateSubmissionCommand struct {
 	WorkflowID     string  `validate:"required"`
 	Description    *string `validate:"omitempty,submissionDesc"`
 	Type           string  `validate:"required,oneof=dataModel filePath"`
+	Language       string  `validate:"required,oneof=WDL Nextflow"`
 	Entity         *Entity
 	ExposedOptions ExposedOptions
 	InOutMaterial  *InOutMaterial

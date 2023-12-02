@@ -15,6 +15,7 @@ func createSubmissionVoToDto(req CreateSubmissionRequest) *submissioncommand.Cre
 		WorkflowID:     req.WorkflowID,
 		Description:    req.Description,
 		Type:           req.Type,
+		Language:       req.Language,
 		Entity:         commandEntityVoToDto(req.Entity),
 		ExposedOptions: commandExposedOptionsVoToDto(req.ExposedOptions),
 		InOutMaterial:  commandInOutMaterialVoToDto(req.InOutMaterial),
@@ -89,6 +90,9 @@ func listSubmissionsVoToDto(req ListSubmissionsRequest) (*submissionquery.ListQu
 	if len(req.Status) != 0 {
 		filter.Status = req.Status
 	}
+	if len(req.Language) != 0 {
+		filter.Language = req.Language
+	}
 	return &submissionquery.ListQuery{
 		WorkspaceID: req.WorkspaceID,
 		Pg:          pg,
@@ -102,6 +106,7 @@ func submissionItemDtoToVo(item *submissionquery.SubmissionItem) SubmissionItem 
 		Name:            item.Name,
 		Description:     item.Description,
 		Type:            item.Type,
+		Language:        item.Language,
 		Status:          item.Status,
 		StartTime:       item.StartTime,
 		FinishTime:      item.FinishTime,

@@ -7,6 +7,15 @@ import (
 	"github.com/Bio-OS/bioos/pkg/utils"
 )
 
+// Language workflow language
+type Language string
+
+// SupportedLanguages ...
+var SupportedLanguages = []string{
+	string(LanguageWDL),
+	string(LanguageNextflow),
+}
+
 // Workflow workflow entity
 type Workflow struct {
 	// ID is the unique identifier of the workflow
@@ -21,7 +30,7 @@ type Workflow struct {
 	LatestVersion string
 	// Versions is the versions of the workflow
 	Versions map[string]*WorkflowVersion
-	// CreatedAt is the create time of workflow version
+	// CreatedAt is the creation time of workflow version
 	CreatedAt time.Time
 	// UpdatedAt is the update time of workflow version
 	UpdatedAt time.Time
@@ -32,6 +41,7 @@ func (w *Workflow) UpdateName(name string) {
 		w.Name = name
 	}
 }
+
 func (w *Workflow) UpdateDescription(description string) {
 	if w.Description != description {
 		w.Description = description

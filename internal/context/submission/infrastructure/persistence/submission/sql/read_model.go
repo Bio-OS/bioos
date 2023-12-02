@@ -6,10 +6,9 @@ import (
 
 	"gorm.io/gorm"
 
-	applog "github.com/Bio-OS/bioos/pkg/log"
-
 	query "github.com/Bio-OS/bioos/internal/context/submission/application/query/submission"
 	apperrors "github.com/Bio-OS/bioos/pkg/errors"
+	applog "github.com/Bio-OS/bioos/pkg/log"
 	"github.com/Bio-OS/bioos/pkg/utils"
 )
 
@@ -77,7 +76,9 @@ func listSubmissionsFilter(db *gorm.DB, filter *query.ListSubmissionsFilter) *go
 	if len(filter.WorkflowID) != 0 {
 		db = db.Where("workflow_id = ?", filter.WorkflowID)
 	}
-
+	if len(filter.Language) > 0 {
+		db = db.Where("language IN ?", filter.Language)
+	}
 	return db
 }
 

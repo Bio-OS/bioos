@@ -113,3 +113,14 @@ export const RUN_STATUS_TAG = [
 ];
 
 export const GLOBAL_CONFIG_STORAGE_KEY = 'global-config-storage-key';
+
+export const LANGUAGE_TYPES = [
+  {
+    'text': 'WDL',
+    'value': 'WDL',
+  },
+  {
+    'text': 'Nextflow',
+    'value': 'Nextflow',
+  },
+]

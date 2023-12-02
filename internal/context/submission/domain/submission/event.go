@@ -3,6 +3,8 @@ package submission
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/Bio-OS/bioos/pkg/utils"
 )
 
 const (
@@ -68,9 +70,10 @@ type CreateEvent struct {
 	SourceWorkflowVersionID string
 	SourceDataModelID       *string
 	SourceDataModelRowIDs   []string
+	Language                string
 }
 
-func NewCreateEvent(workspaceID, submissionID, workflowID, workflowVersionID string, sourceDataModelID *string, sourceDataModelRowIDs []string) *CreateEvent {
+func NewCreateEvent(workspaceID, submissionID, workflowID, workflowVersionID, language string, sourceDataModelID *string, sourceDataModelRowIDs []string) *CreateEvent {
 	return &CreateEvent{
 		WorkspaceID:             workspaceID,
 		SubmissionID:            submissionID,
@@ -78,6 +81,7 @@ func NewCreateEvent(workspaceID, submissionID, workflowID, workflowVersionID str
 		SourceWorkflowVersionID: workflowVersionID,
 		SourceDataModelID:       sourceDataModelID,
 		SourceDataModelRowIDs:   sourceDataModelRowIDs,
+		Language:                language,
 	}
 }
 
@@ -148,11 +152,15 @@ type EventCreateRuns struct {
 	SubmissionID    string
 	InputsTemplate  map[string]interface{}
 	OutputsTemplate map[string]interface{}
-	SubmisstionType string // filePath or dataModel
+	SubmissionType  string // filePath or dataModel
 	DataModelID     *string
 	DataModelRowIDs []string
 
 	RunConfig *RunConfig
+}
+
+func (e *EventCreateRuns) InAndOutTemplate() map[string]interface{} {
+	return utils.MergeMap(e.InputsTemplate, e.OutputsTemplate)
 }
 
 type RunConfig struct {
@@ -161,13 +169,14 @@ type RunConfig struct {
 	MainWorkflowFilePath     string
 	WorkflowEngineParameters map[string]interface{}
 	Version                  string
+	WorkflowURL              string
 }
 
 func NewEventCreateRuns(workspaceID, submissionID, submissionType string, inputs, outputs map[string]interface{}, dataModelID *string, DataModelRowIDs []string, runConfig *RunConfig) *EventCreateRuns {
 	return &EventCreateRuns{
 		WorkspaceID:     workspaceID,
 		SubmissionID:    submissionID,
-		SubmisstionType: submissionType,
+		SubmissionType:  submissionType,
 		InputsTemplate:  inputs,
 		OutputsTemplate: outputs,
 		DataModelID:     dataModelID,
@@ -202,6 +211,10 @@ type EventSubmitRun struct {
 	RunConfig *RunConfig
 }
 
+func (e *EventSubmitRun) WorkflowType() string {
+	return e.RunConfig.Language
+}
+
 func NewEventSubmitRun(runID string, runConfig *RunConfig) *EventSubmitRun {
 	return &EventSubmitRun{
 		RunID:     runID,
@@ -234,6 +247,7 @@ type EventRun struct {
 	RunID         string
 	EventTyp      string
 	DelayDuration time.Duration
+	WorkflowType  string
 }
 
 func (e *EventRun) EventType() string {
@@ -265,11 +279,12 @@ func NewEventDeleteRun(runID string) *EventRun {
 	}
 }
 
-func NewEventSyncRun(runID string, delayDuration time.Duration) *EventRun {
+func NewEventSyncRun(runID string, workflowType string, delayDuration time.Duration) *EventRun {
 	return &EventRun{
 		RunID:         runID,
 		EventTyp:      SyncRun,
 		DelayDuration: delayDuration,
+		WorkflowType:  workflowType,
 	}
 }
 

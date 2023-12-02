@@ -27,10 +27,11 @@ import (
 	"time"
 )
 
-func Exec(ctx context.Context, timeout time.Duration, name string, arg ...string) ([]byte, error) {
+func Exec(ctx context.Context, timeout time.Duration, workdir, name string, arg ...string) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, name, arg...)
+	cmd.Dir = workdir
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		HideWindow: true,
 	}

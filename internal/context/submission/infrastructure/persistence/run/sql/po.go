@@ -15,6 +15,7 @@ type Run struct {
 	Status       string                  `gorm:"type:varchar(32);not null"`
 	Log          *string                 `gorm:"type:longtext"`
 	Message      *string                 `gorm:"type:longtext"`
+	WorkflowType string                  `gorm:"type:varchar(16);not null"`
 	StartTime    time.Time
 	FinishTime   *time.Time
 }

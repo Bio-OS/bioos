@@ -55,6 +55,19 @@ services:
       - bioos-storage:/nfs/bioos-storage
     networks:
       - bioos
+  ga4gh-wes-nextflow:
+    image: ga4gh/ga4gh-starter-kit-wes:0.3.2-nextflow
+    restart: always
+    ports:
+      - "7500:7500"
+      - "7501:7501"
+    volumes:
+      - /etc/hosts:/etc/hosts
+      - /var/run/docker.sock:/var/run/docker.sock
+      - bioos-storage:/nfs/bioos-storage
+      - ./conf/ga4gh-config.yaml:/config/config.yml
+    working_dir: /nfs/bioos-storage
+    command: ["-c", "/config/config.yml"]
 networks:
   bioos:
     driver: bridge

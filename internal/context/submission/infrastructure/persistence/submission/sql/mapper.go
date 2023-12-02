@@ -19,6 +19,7 @@ func SubmissionPOToSubmissionDTO(ctx context.Context, submission *Submission) (*
 		Description:       submission.Description,
 		Type:              submission.Type,
 		Status:            submission.Status,
+		Language:          submission.Language,
 		StartTime:         submission.StartTime.Unix(),
 		WorkflowID:        submission.WorkflowID,
 		WorkflowVersionID: submission.WorkflowVersionID,
@@ -127,6 +128,7 @@ func SubmissionDOToSubmissionPO(ctx context.Context, sb *submission.Submission) 
 			ReadFromCache: sb.ExposedOptions.ReadFromCache,
 		},
 		Status:     sb.Status,
+		Language:   sb.Language,
 		StartTime:  sb.StartTime,
 		FinishTime: sb.FinishTime,
 	}, nil

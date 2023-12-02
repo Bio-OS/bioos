@@ -19,6 +19,7 @@ type CreateRunParam struct {
 	Message      *string
 	StartTime    time.Time
 	FinishTime   *time.Time
+	WorkflowType string
 }
 
 type CreateTaskParam struct {
@@ -71,6 +72,7 @@ func (fac *Factory) CreateWithRunParam(param CreateRunParam) (*Run, error) {
 		Message:      param.Message,
 		StartTime:    param.StartTime,
 		FinishTime:   param.FinishTime,
+		WorkflowType: param.WorkflowType,
 	}, nil
 }
 

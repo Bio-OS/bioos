@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-import { memo, useMemo, useRef } from 'react';
+import { memo, useMemo, useRef, useState } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { useRouteMatch } from 'react-router-dom';
 import { FormApi } from 'final-form';
 import {
   Alert,
   Form as ArcoForm,
-  Form,
   Input,
   Message,
   Modal,
   Popover,
+  Radio,
 } from '@arco-design/web-react';
 import { IconQuestionCircle } from '@arco-design/web-react/icon';
 
@@ -41,6 +41,8 @@ import { HandlersWorkflowItem } from 'api/index';
 import { ToastLimitText } from '..';
 
 import style from './style.less';
+
+const DEFAULT_LANGUAGE = 'WDL';
 
 interface Props {
   visible: boolean;
@@ -60,12 +62,15 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
       workflowInfo
         ? {
             name: workflowInfo.name,
+            language: workflowInfo.latestVersion.language,
             url: workflowInfo.latestVersion.metadata.gitURL,
             tag: workflowInfo.latestVersion.metadata.gitTag,
             mainWorkflowPath: workflowInfo.latestVersion.mainWorkflowPath,
             description: workflowInfo.description,
           }
-        : undefined,
+        : {
+            language: DEFAULT_LANGUAGE,
+          },
     [workflowInfo],
   );
 
@@ -177,9 +182,23 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
               >
                 <Input placeholder="请输入" allowClear={true} />
               </FieldItem>
-              <Form.Item label="规范">
-                <span>WDL</span>
-              </Form.Item>
+              <FieldItem
+                name="language"
+                label="规范"
+                validate={[
+                  (val: string | undefined) => {
+                    if (val === undefined) {
+                      return '请选择 workflow 规范';
+                    }
+                    return;
+                  },
+                ]}
+              >
+                <Radio.Group type="button" defaultValue={DEFAULT_LANGUAGE}>
+                  <Radio value="WDL">WDL</Radio>
+                  <Radio value="Nextflow">Nextflow</Radio>
+                </Radio.Group>
+              </FieldItem>
               <FieldItem
                 name="url"
                 label="Git 地址"
@@ -251,8 +270,7 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
 }
 
 export default memo(ImportModal, (pre, next) => {
-  if (pre.visible !== next.visible || pre.workflowInfo !== next.workflowInfo) {
-    return false;
-  }
-  return true;
+  return !(
+    pre.visible !== next.visible || pre.workflowInfo !== next.workflowInfo
+  );
 });

@@ -6,6 +6,7 @@ type CreateSubmissionRequest struct {
 	WorkflowID     string         `json:"workflowID"`
 	Description    *string        `json:"description"`
 	Type           string         `json:"type"`
+	Language       string         `json:"language"`
 	Entity         *Entity        `json:"entity"`
 	ExposedOptions ExposedOptions `json:"exposedOptions"`
 	InOutMaterial  *InOutMaterial `json:"inOutMaterial"`
@@ -59,6 +60,7 @@ type ListSubmissionsRequest struct {
 	Exact       bool     `query:"exact"`
 	WorkflowID  string   `query:"workflowID"`
 	Status      []string `query:"status"`
+	Language    []string `query:"language"`
 	IDs         []string `query:"ids"`
 }
 
@@ -75,6 +77,7 @@ type SubmissionItem struct {
 	Description     *string         `json:"description"`
 	Type            string          `json:"type"`
 	Status          string          `json:"status"`
+	Language        string          `json:"language"`
 	StartTime       int64           `json:"startTime"`
 	FinishTime      *int64          `json:"finishTime"`
 	Duration        int64           `json:"duration"`

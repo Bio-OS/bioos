@@ -46,7 +46,7 @@ go.lint: tools.verify.golangci-lint
 	@golangci-lint run -c $(ROOT_DIR)/.golangci.yaml $(ROOT_DIR)/...
 
 .PHONY: go.run
-go.run: tools.install.womtool generate.certs $(addprefix go.run., $(addprefix $(PLATFORM)., apiserver))
+go.run: tools.install.womtool tools.install.nextflow generate.certs $(addprefix go.run., $(addprefix $(PLATFORM)., apiserver))
 
 .PHONY: generate.certs
 generate.certs:

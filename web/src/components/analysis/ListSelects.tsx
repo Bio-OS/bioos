@@ -19,28 +19,35 @@
 import React, { useEffect } from 'react';
 import { Select, Space, Typography } from '@arco-design/web-react';
 
-import { ANALYSIS_STATUS, RUN_STATUS_TAG } from 'helpers/constants';
+import { ANALYSIS_STATUS, RUN_STATUS_TAG, LANGUAGE_TYPES } from 'helpers/constants';
 
 import styles from './analysis.less';
 
 interface ListSelectProps {
   showStatusFlag?: boolean;
   showWorkflowFlag?: boolean;
+  showLanguageFlag?: boolean;
   statusID?: string;
   workflowID?: string;
+  language?: string;
   listWorkFlowItems?: any;
   onChangeStatus?: (value: string) => void;
   onChangeWorkflow?: (value: string) => void;
+  onChangeLanguage?: (value: string) => void;
+
 }
 
 const ListSelects: React.FC<ListSelectProps> = ({
   showStatusFlag = true,
   showWorkflowFlag = false,
+  showLanguageFlag= false,
   statusID,
   workflowID,
+  language,
   listWorkFlowItems,
   onChangeStatus,
   onChangeWorkflow,
+  onChangeLanguage,
 }) => (
   <Space size={12}>
     {showStatusFlag && (
@@ -111,6 +118,26 @@ const ListSelects: React.FC<ListSelectProps> = ({
           </Select.Option>
         ))}
       </Select>
+    )}
+    {showLanguageFlag && (
+        <Select
+            placeholder={'请选择'}
+            addBefore={'规范'}
+            value={language}
+            className={styles.historySelect}
+            onChange={value => {
+              onChangeLanguage && onChangeLanguage(value);
+            }}
+            triggerProps={{
+              autoFitPosition: false,
+            }}
+            notFoundContent={'暂无数据'}
+        >
+          <Select.Option value="All">全部</Select.Option>
+          {LANGUAGE_TYPES.map(({value, text}) => (
+            <Select.Option value={value} key={value}>{text}</Select.Option>
+          ))}
+        </Select>
     )}
   </Space>
 );

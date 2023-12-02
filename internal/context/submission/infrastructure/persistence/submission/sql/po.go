@@ -26,6 +26,7 @@ type Submission struct {
 	Outputs           map[string]interface{} `gorm:"serializer:json"`
 	ExposedOptions    ExposedOptions         `gorm:"serializer:json"`
 	Status            string                 `gorm:"type:varchar(32);not null"`
+	Language          string                 `gorm:"type:varchar(16);not null"`
 	StartTime         time.Time              `gorm:"not null"`
 	FinishTime        *time.Time
 	UserID            *int64

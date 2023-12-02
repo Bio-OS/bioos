@@ -13,6 +13,7 @@ type Submission struct {
 	DataModelID       *string
 	DataModelRowIDs   []string
 	Type              string
+	Language          string
 	Inputs            map[string]interface{}
 	Outputs           map[string]interface{}
 	ExposedOptions    ExposedOptions

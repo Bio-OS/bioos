@@ -17,6 +17,7 @@ func createWorkflowVoToDto(req *pb.CreateWorkflowRequest) *command.CreateCommand
 		Language:         req.GetLanguage(),
 		Source:           req.GetSource(),
 		Tag:              req.GetTag(),
+		URL:              req.GetUrl(),
 		Token:            req.GetToken(),
 		MainWorkflowPath: req.GetMainWorkflowPath(),
 		ID:               req.GetId(),

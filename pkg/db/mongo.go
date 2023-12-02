@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -90,16 +89,18 @@ func (o *MongoOptions) GetDBInstance(ctx context.Context) (*mongo.Client, *mongo
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	mongoURL := fmt.Sprintf("mongodb://%s:%s/?authSource=admin",
-		viper.GetString(o.Host),
-		viper.GetString(o.Port),
+	mongoURL := fmt.Sprintf("mongodb://%s:%s/%s?authSource=admin",
+		o.Host,
+		o.Port,
+		o.Database,
 	)
 	if o.Username != "" && o.Password != "" {
-		mongoURL = fmt.Sprintf("mongodb://%s:%s@%s:%s/?authSource=admin",
-			viper.GetString(o.Username),
-			viper.GetString(o.Password),
-			viper.GetString(o.Host),
-			viper.GetString(o.Port),
+		mongoURL = fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=admin",
+			o.Username,
+			o.Password,
+			o.Host,
+			o.Port,
+			o.Database,
 		)
 	}
 
@@ -123,5 +124,5 @@ func (o *MongoOptions) GetDBInstance(ctx context.Context) (*mongo.Client, *mongo
 		return nil, nil, err
 	}
 
-	return client, client.Database(viper.GetString(o.Database)), nil
+	return client, client.Database(o.Database), nil
 }

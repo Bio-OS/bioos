@@ -32,6 +32,7 @@ import {
   Switch,
   Tabs,
   Typography,
+  Tag,
 } from '@arco-design/web-react';
 import {
   IconCaretRight,
@@ -308,6 +309,7 @@ export default function WorkflowRun() {
       workspaceID: workspaceId,
       workflowID: workflowId,
       type: isPath ? 'filePath' : 'dataModel',
+      language: workflow?.latestVersion?.language,
       exposedOptions: {
         readFromCache: callCaching,
       },
@@ -623,20 +625,37 @@ export default function WorkflowRun() {
             }
             description={
               <>
-                <span className="">描述：</span>
-                <Typography.Paragraph
-                  className="colorGrey mr20"
-                  style={{ maxWidth: 100 }}
-                  ellipsis={{
-                    showTooltip: {
-                      type: 'popover',
-                    },
-                  }}
-                >
-                  {workflow?.description}
-                </Typography.Paragraph>
-                <span>来源：</span>
-                <Link>{workflow?.latestVersion?.metadata?.gitURL}</Link>
+                {workflow?.description && <>
+                  <span className="">描述：</span>
+                  <Typography.Paragraph
+                      className="colorGrey mr20"
+                      style={{ maxWidth: 100 }}
+                      ellipsis={{
+                        showTooltip: {
+                          type: 'popover',
+                        },
+                      }}
+                  >
+                    {workflow?.description}
+                  </Typography.Paragraph>
+                </>}
+
+                {workflow?.latestVersion?.language && <>
+                  <span>规范：</span>
+                  <Typography.Paragraph
+                      className="colorGrey mr20"
+                      style={{ maxWidth: 200 }}
+                  >
+                    <Tag color="arcoblue">{workflow?.latestVersion?.language}</Tag>
+                  </Typography.Paragraph>
+
+                </>}
+
+                {workflow?.latestVersion?.metadata?.gitURL && <>
+                  <span>来源：</span>
+                  <Link>{workflow?.latestVersion?.metadata?.gitURL}</Link>
+                </>}
+
               </>
             }
             title={workflow?.name}
@@ -757,7 +776,7 @@ export default function WorkflowRun() {
                     selectOptions={options.workspaceModel}
                   />
                 </Tabs.TabPane>
-                <Tabs.TabPane key="ouput" title="输出参数">
+                <Tabs.TabPane key="output" title="输出参数">
                   <RunParams
                     type="output"
                     isPath={false}
@@ -776,7 +795,7 @@ export default function WorkflowRun() {
                   />
                 </Tabs.TabPane>
                 <Tabs.TabPane key="graph" title="Graph" style={{ height: 700 }}>
-                  <DAGToGraph data={workflow?.latestVersion?.graph} />
+                  <DAGToGraph data={workflow?.latestVersion?.graph} language={workflow?.latestVersion?.language}/>
                 </Tabs.TabPane>
               </Tabs>
             </div>

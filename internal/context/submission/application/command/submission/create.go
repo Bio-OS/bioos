@@ -50,6 +50,7 @@ func (c *createSubmissionHandler) Handle(ctx context.Context, cmd *CreateSubmiss
 		WorkflowID:  cmd.WorkflowID,
 		WorkspaceID: cmd.WorkspaceID,
 		Type:        cmd.Type,
+		Language:    cmd.Language,
 		ExposedOptions: submission.ExposedOptions{
 			ReadFromCache: cmd.ExposedOptions.ReadFromCache,
 		},

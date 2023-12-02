@@ -5,9 +5,8 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 
-	runquery "github.com/Bio-OS/bioos/internal/context/submission/application/query/run"
-
 	command "github.com/Bio-OS/bioos/internal/context/submission/application/command/submission"
+	runquery "github.com/Bio-OS/bioos/internal/context/submission/application/query/run"
 	query "github.com/Bio-OS/bioos/internal/context/submission/application/query/submission"
 	apperrors "github.com/Bio-OS/bioos/pkg/errors"
 	applog "github.com/Bio-OS/bioos/pkg/log"
@@ -158,27 +157,28 @@ func CheckSubmission(ctx context.Context, c *app.RequestContext, handler query.C
 
 // ListSubmissions list submissions
 //
-//	@Summary		use to list submissions
-//	@Description	list submissions
-//	@Tags			submission
-//	@Accept			application/json
-//	@Produce		application/json
-//	@Router			/workspace/{workspace_id}/submission [get]
-//	@Security		basicAuth
-//	@Param			workspace_id	path		string		true	"workspace id"
-//	@Param			page			query		int			false	"query page"
-//	@Param			size			query		int			false	"query size"
-//	@Param			orderBy			query		string		false	"query order, just like field1,field2:desc"
-//	@Param			searchWord		query		string		false	"query searchWord"
-//	@Param			exact			query		bool		false	"query exact"
-//	@Param			ids				query		[]string	false	"query ids"
-//	@Param			workflowID		query		string		false	"workflow id"
-//	@Param			status			query		[]string	false	"query status"
-//	@Success		200				{object}	ListSubmissionsResponse
-//	@Failure		400				{object}	apperrors.AppError	"invalid param"
-//	@Failure		401				{object}	apperrors.AppError	"unauthorized"
-//	@Failure		403				{object}	apperrors.AppError	"forbidden"
-//	@Failure		500				{object}	apperrors.AppError	"internal system error"
+//		@Summary		use to list submissions
+//		@Description	list submissions
+//		@Tags			submission
+//		@Accept			application/json
+//		@Produce		application/json
+//		@Router			/workspace/{workspace_id}/submission [get]
+//		@Security		basicAuth
+//		@Param			workspace_id	path		string		true	"workspace id"
+//		@Param			page			query		int			false	"query page"
+//		@Param			size			query		int			false	"query size"
+//		@Param			orderBy			query		string		false	"query order, just like field1,field2:desc"
+//		@Param			searchWord		query		string		false	"query searchWord"
+//		@Param			exact			query		bool		false	"query exact"
+//		@Param			ids				query		[]string	false	"query ids"
+//		@Param			workflowID		query		string		false	"workflow id"
+//		@Param			status			query		[]string	false	"query status"
+//	 @Param			language		query		[]string	false	"query language"
+//		@Success		200				{object}	ListSubmissionsResponse
+//		@Failure		400				{object}	apperrors.AppError	"invalid param"
+//		@Failure		401				{object}	apperrors.AppError	"unauthorized"
+//		@Failure		403				{object}	apperrors.AppError	"forbidden"
+//		@Failure		500				{object}	apperrors.AppError	"internal system error"
 func ListSubmissions(ctx context.Context, c *app.RequestContext, subHandler query.ListHandler, runHandler runquery.CountRunsResultHandler) {
 	var req ListSubmissionsRequest
 	err := c.Bind(&req)

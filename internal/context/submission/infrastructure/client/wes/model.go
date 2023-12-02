@@ -10,9 +10,10 @@ import (
 
 // ListRunsRequest ...
 type ListRunsRequest struct {
-	PageSize  *int64
-	PageToken *string
-	TagFilter *string
+	WorkflowType string
+	PageSize     *int64
+	PageToken    *string
+	TagFilter    *string
 }
 
 // ListRunsResponse ...
@@ -34,7 +35,8 @@ type RunWorkflowResponse struct {
 
 // GetRunLogRequest ...
 type GetRunLogRequest struct {
-	RunID string
+	WorkflowType string
+	RunID        string
 }
 
 // GetRunLogResponse ...
@@ -49,7 +51,8 @@ type GetRunLogResponse struct {
 
 // CancelRunRequest ...
 type CancelRunRequest struct {
-	RunID string
+	WorkflowType string
+	RunID        string
 }
 
 // CancelRunResponse ...
@@ -63,7 +66,10 @@ type RunRequest struct {
 	WorkflowType             string                 `json:"workflow_type"`
 	WorkflowTypeVersion      string                 `json:"workflow_type_version"`
 	Tags                     map[string]interface{} `json:"tags"`
+	WorkflowEngine           string                 `json:"workflow_engine"`
+	WorkflowEngineVersion    string                 `json:"workflow_engine_version"`
 	WorkflowEngineParameters map[string]interface{} `json:"workflow_engine_parameters"`
+	WorkflowURL              string                 `json:"workflow_url"`
 }
 
 // RunStatus ...

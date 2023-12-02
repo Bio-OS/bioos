@@ -1,17 +1,10 @@
 package workflow
 
 import (
-	"bufio"
 	"context"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
-	"regexp"
-	"sort"
-	"strings"
 	"time"
 
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -23,7 +16,7 @@ import (
 	apperrors "github.com/Bio-OS/bioos/pkg/errors"
 	applog "github.com/Bio-OS/bioos/pkg/log"
 	"github.com/Bio-OS/bioos/pkg/schema"
-	"github.com/Bio-OS/bioos/pkg/utils/exec"
+	"github.com/Bio-OS/bioos/pkg/utils"
 	"github.com/Bio-OS/bioos/pkg/utils/git"
 	"github.com/Bio-OS/bioos/pkg/validator"
 )
@@ -33,15 +26,25 @@ const (
 )
 
 type WorkflowVersionAddedHandler struct {
-	repo        Repository
-	womtoolPath string
+	repo    Repository
+	readers map[Language]Reader
 }
 
-func NewWorkflowVersionAddedHandler(repo Repository, womtoolPath string) *WorkflowVersionAddedHandler {
+func NewWorkflowVersionAddedHandler(repo Repository, readerOptions *ReaderOptions) *WorkflowVersionAddedHandler {
 	return &WorkflowVersionAddedHandler{
-		repo:        repo,
-		womtoolPath: womtoolPath,
+		repo: repo,
+		readers: map[Language]Reader{
+			LanguageWDL: &WDLReader{readerOptions},
+			LanguageNextflow: &NextflowReader{
+				inputParams:  []WorkflowParam{},
+				outputParams: []WorkflowParam{},
+			},
+		},
 	}
+}
+
+func (h *WorkflowVersionAddedHandler) getWorkflowReader(language Language) Reader {
+	return h.readers[language]
 }
 
 func (h *WorkflowVersionAddedHandler) Handle(ctx context.Context, event *WorkflowVersionAddedEvent) (err error) {
@@ -113,194 +116,38 @@ func (h *WorkflowVersionAddedHandler) handle(ctx context.Context, workflowID str
 		return apperrors.NewInternalError(err)
 	}
 	// parse workfile version
-	languageVersion, err := h.parseWorkflowVersion(ctx, mainWorkflowPath)
+	languageVersion, err := h.getWorkflowReader(Language(version.Language)).ParseWorkflowVersion(ctx, mainWorkflowPath)
 	if err != nil {
 		return apperrors.NewInternalError(err)
 	}
-	version.Language = Language
 	version.LanguageVersion = languageVersion
 
 	// step3: validate and save workflow files
-	if err := h.validateWorkflowFiles(ctx, version, dir, version.MainWorkflowPath); err != nil {
+	if err := h.getWorkflowReader(Language(version.Language)).ValidateWorkflowFiles(ctx, version, dir, version.MainWorkflowPath); err != nil {
 		return err
 	}
 
 	// step4: get workflow inputs
-	inputs, err := h.getWorkflowInputs(ctx, mainWorkflowPath)
+	inputs, err := h.getWorkflowReader(Language(version.Language)).GetWorkflowInputs(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}
 	version.Inputs = inputs
 
 	// step5: get workflow outputs
-	outputs, err := h.getWorkflowOutputs(ctx, mainWorkflowPath)
+	outputs, err := h.getWorkflowReader(Language(version.Language)).GetWorkflowOutputs(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}
 	version.Outputs = outputs
 
 	// step6: get workflow graph
-	graph, err := h.getWorkflowGraph(ctx, mainWorkflowPath)
+	graph, err := h.getWorkflowReader(Language(version.Language)).GetWorkflowGraph(ctx, mainWorkflowPath)
 	if err != nil {
 		return err
 	}
 	version.Graph = graph
 	return nil
-}
-
-func (h *WorkflowVersionAddedHandler) parseWorkflowVersion(_ context.Context, mainWorkflowPath string) (string, error) {
-	versionRegexp := regexp.MustCompile(VersionRegexpStr)
-	file, err := os.Open(mainWorkflowPath)
-	if err != nil {
-		applog.Errorw("fail to open main workflow file", "err", err)
-		return "", err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		matched := versionRegexp.FindStringSubmatch(line)
-		if matched != nil && len(matched) >= 2 {
-			applog.Infow("version regexp matched", "matched", matched)
-			return matched[1], nil
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return "", err
-	}
-	return "draft-2", nil
-}
-
-func (h *WorkflowVersionAddedHandler) validateWorkflowFiles(ctx context.Context, version *WorkflowVersion, baseDir, mainWorkflowPath string) error {
-	applog.Infow("start to validate files", "mainWorkflowPath", mainWorkflowPath)
-	validateResult, err := exec.Exec(ctx, CommandExecuteTimeout, "java", "-jar", h.womtoolPath, "validate", path.Join(baseDir, mainWorkflowPath), "-l")
-	if err != nil {
-		applog.Errorw("fail to validate workflow", "err", err, "result", string(validateResult))
-		return apperrors.NewInternalError(fmt.Errorf("validate workflow failed"))
-	}
-	validateResultLines := strings.Split(string(validateResult), "\n")
-	applog.Infow("validate result", "result", validateResultLines)
-	// parse and save workflow files
-	if len(validateResultLines) < 2 || strings.ToLower(validateResultLines[0]) != "success!" {
-		return proto.ErrorWorkflowValidateError("fail to validate workflow version:%s", version.ID)
-	}
-	workflowFiles := []string{mainWorkflowPath}
-	// need to start from line 2(start with line 0)
-	for i := 2; i < len(validateResultLines); i++ {
-		absPath := validateResultLines[i]
-		if len(absPath) == 0 {
-			continue
-		}
-		// validate file
-		if _, err := os.Stat(absPath); err == nil {
-			// in mac absPath was prefix with /private
-			relPath, err := filepath.Rel(baseDir, absPath[strings.LastIndex(absPath, baseDir):])
-			if err != nil {
-				return apperrors.NewInternalError(err)
-			}
-			applog.Infow("file path", "baseDir", baseDir, "absPath", absPath, "relPath", relPath)
-			workflowFiles = append(workflowFiles, relPath)
-		}
-	}
-	for _, relPath := range workflowFiles {
-		input, err := os.ReadFile(path.Join(baseDir, relPath))
-		if err != nil {
-			applog.Errorw("fail to read file", "err", err)
-			return apperrors.NewInternalError(err)
-		}
-
-		encodedContent := base64.StdEncoding.EncodeToString(input)
-
-		workflowFile, err := version.AddFile(&FileParam{
-			Path:    relPath,
-			Content: encodedContent,
-		})
-		if err != nil {
-			return err
-		}
-		applog.Infow("success add workflow file", "workflowVersionID", version.ID, "fileID", workflowFile.ID, "path", workflowFile.Path)
-	}
-	return nil
-}
-
-func (h *WorkflowVersionAddedHandler) getWorkflowInputs(ctx context.Context, WorkflowFilePath string) ([]WorkflowParam, error) {
-	return h.getWorkflowParams(ctx, "java", "-jar", h.womtoolPath, "inputs", WorkflowFilePath)
-}
-
-func (h *WorkflowVersionAddedHandler) getWorkflowOutputs(ctx context.Context, WorkflowFilePath string) ([]WorkflowParam, error) {
-	return h.getWorkflowParams(ctx, "java", "-jar", h.womtoolPath, "outputs", WorkflowFilePath)
-}
-
-func (h *WorkflowVersionAddedHandler) getWorkflowParams(ctx context.Context, name string, arg ...string) ([]WorkflowParam, error) {
-	params := make([]WorkflowParam, 0)
-	outputsResult, err := exec.Exec(ctx, CommandExecuteTimeout, name, arg...)
-	if err != nil {
-		return params, err
-	}
-	var outputsMap map[string]string
-	if err := json.Unmarshal(outputsResult, &outputsMap); err != nil {
-		return params, err
-	}
-
-	for paramName, value := range outputsMap {
-		paramType, optional, defaultValue := parseWorkflowParamValue(value)
-		param := WorkflowParam{
-			Name:     paramName,
-			Type:     paramType,
-			Optional: optional,
-		}
-		if defaultValue != nil {
-			param.Default = *defaultValue
-		}
-		params = append(params, param)
-	}
-	// keep the return sort stable
-	sort.Slice(params, func(i, j int) bool {
-		return params[i].Name < params[j].Name
-	})
-	return params, nil
-}
-
-func (h *WorkflowVersionAddedHandler) getWorkflowGraph(ctx context.Context, WorkflowFilePath string) (string, error) {
-	graph, err := exec.Exec(ctx, CommandExecuteTimeout, "java", "-jar", h.womtoolPath, "graph", WorkflowFilePath)
-	if err != nil {
-		return "", err
-	}
-
-	return string(graph), nil
-}
-
-func parseWorkflowParamValue(value string) (paramType string, optional bool, defaultValue *string) {
-	splitByLeftBracket := strings.SplitN(value, "(", 2)
-	paramType = strings.TrimSpace(splitByLeftBracket[0])
-	if len(splitByLeftBracket) == 1 {
-		return paramType, false, nil
-	}
-
-	extraInfo := strings.TrimSuffix(splitByLeftBracket[1], ")")
-	splitByComma := strings.SplitN(extraInfo, ",", 2)
-	if strings.TrimSpace(splitByComma[0]) == "optional" {
-		optional = true
-	}
-	if len(splitByComma) == 1 {
-		return paramType, optional, nil
-	}
-
-	defaultInfo := strings.TrimSpace(splitByComma[1])
-	splitByEqual := strings.SplitN(defaultInfo, "=", 2)
-	if len(splitByEqual) != 2 || strings.ToLower(strings.TrimSpace(splitByEqual[0])) != "default" {
-		return paramType, optional, nil
-	}
-	rawDefaultValue := strings.TrimSpace(splitByEqual[1])
-	defaultValue = new(string)
-	if strings.HasPrefix(rawDefaultValue, `"`) && strings.HasSuffix(rawDefaultValue, `"`) { // String type
-		_ = json.Unmarshal([]byte(rawDefaultValue), defaultValue) // escape, never error
-	} else {
-		*defaultValue = rawDefaultValue
-	}
-	return paramType, optional, defaultValue
 }
 
 type WorkspaceDeletedHandler struct {
@@ -442,7 +289,7 @@ func validateWorkflow(workflow schema.WorkflowTypedSchema) error {
 	if !validator.ValidateResNameInString(workflow.Name) {
 		return fmt.Errorf("workflow name[%s] not passed the validation ", workflow.Name)
 	}
-	if workflow.Language != "WDL" {
+	if utils.In(workflow.Language, SupportedLanguages) {
 		return fmt.Errorf("workflow language [%s] not passed the validation ", workflow.Language)
 	}
 	//TODO Validation will be consistent with that of commercial version in the future

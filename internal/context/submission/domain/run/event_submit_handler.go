@@ -48,7 +48,7 @@ func (e *EventHandlerSubmitRun) Handle(ctx context.Context, event *submission.Ev
 
 	if run.EngineRunID != "" {
 		// todo check delay
-		eventSync := submission.NewEventSyncRun(event.RunID, 0)
+		eventSync := submission.NewEventSyncRun(event.RunID, event.WorkflowType(), 0)
 		if err := e.eventBus.Publish(ctx, eventSync); err != nil {
 			return apperrors.NewInternalError(err)
 		}
@@ -65,6 +65,7 @@ func (e *EventHandlerSubmitRun) Handle(ctx context.Context, event *submission.Ev
 				BioosRunIDKey: run.ID,
 			},
 			WorkflowEngineParameters: event.RunConfig.WorkflowEngineParameters,
+			WorkflowURL:              event.RunConfig.WorkflowURL,
 		},
 		WorkflowAttachment: event.RunConfig.WorkflowContents,
 	})
@@ -97,7 +98,7 @@ func (e *EventHandlerSubmitRun) markRunRunningAndPublicEventSync(ctx context.Con
 	if err := e.runRepo.Save(ctx, tempRun); err != nil {
 		return apperrors.NewInternalError(err)
 	}
-	eventSync := submission.NewEventSyncRun(event.RunID, 0)
+	eventSync := submission.NewEventSyncRun(event.RunID, event.WorkflowType(), 0)
 	if err := e.eventBus.Publish(ctx, eventSync); err != nil {
 		return apperrors.NewInternalError(err)
 	}

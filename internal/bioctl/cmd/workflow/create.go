@@ -14,6 +14,7 @@ import (
 	"github.com/Bio-OS/bioos/internal/bioctl/utils/formatter"
 	"github.com/Bio-OS/bioos/internal/bioctl/utils/prompt"
 	"github.com/Bio-OS/bioos/internal/context/workspace/domain/workflow"
+	"github.com/Bio-OS/bioos/pkg/utils"
 )
 
 // CreateOptions is an options to create a workflow.
@@ -54,7 +55,7 @@ func (o *CreateOptions) GetPromptOptions() error {
 		return err
 	}
 
-	o.Language, err = prompt.PromptStringSelect("Language", 10, []string{workflow.Language})
+	o.Language, err = prompt.PromptStringSelect("Language", 10, workflow.SupportedLanguages)
 	if err != nil {
 		return err
 	}
@@ -141,7 +142,7 @@ func (o *CreateOptions) Validate() error {
 	if err := o.options.Validate(); err != nil {
 		return err
 	}
-	if o.Language != workflow.Language {
+	if !utils.In(o.Language, workflow.SupportedLanguages) {
 		return fmt.Errorf("unspport language: %s", o.Language)
 	}
 	if o.Source != workflow.WorkflowSourceGit && o.Source != workflow.WorkflowSourceFile {

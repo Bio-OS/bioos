@@ -44,13 +44,16 @@ func (h *CancelHandler) Handle(ctx context.Context, event *submission.EventRun) 
 		}
 		return h.repository.Save(ctx, run)
 	}
-	if _, err = h.wes.CancelRun(ctx, &wes.CancelRunRequest{RunID: run.EngineRunID}); err != nil {
+	if _, err = h.wes.CancelRun(ctx, &wes.CancelRunRequest{
+		RunID:        run.EngineRunID,
+		WorkflowType: run.WorkflowType,
+	}); err != nil {
 		if !wes.IsNotFound(err) {
 			return apperrors.NewInternalError(err)
 		}
 		applog.Warnf("engine run %s not found", run.EngineRunID)
 	}
-	syncEvent := submission.NewEventSyncRun(event.RunID, 0)
+	syncEvent := submission.NewEventSyncRun(event.RunID, run.WorkflowType, 0)
 	if err = h.eventbus.Publish(ctx, syncEvent); err != nil {
 		return apperrors.NewInternalError(err)
 	}

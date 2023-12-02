@@ -209,7 +209,7 @@ func (s *service) subscribeEvents(womtoolPath string) {
 			return err
 		}
 
-		handler := NewWorkflowVersionAddedHandler(s.repository, womtoolPath)
+		handler := NewWorkflowVersionAddedHandler(s.repository, &ReaderOptions{WomtoolPath: womtoolPath})
 		return handler.Handle(ctx, event)
 	}))
 
@@ -236,5 +236,4 @@ func (s *service) subscribeEvents(womtoolPath string) {
 		handler := NewImportWorkflowsHandler(s.repository, s.readModel, s.eventbus, s.factory)
 		return handler.Handle(ctx, event)
 	}))
-
 }

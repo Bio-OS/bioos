@@ -16,6 +16,8 @@
 
 package utils
 
+import "os"
+
 func DeleteStrSliceElms(sl []string, elms ...string) []string {
 	if len(sl) == 0 || len(elms) == 0 {
 		return sl
@@ -34,11 +36,34 @@ func DeleteStrSliceElms(sl []string, elms ...string) []string {
 }
 
 // In ...
-func In(elm string, elms []string) bool {
+func In[T comparable](elm T, elms []T) bool {
 	for _, item := range elms {
 		if elm == item {
 			return true
 		}
 	}
 	return false
+}
+
+// FileExists ...
+func FileExists(filepath string) bool {
+	fileInfo, err := os.Stat(filepath)
+	if err != nil {
+		return false
+	}
+	return !fileInfo.IsDir()
+}
+
+// MergeMap ...
+func MergeMap[K comparable, V any](maps ...map[K]V) map[K]V {
+	var ret map[K]V
+	for _, m := range maps {
+		if m == nil {
+			continue
+		}
+		for k, v := range m {
+			ret[k] = v
+		}
+	}
+	return ret
 }

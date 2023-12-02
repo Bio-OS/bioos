@@ -1,18 +1,19 @@
 package run
 
 type RunItem struct {
-	ID          string
-	Name        string
-	Status      string
-	StartTime   int64
-	FinishTime  *int64
-	Duration    int64
-	EngineRunID string
-	Inputs      string
-	Outputs     string
-	TaskStatus  Status
-	Log         *string
-	Message     *string
+	ID           string
+	Name         string
+	Status       string
+	StartTime    int64
+	FinishTime   *int64
+	Duration     int64
+	EngineRunID  string
+	Inputs       string
+	Outputs      string
+	TaskStatus   Status
+	Log          *string
+	Message      *string
+	WorkflowType string
 }
 
 type TaskItem struct {

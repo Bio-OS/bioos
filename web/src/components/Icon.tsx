@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 
+import React from 'react';
 import { noop } from 'lodash-es';
 
 export interface IconProps {

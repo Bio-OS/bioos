@@ -39,6 +39,7 @@ jobs:
           export PLATFORM=${{ matrix.os }}_${{ matrix.arch }}
           make tools.install
           make install.womtool
+          make install.nextflow
           make web.install
           make go.build
           

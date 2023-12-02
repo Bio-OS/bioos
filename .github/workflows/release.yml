@@ -65,6 +65,7 @@ jobs:
           docker buildx create --use
           make tools.install
           make install.womtool
+          make install.nextflow
           make image.buildx
 
       - name: Repository Dispatch
