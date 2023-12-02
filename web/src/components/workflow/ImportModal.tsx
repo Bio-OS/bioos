@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import {memo, useMemo, useRef, useState} from 'react';
+import { memo, useMemo, useRef, useState } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { useRouteMatch } from 'react-router-dom';
 import { FormApi } from 'final-form';
@@ -42,7 +42,7 @@ import { ToastLimitText } from '..';
 
 import style from './style.less';
 
-const DEFAULT_LANGUAGE = 'WDL'
+const DEFAULT_LANGUAGE = 'WDL';
 
 interface Props {
   visible: boolean;
@@ -56,7 +56,6 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
   const match = useRouteMatch<{ workspaceId: string }>();
   const isEdit = workflowInfo?.latestVersion.status === 'Success';
   const isReimport = workflowInfo?.latestVersion.status === 'Failed';
-  const [language, _] = useState(DEFAULT_LANGUAGE)
 
   const initialValues = useMemo(
     () =>
@@ -70,7 +69,7 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
             description: workflowInfo.description,
           }
         : {
-            language,
+            language: DEFAULT_LANGUAGE,
           },
     [workflowInfo],
   );
@@ -184,18 +183,18 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
                 <Input placeholder="请输入" allowClear={true} />
               </FieldItem>
               <FieldItem
-                  name="language"
-                  label="规范"
-                  validate={[
-                    (val: string | undefined) => {
-                      if (val === undefined) {
-                        return '请选择 workflow 规范';
-                      }
-                      return;
+                name="language"
+                label="规范"
+                validate={[
+                  (val: string | undefined) => {
+                    if (val === undefined) {
+                      return '请选择 workflow 规范';
                     }
-                  ]}
+                    return;
+                  },
+                ]}
               >
-                <Radio.Group type="button" defaultValue={language}>
+                <Radio.Group type="button" defaultValue={DEFAULT_LANGUAGE}>
                   <Radio value="WDL">WDL</Radio>
                   <Radio value="Nextflow">Nextflow</Radio>
                 </Radio.Group>
@@ -271,5 +270,7 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
 }
 
 export default memo(ImportModal, (pre, next) => {
-  return !(pre.visible !== next.visible || pre.workflowInfo !== next.workflowInfo);
+  return !(
+    pre.visible !== next.visible || pre.workflowInfo !== next.workflowInfo
+  );
 });
