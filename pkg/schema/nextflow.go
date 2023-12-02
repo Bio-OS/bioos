@@ -39,7 +39,7 @@ type PropertySchema struct {
 	Out         bool        `json:"out"`
 	Format      string      `json:"format"`
 	Description string      `json:"description"`
-	Mimetype    string      `json:"mimetype"`
+	MIMEType    string      `json:"mimetype"`
 	Default     interface{} `json:"default"`
 }
 

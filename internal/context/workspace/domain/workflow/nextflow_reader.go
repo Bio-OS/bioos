@@ -83,7 +83,7 @@ func (r *NextflowReader) ValidateWorkflowFiles(ctx context.Context, version *Wor
 				Type:     cases.Title(language.English).String(property.Type),
 				Optional: optional,
 			}
-			if property.Mimetype != "" {
+			if property.MIMEType != "" {
 				workflowParam.Type = "File"
 			}
 			if !optional && property.Default != nil {
