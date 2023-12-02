@@ -12,7 +12,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/Bio-OS/bioos/internal/context/workspace/interface/grpc/proto"
 	apperrors "github.com/Bio-OS/bioos/pkg/errors"
@@ -32,14 +31,8 @@ func NewWDLParser(config WDLConfig) *WDLParser {
 	return &WDLParser{Config: config}
 }
 
-const (
-	CommandExecuteTimeout = time.Minute * 3
-	Language              = "WDL"
-	VersionRegexpStr      = "^version\\s+([\\w-._]+)"
-)
-
 func (wdl *WDLParser) ParseWorkflowVersion(_ context.Context, mainWorkflowPath string) (string, error) {
-	versionRegexp := regexp.MustCompile(VersionRegexpStr)
+	versionRegexp := regexp.MustCompile(WDLVersionRegexpStr)
 	file, err := os.Open(mainWorkflowPath)
 	if err != nil {
 		applog.Errorw("fail to open main workflow file", "err", err)

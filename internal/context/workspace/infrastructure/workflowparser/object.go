@@ -2,6 +2,13 @@ package workflowparser
 
 import (
 	"encoding/json"
+	"time"
+)
+
+const (
+	CommandExecuteTimeout = time.Minute * 3
+	WDLVersionRegexpStr   = "^version\\s+([\\w-._]+)"
+	CWLVersionRegexpStr   = "^cwlVersion\\s+([\\w-._]+)"
 )
 
 type WorkflowParam struct {

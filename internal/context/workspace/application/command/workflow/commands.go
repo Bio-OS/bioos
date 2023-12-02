@@ -20,6 +20,9 @@ func NewCommands(repo workflow.Repository, workflowReadModel workflowquery.ReadM
 		workflowparser.WDL: workflowparser.WDLConfig{
 			WomtoolPath: womtoolPath,
 		},
+		workflowparser.CWL: workflowparser.CWLConfig{
+			CwltoolCmd: "cwltool",
+		},
 	}
 	workflowparser.InitWorkflowParserFactory(configs)
 	return &Commands{

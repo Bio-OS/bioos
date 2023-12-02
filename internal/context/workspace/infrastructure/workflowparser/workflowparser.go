@@ -31,11 +31,18 @@ func RegisterParseCreateFunc(workflowType string, function func(ParserConfig) Wo
 
 func init() {
 	RegisterParseCreateFunc(WDL, func(config ParserConfig) WorkflowParser {
-		wdlConfig, ok := config.(WDLConfig)
+		configParam, ok := config.(WDLConfig)
 		if !ok {
 			panic("Invalid config type for WDL parser")
 		}
-		return NewWDLParser(wdlConfig)
+		return NewWDLParser(configParam)
+	})
+	RegisterParseCreateFunc(CWL, func(config ParserConfig) WorkflowParser {
+		configParam, ok := config.(CWLConfig)
+		if !ok {
+			panic("Invalid config type for WDL parser")
+		}
+		return NewCWLParser(configParam)
 	})
 }
 
