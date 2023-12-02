@@ -18,6 +18,13 @@ const (
 )
 
 const (
+	WorkflowLanguageWDL       = "WDL"
+	WorkflowLanguageCWL       = "CWL"
+	WorkflowLanguageSnakemake = "SMK"
+	WorkflowLanguageNextflow  = "NFL"
+)
+
+const (
 	Language         = "WDL"
 	VersionRegexpStr = "^version\\s+([\\w-._]+)"
 )
