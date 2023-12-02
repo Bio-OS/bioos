@@ -2,6 +2,7 @@ package workflow
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"os/exec"
 	"path"
@@ -10,7 +11,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 
 	"github.com/Bio-OS/bioos/pkg/log"
-	"github.com/Bio-OS/bioos/pkg/utils/git"
+	"github.com/Bio-OS/bioos/pkg/schema"
 )
 
 const (
@@ -23,17 +24,36 @@ nextflow.enable.dsl = x2
 `
 )
 
+var nextflowExample = map[string]string{
+	"main.nf": `nextflow.enable.dsl = 2
+workflow {
+}`,
+	"nextflow.config": `manifest.name = 'a2htray/rnaseq-nf'
+docker.enabled = true
+dag.overwrite = true
+`,
+	"rnaseq-tasks.nf": `process index {
+}
+`,
+}
+
 func cloneRepo() (dir string, err error) {
 	dir, err = os.MkdirTemp("", "test-nextflow-reader")
 	if err != nil {
 		return "", err
 	}
-
-	err = git.Clone(dir, "https://gitee.com/a2htray/rnaseq-nf", "", "v1.0.2")
-	if err != nil {
-		return "", err
+	for k, v := range nextflowExample {
+		f, err := os.Create(path.Join(dir, k))
+		if err != nil {
+			return "", err
+		}
+		f.WriteString(v)
+		f.Close()
 	}
-	return dir, err
+	schemaIns := schema.NextflowSchema{}
+	f, err := os.Create(path.Join(dir, "nextflow_schema.json"))
+	json.NewEncoder(f).Encode(&schemaIns)
+	return dir, nil
 }
 
 func TestNextflowReader_ParseWorkflowVersion(t *testing.T) {
@@ -70,6 +90,8 @@ func TestNextflowReader_ValidateWorkflowFiles(t *testing.T) {
 	log.RegisterLogger(nil)
 	dir, err := cloneRepo()
 	assert.Nil(t, err)
+	t.Log("dir", dir)
+	//return
 	defer os.RemoveAll(dir)
 
 	r := &NextflowReader{}
@@ -103,7 +125,7 @@ func TestNextflowReader_GetWorkflowGraph(t *testing.T) {
 }
 
 func TestNextflowRunPreview(t *testing.T) {
-	workdir := "/Users/a2htray/workspace/rnaseq-nf"
+	workdir := "/path/to/your/nextflow_project"
 	cmd := exec.CommandContext(context.Background(), "nextflow", "run", "main.nf", "-preview", "-with-dag", "dag.html")
 	cmd.Dir = workdir
 	//cmd.Stdout = os.Stdout

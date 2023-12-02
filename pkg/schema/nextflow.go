@@ -25,12 +25,12 @@ const (
 
 // NextflowSchema ...
 type NextflowSchema struct {
-	Schema      string `json:"$schema"`
-	ID          string `json:"$id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Type        string `json:"type"`
-	Definitions map[string]DefinitionSchema
+	Schema      string                      `json:"$schema"`
+	ID          string                      `json:"$id"`
+	Title       string                      `json:"title"`
+	Description string                      `json:"description"`
+	Type        string                      `json:"type"`
+	Definitions map[string]DefinitionSchema `json:"definitions"`
 }
 
 // PropertySchema ...

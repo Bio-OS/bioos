@@ -26,15 +26,14 @@ const (
 )
 
 type WorkflowVersionAddedHandler struct {
-	repo        Repository
-	reader      Reader
-	readerCache map[Language]Reader
+	repo    Repository
+	readers map[Language]Reader
 }
 
 func NewWorkflowVersionAddedHandler(repo Repository, readerOptions *ReaderOptions) *WorkflowVersionAddedHandler {
 	return &WorkflowVersionAddedHandler{
 		repo: repo,
-		readerCache: map[Language]Reader{
+		readers: map[Language]Reader{
 			LanguageWDL: &WDLReader{readerOptions},
 			LanguageNextflow: &NextflowReader{
 				inputParams:  []WorkflowParam{},
@@ -45,7 +44,7 @@ func NewWorkflowVersionAddedHandler(repo Repository, readerOptions *ReaderOption
 }
 
 func (h *WorkflowVersionAddedHandler) getWorkflowReader(language Language) Reader {
-	return h.readerCache[language]
+	return h.readers[language]
 }
 
 func (h *WorkflowVersionAddedHandler) Handle(ctx context.Context, event *WorkflowVersionAddedEvent) (err error) {
