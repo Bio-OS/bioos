@@ -65,6 +65,7 @@ func (e *EventHandlerSubmitRun) Handle(ctx context.Context, event *submission.Ev
 				BioosRunIDKey: run.ID,
 			},
 			WorkflowEngineParameters: event.RunConfig.WorkflowEngineParameters,
+			WorkflowURL:              event.RunConfig.MainWorkflowFilePath,
 		},
 		WorkflowAttachment: event.RunConfig.WorkflowContents,
 	})

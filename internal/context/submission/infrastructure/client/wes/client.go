@@ -121,7 +121,7 @@ func (i *impl) RunWorkflow(ctx context.Context, req *RunWorkflowRequest) (*RunWo
 		}
 		newReq = newReq.SetFileReader(workflowAttachment, filePath[len(prefix):], bytes.NewReader(decodeContent))
 	}
-	formData, err := runRequest2FormData(&req.RunRequest)
+	formData, err := runRequest2FormData(&req.RunRequest, prefix)
 	if err != nil {
 		return nil, newBadRequestError(err.Error())
 	}
@@ -224,7 +224,7 @@ func longestCommonPrefix(strs []string) string {
 }
 
 // runRequest2FormData ...
-func runRequest2FormData(req *RunRequest) (map[string]string, error) {
+func runRequest2FormData(req *RunRequest, prefix string) (map[string]string, error) {
 	formData := make(map[string]string)
 	if req.WorkflowParams != nil && len(req.WorkflowParams) > 0 {
 		workflowParamsInBytes, err := json.Marshal(req.WorkflowParams)
@@ -249,5 +249,6 @@ func runRequest2FormData(req *RunRequest) (map[string]string, error) {
 	}
 	formData[workflowType] = req.WorkflowType
 	formData[workflowTypeVersion] = req.WorkflowTypeVersion
+	formData[workflowURL] = req.WorkflowURL[len(prefix):]
 	return formData, nil
 }
