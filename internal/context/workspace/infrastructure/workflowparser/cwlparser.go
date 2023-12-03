@@ -88,7 +88,7 @@ func (cwl *CWLParser) ValidateWorkflowFiles(ctx context.Context, baseDir, mainWo
 	depsFiles := depsFileRe.FindAllStringSubmatch(string(depsResults), -1)
 
 	workflowFiles := []string{}
-	if len(depsFiles) > 1 {
+	if len(depsFiles) > 0 {
 		scriptDir := filepath.Dir(mainWorkflowPath)
 		for _, value := range depsFiles {
 			joinedPath := filepath.Join(scriptDir, value[1])
@@ -105,7 +105,7 @@ func (cwl *CWLParser) ValidateWorkflowFiles(ctx context.Context, baseDir, mainWo
 			}
 		}
 	} else {
-		return "", err
+		return "", apperrors.NewInternalError(fmt.Errorf("no valid workflow files"))
 	}
 
 	params := make([]FileParam, 0)
