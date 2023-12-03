@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"unicode"
@@ -66,7 +66,7 @@ func (cwl *CWLParser) ValidateWorkflowFiles(ctx context.Context, baseDir, mainWo
 	validateResultLines := strings.Split(string(validateResult), "\n")
 	applog.Infow("validate result", "result", validateResultLines)
 	// parse and save workflow files
-	if len(validateResultLines) < 3 || !strings.Contains(validateResultLines[2], "is valid CWL") {
+	if len(validateResultLines) < 3 || !strings.Contains(validateResultLines[len(validateResultLines)-2], "is valid CWL") {
 		return "", proto.ErrorWorkflowValidateError("fail to validate workflow")
 	}
 
@@ -74,25 +74,43 @@ func (cwl *CWLParser) ValidateWorkflowFiles(ctx context.Context, baseDir, mainWo
 	if err != nil {
 		return "", err
 	}
-	depsResultLines := strings.Split(string(depsResults), "\n")
-	if len(depsResultLines) < 3 {
-		return "", proto.ErrorWorkflowValidateError("fail to check deps")
-	}
-	jsonContent := strings.Join(depsResultLines[2:], "\n")
-	var file CWLFile
-	err = json.Unmarshal([]byte(jsonContent), &file)
-	if err != nil {
+	// depsResultLines := strings.Split(string(depsResults), "\n")
+	// if len(depsResultLines) < 3 {
+	// 	return "", proto.ErrorWorkflowValidateError("fail to check deps")
+	// }
+	// jsonContent := strings.Join(depsResultLines[2:], "\n")
+	// var file CWLFile
+	// err = json.Unmarshal([]byte(jsonContent), &file)
+	// if err != nil {
+	// 	return "", err
+	// }
+	depsFileRe := regexp.MustCompile(`"location":\s*"([^"]*)"`) // 结构比较复杂，没必要解析，直接匹配字符即可
+	depsFiles := depsFileRe.FindAllStringSubmatch(string(depsResults), -1)
+
+	workflowFiles := []string{}
+	if len(depsFiles) > 1 {
+		scriptDir := filepath.Dir(mainWorkflowPath)
+		for _, value := range depsFiles {
+			joinedPath := filepath.Join(scriptDir, value[1])
+			cleanedPath := filepath.Clean(joinedPath)
+			if len(cleanedPath) == 0 {
+				continue
+			}
+			// validate file
+			if _, err := os.Stat(filepath.Join(baseDir, cleanedPath)); err == nil {
+				applog.Infow("file path", "baseDir", baseDir, "relPath", cleanedPath)
+				if !sliceContains(workflowFiles, cleanedPath) { // 去掉重复的文件
+					workflowFiles = append(workflowFiles, cleanedPath)
+				}
+			}
+		}
+	} else {
 		return "", err
 	}
 
-	workflowFiles := []string{mainWorkflowPath}
-	// need to start from line 2(start with line 0)
-	for i := 0; i < len(file.SecondaryFiles); i++ {
-		workflowFiles = append(workflowFiles, file.SecondaryFiles[i].Location)
-	}
 	params := make([]FileParam, 0)
 	for _, relPath := range workflowFiles {
-		input, err := os.ReadFile(path.Join(baseDir, relPath))
+		input, err := os.ReadFile(filepath.Join(baseDir, relPath))
 		if err != nil {
 			applog.Errorw("fail to read file", "err", err)
 			return "", apperrors.NewInternalError(err)
@@ -120,12 +138,17 @@ func (cwl *CWLParser) GetWorkflowInputs(ctx context.Context, WorkflowFilePath st
 	inputs := inputsRe.FindAllStringSubmatch(string(rdfResult), -1)
 	var inputFiles []string
 	if len(inputs) > 0 {
-		for _, value := range inputs {
-			files := strings.Split(value[1], ",")
-			for _, file := range files {
-				trimmedFile := strings.TrimSpace(file)
-				inputFiles = append(inputFiles, trimmedFile)
-			}
+		// for _, value := range inputs {
+		// 	files := strings.Split(value[1], ",")
+		// 	for _, file := range files {
+		// 		trimmedFile := strings.TrimSpace(file)
+		// 		inputFiles = append(inputFiles, trimmedFile)
+		// 	}
+		// }
+		files := strings.Split(inputs[0][1], ",") // 只处理第一部分，不需要中间文件
+		for _, file := range files {
+			trimmedFile := strings.TrimSpace(file)
+			inputFiles = append(inputFiles, trimmedFile)
 		}
 	} else {
 		return "", nil
@@ -135,7 +158,7 @@ func (cwl *CWLParser) GetWorkflowInputs(ctx context.Context, WorkflowFilePath st
 	rdfResultSection := sectionRe.Split(string(rdfResult), -1)
 
 	for _, value := range rdfResultSection { // 遍历各个分块，找到描述对应文件的部分
-		if containsAny(value, inputFiles) && !strings.Contains(value, "cwl:inputs") {
+		if findFileSection(value, inputFiles) && !strings.Contains(value, "cwl:inputs") {
 			param := WorkflowParam{}
 			nameRe := regexp.MustCompile(`#(.*?)> `)
 			nameMatch := nameRe.FindStringSubmatch(value)
@@ -190,12 +213,17 @@ func (cwl *CWLParser) GetWorkflowOutputs(ctx context.Context, WorkflowFilePath s
 	outputs := outputsRe.FindAllStringSubmatch(string(rdfResult), -1)
 	var outputFiles []string
 	if len(outputs) > 0 {
-		for _, value := range outputs {
-			files := strings.Split(value[1], ",")
-			for _, file := range files {
-				trimmedFile := strings.TrimSpace(file)
-				outputFiles = append(outputFiles, trimmedFile)
-			}
+		// for _, value := range outputs {
+		// 	files := strings.Split(value[1], ",")
+		// 	for _, file := range files {
+		// 		trimmedFile := strings.TrimSpace(file)
+		// 		outputFiles = append(outputFiles, trimmedFile)
+		// 	}
+		// }
+		files := strings.Split(outputs[0][1], ",") // 只处理第一部分，不需要中间文件
+		for _, file := range files {
+			trimmedFile := strings.TrimSpace(file)
+			outputFiles = append(outputFiles, trimmedFile)
 		}
 	} else {
 		return "", nil
@@ -205,7 +233,7 @@ func (cwl *CWLParser) GetWorkflowOutputs(ctx context.Context, WorkflowFilePath s
 	rdfResultSection := sectionRe.Split(string(rdfResult), -1)
 
 	for _, value := range rdfResultSection { // 遍历各个分块，找到描述对应文件的部分
-		if containsAny(value, outputFiles) && !strings.Contains(value, "cwl:outputs") {
+		if findFileSection(value, outputFiles) && !strings.Contains(value, "cwl:outputs") {
 			param := WorkflowParam{}
 			nameRe := regexp.MustCompile(`#(.*?)> `)
 			nameMatch := nameRe.FindStringSubmatch(value)
@@ -256,9 +284,9 @@ type CWLFile struct {
 	Nameext        string    `json:"nameext,omitempty"`
 }
 
-func containsAny(str string, substrings []string) bool {
+func findFileSection(str string, substrings []string) bool {
 	for _, substr := range substrings {
-		if strings.Contains(str, substr) {
+		if strings.HasPrefix(str, substr) {
 			return true
 		}
 	}
@@ -279,4 +307,13 @@ func removeSpacesAndNewlines(input string) string {
 		parts[i] = strings.TrimSpace(part)
 	}
 	return strings.Join(parts, ",")
+}
+
+func sliceContains(slice []string, element string) bool {
+	for _, v := range slice {
+		if v == element {
+			return true
+		}
+	}
+	return false
 }
