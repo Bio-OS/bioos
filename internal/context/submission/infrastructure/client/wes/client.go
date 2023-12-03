@@ -111,10 +111,6 @@ func (i *impl) RunWorkflow(ctx context.Context, req *RunWorkflowRequest) (*RunWo
 		return nil, newBadRequestError("workflowAttachment is empty")
 	}
 	prefix := longestCommonPrefix(filesPath)
-	// fix bug that func longestCommonPrefix() only return string level longestCommonPrefix
-	// However we need path level longestCommonPrefix.
-	// |   Main File  |Attachment File|String Level Prefix|Path Level Prefix|
-	// |/app/tasks.wdl| /app/test.wdl |      /app/t       |      /app/      |
 	if !strings.HasSuffix(prefix, "/") && len(prefix) > 0 {
 		prefix = fmt.Sprintf("%s/", path.Dir(prefix))
 	}
@@ -208,11 +204,16 @@ func longestCommonPrefix(strs []string) string {
 	prefix := strs[0][0:minStrLen]
 	for {
 		allFound := true
-		for i := 1; i < strsLen; i++ {
-			if strings.Index(strs[i], prefix) != 0 {
-				prefix = prefix[0 : len(prefix)-1]
-				allFound = false
-				break
+		if !strings.HasSuffix(prefix, "/") {
+			prefix = prefix[0 : len(prefix)-1]
+			allFound = false
+		} else {
+			for i := 1; i < strsLen; i++ {
+				if strings.Index(strs[i], prefix) != 0 {
+					prefix = prefix[0 : len(prefix)-1]
+					allFound = false
+					break
+				}
 			}
 		}
 		if allFound || len(prefix) == 0 {
