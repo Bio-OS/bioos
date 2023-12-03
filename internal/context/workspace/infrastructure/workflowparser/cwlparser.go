@@ -271,8 +271,24 @@ func (cwl *CWLParser) GetWorkflowOutputs(ctx context.Context, WorkflowFilePath s
 }
 
 func (cwl *CWLParser) GetWorkflowGraph(ctx context.Context, WorkflowFilePath string) (string, error) {
-	return "", nil
+	graph, err := exec.Exec(ctx, CommandExecuteTimeout, cwl.Config.CwltoolCmd, "--print-dot", WorkflowFilePath)
+	if err != nil { // 无法绘图时不返回错误，使流程能成功导入
+		return noGraph, nil
+	}
+
+	graphRe := regexp.MustCompile(`(?s)(digraph.*\})`)
+	graphMatch := graphRe.FindStringSubmatch(string(graph))
+
+	if len(graphMatch) > 1 {
+		return graphMatch[1], nil
+	} else {
+		return noGraph, nil
+	}
 }
+
+const noGraph = `digraph G {
+    "error" [shape=box, style=filled, color=lightgrey, label="The graph for this workflow is unavailable."];
+}`
 
 type CWLFile struct {
 	Class          string    `json:"class"`
