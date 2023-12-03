@@ -67,7 +67,7 @@ export interface GithubComBioOSBioosInternalContextWorkspaceInterfaceHertzHandle
 export interface HandlersCreateSubmissionRequest {
   description?: string;
   entity?: HandlersEntity;
-  exposedOptions?: HandlersExposedOptions;
+  exposedOptions?: string;
   inOutMaterial?: HandlersInOutMaterial;
   name?: string;
   type?: string;
@@ -113,10 +113,6 @@ export interface HandlersEntity {
    * 	  - 在 inputs/outputs 层级进行序列化可使得 `bioos-server` 不处理 `Inputs`/`Outputs`(非 `this.xxx` 索引的输入) 就入库/提交给计算引擎，达到透传效果
    */
   outputsTemplate?: string;
-}
-
-export interface HandlersExposedOptions {
-  readFromCache?: boolean;
 }
 
 export interface HandlersGetDataModelResponse {
@@ -233,7 +229,7 @@ export interface HandlersSubmissionItem {
   description?: string;
   duration?: number;
   entity?: HandlersEntity;
-  exposedOptions?: HandlersExposedOptions;
+  exposedOptions?: string;
   finishTime?: number;
   id?: string;
   inOutMaterial?: HandlersInOutMaterial;

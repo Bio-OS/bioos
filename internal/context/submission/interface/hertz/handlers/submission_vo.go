@@ -7,7 +7,7 @@ type CreateSubmissionRequest struct {
 	Description    *string        `json:"description"`
 	Type           string         `json:"type"`
 	Entity         *Entity        `json:"entity"`
-	ExposedOptions ExposedOptions `json:"exposedOptions"`
+	ExposedOptions string         `json:"exposedOptions"`
 	InOutMaterial  *InOutMaterial `json:"inOutMaterial"`
 }
 
@@ -31,10 +31,6 @@ type Entity struct {
 type InOutMaterial struct {
 	InputsMaterial  string `json:"inputsMaterial"`
 	OutputsMaterial string `json:"outputsMaterial"`
-}
-
-type ExposedOptions struct {
-	ReadFromCache bool `json:"readFromCache"`
 }
 
 type CreateSubmissionResponse struct {
@@ -81,7 +77,7 @@ type SubmissionItem struct {
 	WorkflowVersion WorkflowVersion `json:"workflowVersion"`
 	RunStatus       Status          `json:"runStatus"`
 	Entity          *Entity         `json:"entity"`
-	ExposedOptions  ExposedOptions  `json:"exposedOptions"`
+	ExposedOptions  string          `json:"exposedOptions"`
 	InOutMaterial   *InOutMaterial  `json:"inOutMaterial"`
 }
 

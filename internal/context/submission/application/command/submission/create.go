@@ -45,16 +45,14 @@ func (c *createSubmissionHandler) Handle(ctx context.Context, cmd *CreateSubmiss
 	}
 
 	param := submission.CreateSubmissionParam{
-		Name:        cmd.Name,
-		Description: cmd.Description,
-		WorkflowID:  cmd.WorkflowID,
-		WorkspaceID: cmd.WorkspaceID,
-		Type:        cmd.Type,
-		ExposedOptions: submission.ExposedOptions{
-			ReadFromCache: cmd.ExposedOptions.ReadFromCache,
-		},
-		Inputs:  make(map[string]interface{}),
-		Outputs: make(map[string]interface{}),
+		Name:           cmd.Name,
+		Description:    cmd.Description,
+		WorkflowID:     cmd.WorkflowID,
+		WorkspaceID:    cmd.WorkspaceID,
+		Type:           cmd.Type,
+		ExposedOptions: cmd.ExposedOptions,
+		Inputs:         make(map[string]interface{}),
+		Outputs:        make(map[string]interface{}),
 	}
 
 	switch param.Type {

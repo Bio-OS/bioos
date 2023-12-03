@@ -308,10 +308,11 @@ export default function WorkflowRun() {
       workspaceID: workspaceId,
       workflowID: workflowId,
       type: isPath ? 'filePath' : 'dataModel',
-      exposedOptions: {
-        readFromCache: callCaching,
-      },
     };
+
+    body.exposedOptions = JSON.stringify({
+      readFromCache: callCaching,
+    })
 
     if (isPath) {
       body.inOutMaterial = {
@@ -515,7 +516,13 @@ export default function WorkflowRun() {
 
   useEffect(() => {
     if (!dataModelList) return;
-    setCallCaching(submission?.exposedOptions?.readFromCache ?? true);
+    try {
+      const exposedOptions = submission?.exposedOptions ? JSON.parse(submission.exposedOptions) : {};
+      setCallCaching(exposedOptions.readFromCache ?? true);
+    } catch (e) {
+      setCallCaching(true); // 解析失败时，使用默认值true
+    }
+
     if (!submissionId || submission?.type === 'filePath') {
       setModelId(dataModelList?.[0]?.id);
       setMode(submission?.type || 'dataModel');
