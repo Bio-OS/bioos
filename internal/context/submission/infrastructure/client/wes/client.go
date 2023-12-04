@@ -153,6 +153,7 @@ func (i *impl) GetRunLog(ctx context.Context, req *GetRunLogRequest) (*GetRunLog
 		if res.StatusCode >= 400 {
 			return nil, res.ErrorResp
 		}
+		UpdateLogsWithStdout(&res.GetRunLogResponse)
 		return &res.GetRunLogResponse, nil
 	} else if resp.IsError() {
 		return nil, res.ErrorResp
@@ -251,4 +252,12 @@ func runRequest2FormData(req *RunRequest, prefix string) (map[string]string, err
 	formData[workflowTypeVersion] = req.WorkflowTypeVersion
 	formData[workflowURL] = req.WorkflowURL[len(prefix):]
 	return formData, nil
+}
+
+// 标准WES API中没有log字段，在此处处理
+func UpdateLogsWithStdout(response *GetRunLogResponse) {
+	response.RunLog.Log = response.RunLog.Stdout
+	for index := range response.TaskLogs {
+		response.TaskLogs[index].Log = response.TaskLogs[index].Stdout
+	}
 }
