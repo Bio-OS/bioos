@@ -312,7 +312,7 @@ export default function WorkflowRun() {
 
     body.exposedOptions = JSON.stringify({
       readFromCache: callCaching,
-    })
+    });
 
     if (isPath) {
       body.inOutMaterial = {
@@ -641,6 +641,18 @@ export default function WorkflowRun() {
                   }}
                 >
                   {workflow?.description}
+                </Typography.Paragraph>
+                <span className="">流程语言：</span>
+                <Typography.Paragraph
+                  className="colorGrey mr20"
+                  style={{ maxWidth: 100 }}
+                  ellipsis={{
+                    showTooltip: {
+                      type: 'popover',
+                    },
+                  }}
+                >
+                  {workflow?.latestVersion?.language}
                 </Typography.Paragraph>
                 <span>来源：</span>
                 <Link>{workflow?.latestVersion?.metadata?.gitURL}</Link>
