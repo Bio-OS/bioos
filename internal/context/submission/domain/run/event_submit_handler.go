@@ -86,7 +86,7 @@ func (e *EventHandlerSubmitRun) markRunFailed(ctx context.Context, run *Run, mes
 	tempRun := run.Copy()
 	tempRun.Message = utils.PointString(message)
 	tempRun.FinishTime = utils.PointTime(time.Now())
-	if err := e.runRepo.Save(ctx, run); err != nil {
+	if err := e.runRepo.Save(ctx, tempRun); err != nil {
 		return apperrors.NewInternalError(err)
 	}
 	return nil
