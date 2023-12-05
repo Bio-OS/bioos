@@ -64,10 +64,8 @@ func queryEntityDTOToVO(entity *query.Entity) *pb.Entity {
 	}
 }
 
-func queryExposedOptionsDTOToVO(options query.ExposedOptions) *pb.ExposedOptions {
-	return &pb.ExposedOptions{
-		ReadFromCache: options.ReadFromCache,
-	}
+func queryExposedOptionsDTOToVO(options string) *pb.ExposedOptions {
+	return &pb.ExposedOptions{}
 }
 
 func queryInOutMaterialDTOToVO(material *query.InOutMaterial) *pb.InOutMaterial {
@@ -105,13 +103,9 @@ func commandEntityVoToDto(entity *pb.Entity) *command.Entity {
 	}
 }
 
-func commandExposedOptionsVoToDto(options *pb.ExposedOptions) command.ExposedOptions {
-	if options == nil {
-		return command.ExposedOptions{}
-	}
-	return command.ExposedOptions{
-		ReadFromCache: options.ReadFromCache,
-	}
+func commandExposedOptionsVoToDto(options *pb.ExposedOptions) string {
+	return ""
+
 }
 
 func commandInOutMaterialVoToDto(material *pb.InOutMaterial) *command.InOutMaterial {

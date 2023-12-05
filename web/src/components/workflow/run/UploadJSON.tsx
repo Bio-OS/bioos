@@ -81,10 +81,12 @@ export default function UploadJSON({
             let jsonVal = jsonObj[item.name];
 
             // String和File类型需要多加一层双引号
+            // Directory类型(CWL流程中会出现)也需要加引号
             if (
               jsonVal &&
               (item?.type.startsWith('String') ||
-                item?.type.startsWith('File')) &&
+              item?.type.startsWith('File') ||
+              item?.type.startsWith('Directory')) &&
               !(jsonVal?.startsWith('"') && jsonVal?.endsWith('"')) &&
               !isContextValue(jsonVal)
             ) {

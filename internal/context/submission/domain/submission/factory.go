@@ -20,7 +20,7 @@ type CreateSubmissionParam struct {
 	Type              string
 	Inputs            map[string]interface{}
 	Outputs           map[string]interface{}
-	ExposedOptions    ExposedOptions
+	ExposedOptions    string
 }
 
 func (p CreateSubmissionParam) validate() error {

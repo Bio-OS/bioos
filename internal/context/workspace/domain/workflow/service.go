@@ -26,14 +26,14 @@ type service struct {
 	factory    *Factory
 }
 
-func NewService(repo Repository, readModel workflow.ReadModel, bus eventbus.EventBus, factory *Factory, womtoolPath string) Service {
+func NewService(repo Repository, readModel workflow.ReadModel, bus eventbus.EventBus, factory *Factory) Service {
 	svc := &service{
 		readModel:  readModel,
 		repository: repo,
 		eventbus:   bus,
 		factory:    factory,
 	}
-	svc.subscribeEvents(womtoolPath)
+	svc.subscribeEvents()
 	return svc
 }
 
@@ -200,7 +200,7 @@ func (s *service) UpdateVersion(ctx context.Context, workspaceID string, workflo
 	return nil
 }
 
-func (s *service) subscribeEvents(womtoolPath string) {
+func (s *service) subscribeEvents() {
 	s.eventbus.Subscribe(WorkflowVersionAdded, eventbus.EventHandlerFunc(func(ctx context.Context, payload string) (err error) {
 		applog.Infow("start to consume workflow version added event", "payload", payload)
 
@@ -209,7 +209,7 @@ func (s *service) subscribeEvents(womtoolPath string) {
 			return err
 		}
 
-		handler := NewWorkflowVersionAddedHandler(s.repository, womtoolPath)
+		handler := NewWorkflowVersionAddedHandler(s.repository)
 		return handler.Handle(ctx, event)
 	}))
 
