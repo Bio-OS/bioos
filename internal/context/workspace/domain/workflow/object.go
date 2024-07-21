@@ -1,6 +1,7 @@
 package workflow
 
 import (
+	"encoding/json"
 	"time"
 
 	applog "github.com/Bio-OS/bioos/pkg/log"
@@ -141,6 +142,16 @@ func (v *WorkflowVersion) AddFile(param *FileParam) (*WorkflowFile, error) {
 	return file, nil
 }
 
+func workflowParamPOToDO(paramStr string) ([]WorkflowParam, error) {
+	var params []WorkflowParam
+	if len(paramStr) > 0 {
+		if err := json.Unmarshal([]byte(paramStr), &params); err != nil {
+			return nil, err
+		}
+	}
+	return params, nil
+}
+
 // WorkflowFile workflow file
 type WorkflowFile struct {
 	// ID is the unique identifier of the workflow file
@@ -153,4 +164,14 @@ type WorkflowFile struct {
 	CreatedAt time.Time
 	// UpdatedAt is the update time of workflow file
 	UpdatedAt time.Time
+}
+
+func fileParamPOToDO(paramStr string) ([]FileParam, error) {
+	var params []FileParam
+	if len(paramStr) > 0 {
+		if err := json.Unmarshal([]byte(paramStr), &params); err != nil {
+			return nil, err
+		}
+	}
+	return params, nil
 }

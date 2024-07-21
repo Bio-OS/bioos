@@ -111,14 +111,7 @@ func (i *impl) RunWorkflow(ctx context.Context, req *RunWorkflowRequest) (*RunWo
 		return nil, newBadRequestError("workflowAttachment is empty")
 	}
 	prefix := longestCommonPrefix(filesPath)
-	if len(filesPath) == 1 {
-		prefix = fmt.Sprintf("%s/", path.Dir(filesPath[0]))
-	}
-	// fix bug that func longestCommonPrefix() only return string level longestCommonPrefix
-	// However we need path level longestCommonPrefix.
-	// |   Main File  |Attachment File|String Level Prefix|Path Level Prefix|
-	// |/app/tasks.wdl| /app/test.wdl |      /app/t       |      /app/      |
-	if !strings.HasSuffix(prefix, "/") {
+	if !strings.HasSuffix(prefix, "/") && len(prefix) > 0 {
 		prefix = fmt.Sprintf("%s/", path.Dir(prefix))
 	}
 	for _, filePath := range filesPath {
@@ -128,7 +121,7 @@ func (i *impl) RunWorkflow(ctx context.Context, req *RunWorkflowRequest) (*RunWo
 		}
 		newReq = newReq.SetFileReader(workflowAttachment, filePath[len(prefix):], bytes.NewReader(decodeContent))
 	}
-	formData, err := runRequest2FormData(&req.RunRequest)
+	formData, err := runRequest2FormData(&req.RunRequest, prefix)
 	if err != nil {
 		return nil, newBadRequestError(err.Error())
 	}
@@ -160,6 +153,7 @@ func (i *impl) GetRunLog(ctx context.Context, req *GetRunLogRequest) (*GetRunLog
 		if res.StatusCode >= 400 {
 			return nil, res.ErrorResp
 		}
+		UpdateLogsWithStdout(&res.GetRunLogResponse)
 		return &res.GetRunLogResponse, nil
 	} else if resp.IsError() {
 		return nil, res.ErrorResp
@@ -192,7 +186,11 @@ func longestCommonPrefix(strs []string) string {
 	case 0:
 		return ""
 	case 1:
-		return strs[0]
+		if strings.Contains(strs[0], "/") {
+			return fmt.Sprintf("%s/", path.Dir(strs[0]))
+		} else {
+			return ""
+		}
 	default:
 		if len(strs[0]) == 0 {
 			return ""
@@ -207,11 +205,16 @@ func longestCommonPrefix(strs []string) string {
 	prefix := strs[0][0:minStrLen]
 	for {
 		allFound := true
-		for i := 1; i < strsLen; i++ {
-			if strings.Index(strs[i], prefix) != 0 {
-				prefix = prefix[0 : len(prefix)-1]
-				allFound = false
-				break
+		if !strings.HasSuffix(prefix, "/") {
+			prefix = prefix[0 : len(prefix)-1]
+			allFound = false
+		} else {
+			for i := 1; i < strsLen; i++ {
+				if strings.Index(strs[i], prefix) != 0 {
+					prefix = prefix[0 : len(prefix)-1]
+					allFound = false
+					break
+				}
 			}
 		}
 		if allFound || len(prefix) == 0 {
@@ -222,7 +225,7 @@ func longestCommonPrefix(strs []string) string {
 }
 
 // runRequest2FormData ...
-func runRequest2FormData(req *RunRequest) (map[string]string, error) {
+func runRequest2FormData(req *RunRequest, prefix string) (map[string]string, error) {
 	formData := make(map[string]string)
 	if req.WorkflowParams != nil && len(req.WorkflowParams) > 0 {
 		workflowParamsInBytes, err := json.Marshal(req.WorkflowParams)
@@ -247,5 +250,14 @@ func runRequest2FormData(req *RunRequest) (map[string]string, error) {
 	}
 	formData[workflowType] = req.WorkflowType
 	formData[workflowTypeVersion] = req.WorkflowTypeVersion
+	formData[workflowURL] = req.WorkflowURL[len(prefix):]
 	return formData, nil
+}
+
+// 标准WES API中没有log字段，在此处处理
+func UpdateLogsWithStdout(response *GetRunLogResponse) {
+	response.RunLog.Log = response.RunLog.Stdout
+	for index := range response.TaskLogs {
+		response.TaskLogs[index].Log = response.TaskLogs[index].Stdout
+	}
 }
