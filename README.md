@@ -58,13 +58,15 @@ Minimum 8 cpu and 16G memory
 
 ## Tutorial
 ### Bio-OS Installation guide
-Please look at the Bio-OS installation guide: [https://bio-os.gitbook.io/userguide/bu-shu/getting-set-up](https://bio-os.gitbook.io/userguide/bu-shu/getting-set-up)
+Please look at the Bio-OS installation guide: [https://bio-os.gitbook.io/bio-os-open-source-version-user-manual/deployment/getting-set-up](https://bio-os.gitbook.io/bio-os-open-source-version-user-manual/deployment/getting-set-up)
 
 ### Bio-OS user guide
-Please look at the Bio-OS user guide: [https://bio-os.gitbook.io/userguide/](https://bio-os.gitbook.io/userguide)
+Please look at the Bio-OS user guide: [https://bio-os.gitbook.io/bio-os-open-source-version-user-manual](https://bio-os.gitbook.io/bio-os-open-source-version-user-manual)
 
 ### Bio-OS CLI
-Please look at the CLI tutorial: [https://bio-os.gitbook.io/userguide/chan-pin-zhi-nan/ming-ling-hang-gong-ju-bioctl](https://bio-os.gitbook.io/userguide/chan-pin-zhi-nan/ming-ling-xing-gong-ju-bioctl)
+Please look at the CLI tutorial: [https://bio-os.gitbook.io/bio-os-open-source-version-user-manual/product-manual/cli-tool-bioctl](https://bio-os.gitbook.io/bio-os-open-source-version-user-manual/product-manual/cli-tool-bioctl)
+
+For the Chinese version of this documentation, please refer to:[开源Bio-OS中文文档](https://bio-os.gitbook.io/userguide)
 
 ## Help
 
