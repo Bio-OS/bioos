@@ -148,7 +148,7 @@ type EventCreateRuns struct {
 	SubmissionID    string
 	InputsTemplate  map[string]interface{}
 	OutputsTemplate map[string]interface{}
-	SubmisstionType string // filePath or dataModel
+	SubmissionType  string // filePath or dataModel
 	DataModelID     *string
 	DataModelRowIDs []string
 
@@ -167,7 +167,7 @@ func NewEventCreateRuns(workspaceID, submissionID, submissionType string, inputs
 	return &EventCreateRuns{
 		WorkspaceID:     workspaceID,
 		SubmissionID:    submissionID,
-		SubmisstionType: submissionType,
+		SubmissionType:  submissionType,
 		InputsTemplate:  inputs,
 		OutputsTemplate: outputs,
 		DataModelID:     dataModelID,
