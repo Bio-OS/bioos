@@ -13,7 +13,7 @@ type SubmissionItem struct {
 	WorkflowVersionID string
 	RunStatus         Status
 	Entity            *Entity
-	ExposedOptions    ExposedOptions
+	ExposedOptions    string
 	InOutMaterial     *InOutMaterial
 	WorkspaceID       string
 }
@@ -28,10 +28,6 @@ type Entity struct {
 type InOutMaterial struct {
 	InputsMaterial  string
 	OutputsMaterial string
-}
-
-type ExposedOptions struct {
-	ReadFromCache bool
 }
 
 type WorkflowVersion struct {

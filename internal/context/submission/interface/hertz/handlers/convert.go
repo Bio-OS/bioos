@@ -16,7 +16,7 @@ func createSubmissionVoToDto(req CreateSubmissionRequest) *submissioncommand.Cre
 		Description:    req.Description,
 		Type:           req.Type,
 		Entity:         commandEntityVoToDto(req.Entity),
-		ExposedOptions: commandExposedOptionsVoToDto(req.ExposedOptions),
+		ExposedOptions: req.ExposedOptions,
 		InOutMaterial:  commandInOutMaterialVoToDto(req.InOutMaterial),
 	}
 }
@@ -30,12 +30,6 @@ func commandEntityVoToDto(entity *Entity) *submissioncommand.Entity {
 		DataModelRowIDs: entity.DataModelRowIDs,
 		InputsTemplate:  entity.InputsTemplate,
 		OutputsTemplate: entity.OutputsTemplate,
-	}
-}
-
-func commandExposedOptionsVoToDto(options ExposedOptions) submissioncommand.ExposedOptions {
-	return submissioncommand.ExposedOptions{
-		ReadFromCache: options.ReadFromCache,
 	}
 }
 
@@ -109,7 +103,7 @@ func submissionItemDtoToVo(item *submissionquery.SubmissionItem) SubmissionItem 
 		WorkflowVersion: queryWorkflowVersionDtoToVo(item.WorkflowID, item.WorkflowVersionID),
 		RunStatus:       submissionQueryStatusDtoToVo(item.RunStatus),
 		Entity:          queryEntityDtoToVo(item.Entity),
-		ExposedOptions:  queryExposedOptionsDtoToVo(item.ExposedOptions),
+		ExposedOptions:  item.ExposedOptions,
 		InOutMaterial:   queryInOutMaterialDtoToVo(item.InOutMaterial),
 	}
 }
@@ -142,12 +136,6 @@ func queryEntityDtoToVo(entity *submissionquery.Entity) *Entity {
 		DataModelRowIDs: entity.DataModelRowIDs,
 		InputsTemplate:  entity.InputsTemplate,
 		OutputsTemplate: entity.OutputsTemplate,
-	}
-}
-
-func queryExposedOptionsDtoToVo(options submissionquery.ExposedOptions) ExposedOptions {
-	return ExposedOptions{
-		ReadFromCache: options.ReadFromCache,
 	}
 }
 

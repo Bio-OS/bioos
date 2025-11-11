@@ -2,11 +2,12 @@ package submission
 
 import (
 	"context"
-	"reflect"
+	"encoding/json"
 
 	"github.com/Bio-OS/bioos/internal/context/workspace/infrastructure/eventbus"
 	workspaceproto "github.com/Bio-OS/bioos/internal/context/workspace/interface/grpc/proto"
 	apperrors "github.com/Bio-OS/bioos/pkg/errors"
+	applog "github.com/Bio-OS/bioos/pkg/log"
 	"github.com/Bio-OS/bioos/pkg/utils"
 	"github.com/Bio-OS/bioos/pkg/utils/grpc"
 )
@@ -60,7 +61,7 @@ func (h *CreateHandler) genCreateRunEvent(ctx context.Context, event *CreateEven
 	if err != nil {
 		return nil, apperrors.NewInternalError(err)
 	}
-	workflowEngineParameters := exposedOptions2Map(&sub.ExposedOptions)
+	workflowEngineParameters := exposedOptions2Map(sub.ExposedOptions)
 	files, err := h.genWorkflowFiles(ctx, getWorkflowVersionResp.Version, event)
 	if err != nil {
 		return nil, err
@@ -99,12 +100,12 @@ func (h *CreateHandler) genWorkflowFiles(ctx context.Context, workflowVersion *w
 }
 
 // exposedOptions2Map ...
-func exposedOptions2Map(exposedOptions *ExposedOptions) map[string]interface{} {
+func exposedOptions2Map(exposedOptions string) map[string]interface{} {
 	res := make(map[string]interface{})
-	t := reflect.TypeOf(exposedOptions).Elem()
-	v := reflect.ValueOf(exposedOptions).Elem()
-	for i := 0; i < v.NumField(); i++ {
-		res[t.Field(i).Tag.Get(WESTag)] = v.Field(i).Interface()
+	err := json.Unmarshal([]byte(exposedOptions), &res)
+	if err != nil {
+		applog.Errorf("invalid exposedOptions, value : ", exposedOptions)
+		res = make(map[string]interface{})
 	}
 	return res
 }

@@ -129,6 +129,18 @@ export default function AnalysisDetail() {
       (detailData?.status === 'Pending' ? 'Running' : detailData?.status),
   );
 
+  const parsedExposedOptions = useMemo(() => {
+    if (detailData?.exposedOptions) {
+      try {
+        return JSON.parse(detailData.exposedOptions);
+      } catch (e) {
+        console.error("Parsing exposedOptions failed", e);
+        return {};
+      }
+    }
+    return {};
+  }, [detailData]);
+
   //获取 icon 组件
   const getIcon = () => {
     switch (status?.icon) {
@@ -199,7 +211,7 @@ export default function AnalysisDetail() {
             id={detailData?.id}
             workspaceId={workspaceId}
             workflowId={detailData?.workflowVersion?.id}
-            flagReadFromCache={detailData?.exposedOptions?.readFromCache}
+            flagReadFromCache={parsedExposedOptions?.readFromCache}
           />
         </DetailRightContainer>
       </div>

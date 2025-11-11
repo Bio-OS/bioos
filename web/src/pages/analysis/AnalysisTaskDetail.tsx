@@ -113,6 +113,18 @@ export default function AnalysisTaskDetail() {
 
   const status = RUN_STATUS_TAG.find(item => item.value === runData.status);
 
+  const parsedExposedOptions = useMemo(() => {
+    if (runSubmissionData?.exposedOptions) {
+      try {
+        return JSON.parse(runSubmissionData.exposedOptions);
+      } catch (e) {
+        console.error("Parsing exposedOptions failed", e);
+        return {};
+      }
+    }
+    return {};
+  }, [runSubmissionData]);
+
   useEffect(() => {
     startAnalysisDetailPolling();
     return () => stopAnalysisDetailPolling();
@@ -146,7 +158,7 @@ export default function AnalysisTaskDetail() {
           inputs={runData.inputs}
           outputs={runData.outputs}
           logs={logs}
-          callCache={runSubmissionData?.exposedOptions?.readFromCache}
+          callCache={parsedExposedOptions?.readFromCache}
           isFinished={isFinished}
         />
         <DetailRightContainer>

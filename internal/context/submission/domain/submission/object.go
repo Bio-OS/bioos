@@ -15,12 +15,8 @@ type Submission struct {
 	Type              string
 	Inputs            map[string]interface{}
 	Outputs           map[string]interface{}
-	ExposedOptions    ExposedOptions
+	ExposedOptions    string
 	Status            string
 	StartTime         time.Time
 	FinishTime        *time.Time
-}
-
-type ExposedOptions struct {
-	ReadFromCache bool `wes:"read_from_cache"`
 }
