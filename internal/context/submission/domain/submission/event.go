@@ -161,6 +161,7 @@ type RunConfig struct {
 	MainWorkflowFilePath     string
 	WorkflowEngineParameters map[string]interface{}
 	Version                  string
+	WorkflowVersionID        string
 }
 
 func NewEventCreateRuns(workspaceID, submissionID, submissionType string, inputs, outputs map[string]interface{}, dataModelID *string, DataModelRowIDs []string, runConfig *RunConfig) *EventCreateRuns {
