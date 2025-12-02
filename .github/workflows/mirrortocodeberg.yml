@@ -1,0 +1,12 @@
+on: [push]
+...
+steps:
+
+uses: actions/checkout@v3
+with:
+fetch-depth: 0
+uses: yesolutions/mirror-action@master
+with:
+REMOTE: 'https://codeberg.org/Bio-OS/bioos.git'
+GIT_USERNAME: zhaoqiang_li
+GIT_PASSWORD: ${{ secrets.FORCODEBERG }}
