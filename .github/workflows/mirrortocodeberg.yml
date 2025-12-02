@@ -1,12 +1,20 @@
-on: [push]
-...
-steps:
+name: Mirror to Codeberg
 
-uses: actions/checkout@v3
-with:
-fetch-depth: 0
-uses: yesolutions/mirror-action@master
-with:
-REMOTE: 'https://codeberg.org/Bio-OS/bioos.git'
-GIT_USERNAME: zhaoqiang_li
-GIT_PASSWORD: ${{ secrets.FORCODEBERG }}
+on:
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Mirror code to Codeberg
+        uses: yesolutions/mirror-action@master
+        with:
+          REMOTE: 'https://codeberg.org/Bio-OS/bioos.git'
+          GIT_USERNAME: zhaoqiang_li
+          GIT_PASSWORD: ${{ secrets.FORCODEBERG }}
