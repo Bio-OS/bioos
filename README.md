@@ -1,4 +1,4 @@
-# About Bio-OS
+# About Bio-OS  
 Bio-OS is an open-source platform for genomics users.  It provides a workspace which encapsulates data, workflows, Notebooks, job history, etc. Bio-OS provides both  GUI and CLI(Command Line Interface) to quickly setup and run  workflows specified by languages like WDL and notebook as well.
 
 ## Bio-OS Concept
