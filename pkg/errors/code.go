@@ -26,6 +26,7 @@ const (
 	InternalCode
 	TemporaryDisabledCode
 	TimeoutCode
+	ValidateFailedCode
 )
 
 // hertz code.

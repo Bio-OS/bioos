@@ -86,6 +86,14 @@ func NewInternalError(err error) *AppError {
 	}
 }
 
+func NewValidateFailedError(err error) *AppError {
+	return &AppError{
+		Code:    ValidateFailedCode,
+		Message: "validate failed",
+		Inner:   err,
+	}
+}
+
 func NewHertzBindError(err error) *AppError {
 	return &AppError{
 		Code:    BindErrorCode,
