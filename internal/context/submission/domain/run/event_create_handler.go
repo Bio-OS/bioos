@@ -61,7 +61,7 @@ func (e *EventHandlerCreateRuns) genRunList(ctx context.Context, dataList *dataL
 	res := make([]*Run, 0)
 	// only contains ws data model implement submissionType is filePath
 	if len(event.DataModelRowIDs) == 0 {
-		if event.SubmisstionType != consts.FilePathTypeSubmission {
+		if event.SubmissionType != consts.FilePathTypeSubmission {
 			return nil, apperrors.NewInternalError(fmt.Errorf("only submissionType is filepath when with no datamodel"))
 		}
 		for name, vInputs := range event.InputsTemplate {
@@ -108,7 +108,7 @@ func (e *EventHandlerCreateRuns) genRunList(ctx context.Context, dataList *dataL
 }
 
 func (e *EventHandlerCreateRuns) genDataList(ctx context.Context, event *submission.EventCreateRuns) (*dataList, error) {
-	wsModelData, err := e.genWsModelData(ctx, event.WorkspaceID, event.InputsTemplate, event.SubmisstionType)
+	wsModelData, err := e.genWsModelData(ctx, event.WorkspaceID, event.InputsTemplate, event.SubmissionType)
 	if err != nil {
 		return nil, err
 	}
