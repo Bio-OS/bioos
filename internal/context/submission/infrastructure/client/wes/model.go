@@ -64,6 +64,7 @@ type RunRequest struct {
 	WorkflowTypeVersion      string                 `json:"workflow_type_version"`
 	Tags                     map[string]interface{} `json:"tags"`
 	WorkflowEngineParameters map[string]interface{} `json:"workflow_engine_parameters"`
+	WorkflowURL              string                 `json:"workflow_url"`
 }
 
 // RunStatus ...

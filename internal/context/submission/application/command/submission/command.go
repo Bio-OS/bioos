@@ -15,7 +15,7 @@ type CreateSubmissionCommand struct {
 	Description    *string `validate:"omitempty,submissionDesc"`
 	Type           string  `validate:"required,oneof=dataModel filePath"`
 	Entity         *Entity
-	ExposedOptions ExposedOptions
+	ExposedOptions string
 	InOutMaterial  *InOutMaterial
 }
 
@@ -29,10 +29,6 @@ type Entity struct {
 type InOutMaterial struct {
 	InputsMaterial  string
 	OutputsMaterial string
-}
-
-type ExposedOptions struct {
-	ReadFromCache bool
 }
 
 type DeleteSubmissionCommand struct {

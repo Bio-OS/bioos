@@ -308,10 +308,9 @@ export default function WorkflowRun() {
       workspaceID: workspaceId,
       workflowID: workflowId,
       type: isPath ? 'filePath' : 'dataModel',
-      exposedOptions: {
-        readFromCache: callCaching,
-      },
     };
+
+    body.exposedOptions = JSON.stringify(exposedOptions);
 
     if (isPath) {
       body.inOutMaterial = {
@@ -504,6 +503,59 @@ export default function WorkflowRun() {
     }
   }
 
+  function useLanguageOptions(language, submission) {
+    // 定义默认状态
+    const [optionStates, setOptionStates] = useState({
+      callCaching: true,
+      continueWhenFailed: true,
+      useConda: true,
+      // ...在此添加状态
+    });
+
+    // 根据状态对象生成 exposedOptions
+    const exposedOptions = useMemo(() => {
+      switch (language) {
+        case 'WDL':
+          const WDLOptions = {
+            readFromCache: optionStates.callCaching,
+          };
+          return WDLOptions;
+        case 'CWL':
+          const CWLOptions = {
+            workflowFailureMode: optionStates.continueWhenFailed ? 'ContinueWhilePossible' : 'NoNewCalls',
+          };
+          return CWLOptions;
+        case 'SMK':
+          const SMKOptions = {
+            useConda: optionStates.useConda,
+          };
+          return SMKOptions;
+        default:
+          return {};
+      }
+    }, [optionStates, language]);
+
+    // 通用的更新方法
+    const updateOptionState = (name, newValue) => {
+      setOptionStates(prevState => ({
+        ...prevState,
+        [name]: newValue,
+      }));
+    };
+
+    // 处理 submission 变化，更新状态对象
+    useEffect(() => {
+      if (submission) {
+        const submissionOptions = submission?.exposedOptions ? JSON.parse(submission.exposedOptions) : {};
+        Object.keys(submissionOptions).forEach(key => {
+          updateOptionState(key, submissionOptions[key]);
+        });
+      }
+    }, [submission]);
+
+    return { optionStates, updateOptionState, exposedOptions };
+  }
+
   // 获取初始数据
   useEffect(() => {
     getWorkflow();
@@ -513,9 +565,76 @@ export default function WorkflowRun() {
     }
   }, []);
 
+  const language = workflow?.latestVersion?.language;
+  const { optionStates, updateOptionState, exposedOptions } = useLanguageOptions(language, submission);
+
+  const getLanguageOptionsUI = (language, optionStates, updateOptionState) => {
+    switch (language) {
+      case 'WDL':
+        return (
+          <div className={style.row}>
+            <div className={style.col}>
+              CallCaching
+              <Popover content="CallCaching会在之前运行的任务的缓存中搜索具有完全相同的命令和完全相同的输入的任务。 如果缓存命中，将使用前一个任务的结果而不是重新运行，从而节省时间和资源。">
+                <IconQuestionCircle className="ml4" />
+              </Popover>
+            </div>
+            <div className={style.col}>
+              <Switch
+                checkedText="开"
+                uncheckedText="关"
+                checked={optionStates.callCaching}
+                onChange={checked => updateOptionState('callCaching', checked)}
+              />
+            </div>
+          </div>
+        );
+      case 'CWL':
+        return (
+          <div className={style.row}>
+            <div className={style.col}>
+              FailMode
+              <Popover content="单个任务失败后要立刻停止，还是尽可能地继续执行。开代表尽可能执行。">
+                <IconQuestionCircle className="ml4" />
+              </Popover>
+            </div>
+            <div className={style.col}>
+              <Switch
+                checkedText="开"
+                uncheckedText="关"
+                checked={optionStates.continueWhenFailed}
+                onChange={checked => updateOptionState('continueWhenFailed', checked)}
+              />
+            </div>
+          </div>
+        );
+      case 'SMK':
+        return (
+          <div className={style.row}>
+            <div className={style.col}>
+              UseConda
+              <Popover content="是否使用Conda">
+                <IconQuestionCircle className="ml4" />
+              </Popover>
+            </div>
+            <div className={style.col}>
+              <Switch
+                checkedText="开"
+                uncheckedText="关"
+                checked={optionStates.useConda}
+                onChange={checked => updateOptionState('useConda', checked)}
+              />
+            </div>
+          </div>
+        );
+      default:
+        return <div>No options available for this language.</div>;
+    }
+  };
+
   useEffect(() => {
     if (!dataModelList) return;
-    setCallCaching(submission?.exposedOptions?.readFromCache ?? true);
+
     if (!submissionId || submission?.type === 'filePath') {
       setModelId(dataModelList?.[0]?.id);
       setMode(submission?.type || 'dataModel');
@@ -635,6 +754,18 @@ export default function WorkflowRun() {
                 >
                   {workflow?.description}
                 </Typography.Paragraph>
+                <span className="">流程语言：</span>
+                <Typography.Paragraph
+                  className="colorGrey mr20"
+                  style={{ maxWidth: 100 }}
+                  ellipsis={{
+                    showTooltip: {
+                      type: 'popover',
+                    },
+                  }}
+                >
+                  {workflow?.latestVersion?.language}
+                </Typography.Paragraph>
                 <span>来源：</span>
                 <Link>{workflow?.latestVersion?.metadata?.gitURL}</Link>
               </>
@@ -706,23 +837,7 @@ export default function WorkflowRun() {
                     </div>
                   </>
                 )}
-
-                <div className={style.row}>
-                  <div className={style.col}>
-                    CallCaching
-                    <Popover content="CallCaching会在之前运行的任务的缓存中搜索具有完全相同的命令和完全相同的输入的任务。 如果缓存命中，将使用前一个任务的结果而不是重新运行，从而节省时间和资源。">
-                      <IconQuestionCircle className="ml4" />
-                    </Popover>
-                  </div>
-                  <div className={style.col}>
-                    <Switch
-                      checkedText="开"
-                      uncheckedText="关"
-                      checked={callCaching}
-                      onChange={setCallCaching}
-                    />
-                  </div>
-                </div>
+                {getLanguageOptionsUI(language, optionStates, updateOptionState)}
               </div>
             </div>
             <div className={style.blockBox}>

@@ -83,6 +83,10 @@ func (p VersionOption) validate() error {
 			return apperrors.NewInvalidError("tag")
 		}
 	}
+	// 增加language validation
+	if p.Language != WorkflowLanguageCWL && p.Language != WorkflowLanguageWDL && p.Language != WorkflowLanguageNextflow && p.Language != WorkflowLanguageSnakemake {
+		return apperrors.NewInvalidError("Language")
+	}
 	return nil
 }
 

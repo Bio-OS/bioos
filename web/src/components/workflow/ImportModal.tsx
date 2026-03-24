@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { memo, useMemo, useRef } from 'react';
+import { memo, useMemo, useRef, useState } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { useRouteMatch } from 'react-router-dom';
 import { FormApi } from 'final-form';
@@ -42,6 +42,10 @@ import { ToastLimitText } from '..';
 
 import style from './style.less';
 
+import WorkflowMode, {
+  WorkflowModeType,
+} from 'components/workflow/WorkflowMode';
+
 interface Props {
   visible: boolean;
   workflowInfo?: HandlersWorkflowItem;
@@ -54,12 +58,14 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
   const match = useRouteMatch<{ workspaceId: string }>();
   const isEdit = workflowInfo?.latestVersion.status === 'Success';
   const isReimport = workflowInfo?.latestVersion.status === 'Failed';
+  const [language, setLanguage] = useState<WorkflowModeType>('WDL');
 
   const initialValues = useMemo(
     () =>
       workflowInfo
         ? {
             name: workflowInfo.name,
+            language: workflowInfo.latestVersion.language,
             url: workflowInfo.latestVersion.metadata.gitURL,
             tag: workflowInfo.latestVersion.metadata.gitTag,
             mainWorkflowPath: workflowInfo.latestVersion.mainWorkflowPath,
@@ -167,6 +173,13 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
           return (
             <ArcoForm layout="vertical">
               <FieldItem
+                  name="language"
+                  label="工作流声明语言"
+                  required={true}
+              >
+                <WorkflowMode value={language} onChange={setLanguage} />
+              </FieldItem>
+              <FieldItem
                 name="name"
                 label="工作流名称"
                 required={true}
@@ -177,9 +190,6 @@ function ImportModal({ visible, workflowInfo, onClose, refetch }: Props) {
               >
                 <Input placeholder="请输入" allowClear={true} />
               </FieldItem>
-              <Form.Item label="规范">
-                <span>WDL</span>
-              </Form.Item>
               <FieldItem
                 name="url"
                 label="Git 地址"

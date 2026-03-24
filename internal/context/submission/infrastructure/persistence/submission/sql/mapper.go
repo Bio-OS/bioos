@@ -23,9 +23,7 @@ func SubmissionPOToSubmissionDTO(ctx context.Context, submission *Submission) (*
 		WorkflowID:        submission.WorkflowID,
 		WorkflowVersionID: submission.WorkflowVersionID,
 		WorkspaceID:       submission.WorkspaceID,
-		ExposedOptions: query.ExposedOptions{
-			ReadFromCache: submission.ExposedOptions.ReadFromCache,
-		},
+		ExposedOptions:    submission.ExposedOptions,
 	}
 	if submission.FinishTime != nil {
 		item.FinishTime = utils.PointInt64(submission.FinishTime.Unix())
@@ -93,12 +91,10 @@ func SubmissionPOToSubmissionDO(ctx context.Context, sb *Submission) (*submissio
 		Type:              sb.Type,
 		Inputs:            sb.Inputs,
 		Outputs:           sb.Outputs,
-		ExposedOptions: submission.ExposedOptions{
-			ReadFromCache: sb.ExposedOptions.ReadFromCache,
-		},
-		Status:     sb.Status,
-		StartTime:  sb.StartTime,
-		FinishTime: sb.FinishTime,
+		ExposedOptions:    sb.ExposedOptions,
+		Status:            sb.Status,
+		StartTime:         sb.StartTime,
+		FinishTime:        sb.FinishTime,
 	}, nil
 }
 
@@ -123,11 +119,9 @@ func SubmissionDOToSubmissionPO(ctx context.Context, sb *submission.Submission) 
 		Inputs:            sb.Inputs,
 		Outputs:           sb.Outputs,
 		WorkspaceID:       sb.WorkspaceID,
-		ExposedOptions: ExposedOptions{
-			ReadFromCache: sb.ExposedOptions.ReadFromCache,
-		},
-		Status:     sb.Status,
-		StartTime:  sb.StartTime,
-		FinishTime: sb.FinishTime,
+		ExposedOptions:    sb.ExposedOptions,
+		Status:            sb.Status,
+		StartTime:         sb.StartTime,
+		FinishTime:        sb.FinishTime,
 	}, nil
 }

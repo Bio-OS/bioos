@@ -24,15 +24,11 @@ type Submission struct {
 	Type              string                 `gorm:"type:varchar(32);not null"`
 	Inputs            map[string]interface{} `gorm:"serializer:json"`
 	Outputs           map[string]interface{} `gorm:"serializer:json"`
-	ExposedOptions    ExposedOptions         `gorm:"serializer:json"`
+	ExposedOptions    string                 `gorm:"type:longtext"`
 	Status            string                 `gorm:"type:varchar(32);not null"`
 	StartTime         time.Time              `gorm:"not null"`
 	FinishTime        *time.Time
 	UserID            *int64
-}
-
-type ExposedOptions struct {
-	ReadFromCache bool `json:"readFromCache"`
 }
 
 func (s *SubmissionModel) TableName() string {
